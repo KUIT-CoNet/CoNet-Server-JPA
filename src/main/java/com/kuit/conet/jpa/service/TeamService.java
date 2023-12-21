@@ -1,23 +1,31 @@
-package com.kuit.conet.service;
+package com.kuit.conet.jpa.service;
+
+import com.kuit.conet.jpa.domain.member.Member;
+import com.kuit.conet.jpa.domain.team.TeamMember;
+import com.kuit.conet.jpa.domain.team.*;
 
 import com.kuit.conet.common.exception.TeamException;
 import com.kuit.conet.dao.HistoryDao;
 import com.kuit.conet.dao.TeamDao;
 import com.kuit.conet.dao.UserDao;
 import com.kuit.conet.domain.storage.StorageDomain;
-import com.kuit.conet.domain.team.Team;
-import com.kuit.conet.domain.team.TeamMember;
+//import com.kuit.conet.domain.team.Team;
+//import com.kuit.conet.domain.team.TeamMember;
 import com.kuit.conet.dto.request.team.CreateTeamRequest;
 import com.kuit.conet.dto.request.team.ParticipateTeamRequest;
 import com.kuit.conet.dto.request.team.TeamIdRequest;
 import com.kuit.conet.dto.request.team.UpdateTeamRequest;
 import com.kuit.conet.dto.response.StorageImgResponse;
 import com.kuit.conet.dto.response.team.*;
-import com.kuit.conet.utils.JwtParser;
+import com.kuit.conet.jpa.repository.TeamMemberRepository;
+import com.kuit.conet.jpa.repository.TeamRepository;
+import com.kuit.conet.jpa.repository.UserRepository;
+import com.kuit.conet.service.StorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
@@ -32,13 +40,17 @@ import java.util.Random;
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.*;
 
 @Slf4j
-//@Service
+@Service
+@Transactional
 @RequiredArgsConstructor
 public class TeamService {
     private final StorageService storageService;
-    private final TeamDao teamDao;
-    private final UserDao userDao;
-    private final HistoryDao historyDao;
+//    private final TeamDao teamDao;
+//    private final UserDao userDao;
+//    private final HistoryDao historyDao;
+    private final TeamRepository teamRepository;
+    private final UserRepository userRepository;
+    private final TeamMemberRepository teamMemberRepository;
 
     public CreateTeamResponse createTeam(CreateTeamRequest createTeamRequest, HttpServletRequest httpRequest, MultipartFile file) {
         String inviteCode;
@@ -46,29 +58,38 @@ public class TeamService {
         // 초대 코드 생성 및 코드 중복 확인
         do {
             inviteCode = generateInviteCode();
-        } while (teamDao.validateDuplicateCode(inviteCode));  // 중복되면 true 반환
+        } while (!teamRepository.findByInviteCode(inviteCode).isEmpty());  // 중복되면 true 반환
 
         // 모임 생성 시간 찍기
         Timestamp codeGeneratedTime = Timestamp.valueOf(LocalDateTime.now());
 
-        // team table에 새로운 team insert하고 teamId 얻기
-        Team newTeam = new Team(createTeamRequest.getTeamName(), "", inviteCode, codeGeneratedTime);
-        Long teamId = teamDao.saveTeam(newTeam);
+        // team 생성
+        Team newTeam = Team.builder().teamName(createTeamRequest.getTeamName())
+                .inviteCode(inviteCode)
+                .codeGeneratedTime(codeGeneratedTime)
+                .build();
+        Long teamId = teamRepository.save(newTeam);
 
+        updateTeamImg(file, teamId, newTeam);
+
+        // teamMember 에 user 추가
+        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+        Member teamCreator = userRepository.findById(userId);
+        TeamMember teamMember = new TeamMember(newTeam, teamCreator);
+        teamMemberRepository.save(teamMember);
+
+        return new CreateTeamResponse(newTeam.getId(), newTeam.getInviteCode());
+    }
+
+    private void updateTeamImg(MultipartFile file, Long teamId, Team newTeam) {
         // 새로운 이미지 S3에 업로드
         String fileName = storageService.getFileName(file, StorageDomain.TEAM, teamId);
         String imgUrl = storageService.uploadToS3(file, fileName);
 
-        StorageImgResponse response = teamDao.updateImg(teamId, imgUrl);
-
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-
-        // teamMember 에 user 추가
-        TeamMember newTeamMember = new TeamMember(teamId, userId);
-        TeamMember savedTeamMember = teamDao.saveTeamMember(newTeamMember);
-
-        return new CreateTeamResponse(savedTeamMember.getTeamId(), inviteCode);
+        /*        StorageImgResponse response = teamDao.updateImg(teamId, imgUrl);*/
+        newTeam.updateImg(imgUrl);
     }
+/*
 
     public RegenerateCodeResponse regenerateCode(TeamIdRequest request) {
         String inviteCode;
@@ -95,6 +116,8 @@ public class TeamService {
         return new RegenerateCodeResponse(request.getTeamId(), newCode, codeDeadlineStr);
     }
 
+*/
+
     public String generateInviteCode() {
         int leftLimit = 48;
         int rightLimit = 122;
@@ -110,7 +133,7 @@ public class TeamService {
 
         return generatedString;
     }
-
+    /*
     public ParticipateTeamResponse participateTeam(ParticipateTeamRequest participateRequest, HttpServletRequest httpRequest) {
         // 모임 참가 요청 시간 찍기
         LocalDateTime participateRequestTime = LocalDateTime.now();
@@ -318,5 +341,6 @@ public class TeamService {
 
         return teamReturnResponses;
     }
+*/
 
 }
