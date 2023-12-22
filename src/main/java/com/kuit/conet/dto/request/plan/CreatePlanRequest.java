@@ -12,5 +12,5 @@ import java.sql.Date;
 public class CreatePlanRequest {
     private Long teamId;
     private String planName;
-    private Date planStartPeriod;
+    private Date planStartDate;
 }

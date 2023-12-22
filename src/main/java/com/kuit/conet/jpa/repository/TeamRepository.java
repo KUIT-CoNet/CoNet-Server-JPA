@@ -20,6 +20,10 @@ public class TeamRepository {
         return team.getId();
     }
 
+    public Team findById(Long id) {
+        return em.find(Team.class, id);
+    }
+
     public List<Team> findByInviteCode(String inviteCode) {
         return em.createQuery("select t from Team t where t.inviteCode=:inviteCode", Team.class)
                 .setParameter("inviteCode", inviteCode)
