@@ -30,7 +30,7 @@ import java.util.List;
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.*;
 
 @Slf4j
-@Service
+//@Service
 @RequiredArgsConstructor
 public class PlanService {
     private final PlanDao planDao;
