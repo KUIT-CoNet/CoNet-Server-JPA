@@ -20,17 +20,11 @@ import java.time.LocalDate;
 @Transactional
 @RequiredArgsConstructor
 public class PlanService {
-    //    private final PlanDao planDao;
-//    private final UserDao userDao;
-//    private final TeamDao teamDao;
-//    private final HistoryDao historyDao;
     private final TeamRepository teamRepository;
     private final PlanRepository planRepository;
-//    private final StorageService storageService;
 
     public CreatePlanResponse createPlan(CreatePlanRequest request) {
         Date endDate = setEndDate(request.getPlanStartDate());
-
         Team team = teamRepository.findById(request.getTeamId());
 
         Plan newPlan = Plan.builder()
