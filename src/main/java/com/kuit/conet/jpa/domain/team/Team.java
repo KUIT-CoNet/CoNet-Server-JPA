@@ -57,4 +57,6 @@ public class Team {
     public void addTeamMember(TeamMember teamMember) {
         teamMembers.add(teamMember);
     }
+
+    public void addPlan(Plan plan) { plans.add(plan); }
 }

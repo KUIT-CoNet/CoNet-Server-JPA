@@ -30,7 +30,7 @@ import java.util.List;
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.*;
 
 @Slf4j
-@Service
+//@Service
 @RequiredArgsConstructor
 public class PlanService {
     private final PlanDao planDao;
@@ -38,16 +38,6 @@ public class PlanService {
     private final TeamDao teamDao;
     private final HistoryDao historyDao;
     private final StorageService storageService;
-
-    public CreatePlanResponse createPlan(CreatePlanRequest createPlanRequest) {
-        LocalDate date = createPlanRequest.getPlanStartPeriod().toLocalDate().plusDays(6);
-        Date endDate = Date.valueOf(date);
-        Plan plan = new Plan(createPlanRequest.getTeamId(), createPlanRequest.getPlanName(), createPlanRequest.getPlanStartPeriod(), endDate);
-
-        Long planId = planDao.savePlan(plan);
-
-        return new CreatePlanResponse(planId);
-    }
 
     public void saveTime(PossibleTimeRequest possibleTimeRequest, HttpServletRequest httpRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
