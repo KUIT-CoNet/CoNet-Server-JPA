@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Entity
@@ -40,7 +41,7 @@ public class Plan {
     private Date fixedDate;
 
     @Temporal(TemporalType.TIME)
-    private Date fixedTime;
+    private Time fixedTime;
 
     @ColumnDefault("1")
     private Integer status;
@@ -62,5 +63,9 @@ public class Plan {
         this.endPeriod = endPeriod;
 
         team.addPlan(this);
+    }
+
+    public boolean isFixed() {
+        return this.fixedDate != null && this.fixedTime != null;
     }
 }

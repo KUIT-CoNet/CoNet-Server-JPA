@@ -1,3 +1,4 @@
+/*
 package com.kuit.conet.service;
 
 import com.kuit.conet.common.exception.PlanException;
@@ -13,17 +14,13 @@ import com.kuit.conet.dto.request.team.TeamIdRequest;
 import com.kuit.conet.dto.response.plan.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -171,7 +168,9 @@ public class PlanService {
             }
 
             memberDateTimeResponses.add(new MemberDateTimeResponse(date, memberResponses));
-            /** 하루에 대한 가능한 구성원 정보 추가 완료*/
+            */
+/** 하루에 대한 가능한 구성원 정보 추가 완료*//*
+
 
             // 약속 기간 시작 날짜에서 하루씩 더하기
             Calendar cal = Calendar.getInstance();
@@ -381,4 +380,4 @@ public class PlanService {
 
         return planDao.getMemberIsInPlanId(planId);
     }
-}
+}*/

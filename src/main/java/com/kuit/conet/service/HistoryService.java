@@ -1,8 +1,9 @@
+/*
 package com.kuit.conet.service;
 
 import com.kuit.conet.common.exception.HistoryException;
 import com.kuit.conet.dao.HistoryDao;
-import com.kuit.conet.dao.PlanDao;
+//import com.kuit.conet.dao.PlanDao;
 import com.kuit.conet.domain.storage.StorageDomain;
 import com.kuit.conet.dto.request.history.HistoryRegisterRequest;
 import com.kuit.conet.dto.request.team.TeamIdRequest;
@@ -22,7 +23,7 @@ import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.
 @RequiredArgsConstructor
 public class HistoryService {
     private final HistoryDao historyDao;
-    private final PlanDao planDao;
+//    private final PlanDao planDao;
     private final StorageService storageService;
 
     public HistoryRegisterResponse registerToHistory(HistoryRegisterRequest registerRequest, MultipartFile historyImg) {
@@ -63,4 +64,4 @@ public class HistoryService {
         Long teamId = request.getTeamId();
         return historyDao.getHistory(teamId);
     }
-}
+}*/
