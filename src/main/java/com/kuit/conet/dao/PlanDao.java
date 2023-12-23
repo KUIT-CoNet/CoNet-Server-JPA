@@ -1,3 +1,4 @@
+/*
 package com.kuit.conet.dao;
 
 import com.kuit.conet.domain.plan.*;
@@ -196,9 +197,11 @@ public class PlanDao {
         return jdbcTemplate.query(sql, param, mapper);
     }
 
-    /**
+    */
+/**
      * 모임 내 특정 날짜 확정 약속 조회
-     * */
+     * *//*
+
     public List<TeamFixedPlanOnDay> getPlanOnDay(Long teamId, String searchDate) {
         String sql = "select p.plan_id as plan_id, p.fixed_time as fixed_time, p.plan_name as plan_name " +
                 "from plan p, team t " +
@@ -541,4 +544,4 @@ public class PlanDao {
 
         return memberIsInPlanResponses;
     }
-}
+}*/

@@ -1,3 +1,4 @@
+/*
 package com.kuit.conet.controller;
 
 import com.kuit.conet.common.response.BaseResponse;
@@ -32,4 +33,4 @@ public class HistoryController {
         List<HistoryResponse> response = historyService.getHistory(request);
         return new BaseResponse<>(response);
     }
-}
+}*/
