@@ -1,16 +1,20 @@
 package com.kuit.conet.domain.plan;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Time;
+
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class TeamFixedPlanOnDay {
     private Long planId;
-    private String time; // hh-mm
     private String planName;
+    private Time time; // hh-mm
 }
 /*
  * 날짜 / 시각 / 모임 명 / 약속 명

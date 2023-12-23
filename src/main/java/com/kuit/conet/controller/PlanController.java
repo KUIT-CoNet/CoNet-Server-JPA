@@ -1,22 +1,13 @@
 package com.kuit.conet.controller;
 
 import com.kuit.conet.common.response.BaseResponse;
-import com.kuit.conet.domain.plan.SideMenuFixedPlan;
-import com.kuit.conet.domain.plan.PastPlan;
-import com.kuit.conet.domain.plan.PlanDetail;
 import com.kuit.conet.dto.request.plan.*;
-import com.kuit.conet.dto.request.team.TeamIdRequest;
 import com.kuit.conet.dto.response.plan.*;
-import com.kuit.conet.jpa.domain.plan.Plan;
 import com.kuit.conet.jpa.service.PlanService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -33,6 +24,17 @@ public class PlanController {
         CreatePlanResponse response = planService.createPlan(request);
         return new BaseResponse<>(response);
     }
+
+    /**
+     * 모임 내 특정 날짜 확정 약속 조회 - 날짜(yyyy-MM-dd) / 시각(hh-mm)
+     * - '나'의 직접적인 참여 여부와 무관
+     * */
+    @GetMapping("/day")
+    public BaseResponse<TeamPlanOnDayResponse> getPlanOnDay(@ModelAttribute @Valid TeamFixedPlanOnDayRequest planRequest) {
+        TeamPlanOnDayResponse response = planService.getPlanOnDay(planRequest);
+        return new BaseResponse<>(response);
+    }
+
 /*
     @PostMapping("/time")
     public BaseResponse<String> registerTime(HttpServletRequest httpRequest, @RequestBody @Valid PossibleTimeRequest request) {
@@ -67,15 +69,6 @@ public class PlanController {
         return new BaseResponse<>(response);
     }
 
-    *//**
-     * 모임 내 특정 날짜 확정 약속 조회 - 날짜(yyyy-MM-dd) / 시각(hh-mm)
-     * - '나'의 직접적인 참여 여부와 무관
-     * *//*
-    @GetMapping("/day")
-    public BaseResponse<TeamPlanOnDayResponse> getPlanOnDay(@ModelAttribute @Valid TeamFixedPlanRequest planRequest) {
-        TeamPlanOnDayResponse response = planService.getPlanOnDay(planRequest);
-        return new BaseResponse<>(response);
-    }
 
     *//**
      * 모임 내 대기 중인 약속 조회 - 날짜(yyyy-MM-dd) / 시각(hh-mm) / 약속 명 / 모임 명
