@@ -22,7 +22,7 @@ public class Plan {
     @Column(name = "plan_id")
     private Long id;
 
-    @ManyToOne // 다대일 양방향 연관 관계 / 연관 관계의 주인
+    @ManyToOne(fetch = FetchType.LAZY) // 다대일 양방향 연관 관계 / 연관 관계의 주인
     @JoinColumn(name = "team_id")
     private Team team;
 
