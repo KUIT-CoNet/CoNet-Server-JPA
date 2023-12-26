@@ -46,14 +46,8 @@ public class Plan {
     @ColumnDefault("1")
     private Integer status;
 
-    @ColumnDefault("0")
-    private Integer history;
-
     @OneToMany(mappedBy = "plan")// 다대다(다대일, 일대다) 양방향 연관 관계 / 연관 관계 주인의 반대편
     private List<PlanMember> plans = new ArrayList<>();
-
-    @OneToMany(mappedBy = "plan")// 다대다(다대일, 일대다) 양방향 연관 관계 / 연관 관계 주인의 반대편
-    private List<History> histories = new ArrayList<>();
 
     @Builder
     public Plan(Team team, String name, Date startPeriod, Date endPeriod) {

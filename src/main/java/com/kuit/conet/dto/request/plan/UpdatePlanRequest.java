@@ -16,7 +16,4 @@ public class UpdatePlanRequest {
     private String time; // hh:mm
     private List<Long> members; // 구성원 userId
 
-    private Boolean isRegisteredToHistory;
-    // 히스토리에 등록되어 있을 때
-    private String historyDescription;
 }

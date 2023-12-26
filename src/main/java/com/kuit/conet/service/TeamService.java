@@ -1,7 +1,7 @@
+/*
 package com.kuit.conet.service;
 
 import com.kuit.conet.common.exception.TeamException;
-import com.kuit.conet.dao.HistoryDao;
 import com.kuit.conet.dao.TeamDao;
 import com.kuit.conet.dao.UserDao;
 import com.kuit.conet.domain.storage.StorageDomain;
@@ -13,11 +13,9 @@ import com.kuit.conet.dto.request.team.TeamIdRequest;
 import com.kuit.conet.dto.request.team.UpdateTeamRequest;
 import com.kuit.conet.dto.response.StorageImgResponse;
 import com.kuit.conet.dto.response.team.*;
-import com.kuit.conet.utils.JwtParser;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
@@ -38,37 +36,6 @@ public class TeamService {
     private final StorageService storageService;
     private final TeamDao teamDao;
     private final UserDao userDao;
-    private final HistoryDao historyDao;
-
-    public CreateTeamResponse createTeam(CreateTeamRequest createTeamRequest, HttpServletRequest httpRequest, MultipartFile file) {
-        String inviteCode;
-
-        // 초대 코드 생성 및 코드 중복 확인
-        do {
-            inviteCode = generateInviteCode();
-        } while (teamDao.validateDuplicateCode(inviteCode));  // 중복되면 true 반환
-
-        // 모임 생성 시간 찍기
-        Timestamp codeGeneratedTime = Timestamp.valueOf(LocalDateTime.now());
-
-        // team table에 새로운 team insert하고 teamId 얻기
-        Team newTeam = new Team(createTeamRequest.getTeamName(), "", inviteCode, codeGeneratedTime);
-        Long teamId = teamDao.saveTeam(newTeam);
-
-        // 새로운 이미지 S3에 업로드
-        String fileName = storageService.getFileName(file, StorageDomain.TEAM, teamId);
-        String imgUrl = storageService.uploadToS3(file, fileName);
-
-        StorageImgResponse response = teamDao.updateImg(teamId, imgUrl);
-
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-
-        // teamMember 에 user 추가
-        TeamMember newTeamMember = new TeamMember(teamId, userId);
-        TeamMember savedTeamMember = teamDao.saveTeamMember(newTeamMember);
-
-        return new CreateTeamResponse(savedTeamMember.getTeamId(), inviteCode);
-    }
 
     public RegenerateCodeResponse regenerateCode(TeamIdRequest request) {
         String inviteCode;
@@ -93,22 +60,6 @@ public class TeamService {
         String codeDeadlineStr = codeDeadline.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
 
         return new RegenerateCodeResponse(request.getTeamId(), newCode, codeDeadlineStr);
-    }
-
-    public String generateInviteCode() {
-        int leftLimit = 48;
-        int rightLimit = 122;
-        int targetStringLength = 8;
-
-        Random random = new Random();
-
-        String generatedString = random.ints(leftLimit, rightLimit+1)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                .limit(targetStringLength)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
-
-        return generatedString;
     }
 
     public ParticipateTeamResponse participateTeam(ParticipateTeamRequest participateRequest, HttpServletRequest httpRequest) {
@@ -201,7 +152,8 @@ public class TeamService {
             throw new TeamException(NOT_FOUND_TEAM);
         }
 
-        List<String> historyImgUrl = historyDao.getHistoryImgUrlFromTeamId(teamIdRequest.getTeamId());
+        //TODO: history 내용 삭제
+        List<String> ImgUrl = historyDao.getHistoryImgUrlFromTeamId(teamIdRequest.getTeamId());
         for(String url : historyImgUrl) {
             if(url != null) {
                 String deleteFileName = storageService.getFileNameFromUrl(url);
@@ -320,3 +272,4 @@ public class TeamService {
     }
 
 }
+*/
