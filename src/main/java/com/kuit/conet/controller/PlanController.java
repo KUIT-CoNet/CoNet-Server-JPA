@@ -103,6 +103,7 @@ public class PlanController {
     }
 
     @PostMapping("/update-fixed")
+    //TODO: history 관련 내용 삭제
     public BaseResponse<String> updateFixedPlan(@RequestPart(value = "requestBody") @Valid UpdatePlanRequest planRequest, @RequestPart(value = "file", required = false) MultipartFile historyImg) {
         String response = planService.updateFixedPlan(planRequest, historyImg);
         return new BaseResponse<>(response);
@@ -123,12 +124,6 @@ public class PlanController {
     @GetMapping("/fixed")
     public BaseResponse<List<SideMenuFixedPlan>> getFixedPlan(@ModelAttribute @Valid TeamIdRequest planRequest) {
         List<SideMenuFixedPlan> response = planService.getFixedPlan(planRequest);
-        return new BaseResponse<>(response);
-    }
-
-    @GetMapping("/non-history")
-    public BaseResponse<List<PastPlan>> getNotRegisteredToHistoryPlan(@ModelAttribute @Valid TeamIdRequest planRequest) {
-        List<PastPlan> response = planService.getNotRegisteredToHistoryPlan(planRequest);
         return new BaseResponse<>(response);
     }
 

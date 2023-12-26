@@ -62,7 +62,6 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     NOT_FIXED_PLAN(6001, HttpStatus.BAD_REQUEST.value(), "확정된 약속이 아닙니다."),
     NOT_PAST_PLAN(6002, HttpStatus.BAD_REQUEST.value(), "지난 약속이 아닙니다."),
     ALREADY_FIXED_PLAN(6003, HttpStatus.BAD_REQUEST.value(), "이미 확정된 약속입니다."),
-    EXIST_HISTORY(6004, HttpStatus.BAD_REQUEST.value(), "이미 히스토리에 등록된 약속입니다."),
 
     /**
      * 9000: 기타 오류

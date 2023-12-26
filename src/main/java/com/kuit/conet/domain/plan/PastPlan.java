@@ -12,5 +12,4 @@ public class PastPlan {
     private String date;
     private String time;
     private String planName;
-    private Boolean isRegisteredToHistory;
 }

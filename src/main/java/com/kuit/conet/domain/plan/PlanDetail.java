@@ -18,8 +18,4 @@ public class PlanDetail {
     // 참여자 정보
     private List<PlanMember> members;
 
-    private Boolean isRegisteredToHistory;
-    // 히스토리에 등록되어 있을 때
-    private String historyImgUrl;
-    private String historyDescription;
 }

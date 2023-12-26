@@ -2,11 +2,9 @@
 package com.kuit.conet.service;
 
 import com.kuit.conet.common.exception.PlanException;
-import com.kuit.conet.dao.HistoryDao;
 import com.kuit.conet.dao.PlanDao;
 import com.kuit.conet.dao.TeamDao;
 import com.kuit.conet.dao.UserDao;
-import com.kuit.conet.domain.history.History;
 import com.kuit.conet.domain.plan.*;
 import com.kuit.conet.domain.storage.StorageDomain;
 import com.kuit.conet.dto.request.plan.*;
@@ -33,7 +31,6 @@ public class PlanService {
     private final PlanDao planDao;
     private final UserDao userDao;
     private final TeamDao teamDao;
-    private final HistoryDao historyDao;
     private final StorageService storageService;
 
     public void saveTime(PossibleTimeRequest possibleTimeRequest, HttpServletRequest httpRequest) {
@@ -273,6 +270,7 @@ public class PlanService {
     }
 
     public PlanDetail getPlanDetail(PlanIdRequest planRequest) {
+        //TODO: history 내용 삭제
         Long planId = planRequest.getPlanId();
 
         // 히스토리 등록 여부
@@ -286,6 +284,7 @@ public class PlanService {
     }
 
     public String deletePlan(PlanIdRequest planRequest) {
+        //TODO: history 내용 삭제
         Long planId = planRequest.getPlanId();
         Boolean isFixedPlan;
 
@@ -315,6 +314,7 @@ public class PlanService {
     }
 
     public String updateFixedPlan(UpdatePlanRequest planRequest, MultipartFile file) {
+        //TODO: history 내용 삭제
         Long planId = planRequest.getPlanId();
 
         if (!planDao.isFixedPlan(planId)) {
@@ -368,11 +368,6 @@ public class PlanService {
     public List<SideMenuFixedPlan> getFixedPlan(TeamIdRequest planRequest) {
         Long teamId = planRequest.getTeamId();
         return planDao.getFixedPlan(teamId);
-    }
-
-    public List<PastPlan> getNotRegisteredToHistoryPlan(TeamIdRequest planRequest) {
-        Long teamId = planRequest.getTeamId();
-        return planDao.getNotRegisteredToHistoryPlan(teamId);
     }
 
     public List<MemberIsInPlanResponse> getMemberIsInPlan(PlanIdRequest planIdRequest) {

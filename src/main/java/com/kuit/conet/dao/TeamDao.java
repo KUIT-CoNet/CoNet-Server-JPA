@@ -143,6 +143,8 @@ public class TeamDao {
     }
 
     public void deleteTeam(Long teamId) {
+        //TODO: history 내용 삭제
+
         // history s3 사진 삭제
 
         // history 삭제
