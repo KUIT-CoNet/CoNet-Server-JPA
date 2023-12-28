@@ -49,15 +49,24 @@ public class TeamService {
         Timestamp codeGeneratedTime = Timestamp.valueOf(LocalDateTime.now());
 
         // 팀 만든 멤버 정보 추출
-        System.out.println((String) httpRequest.getAttribute("userId"));
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         Member teamCreator = userRepository.findById(userId);
 
+        //이미지 s3 업로드
+        String imgUrl = updateTeamImg(file);
+
         // team 생성
-        Team newTeam = Team.createTeam(createTeamRequest.getTeamName(), inviteCode,codeGeneratedTime,teamCreator,file);
+        Team newTeam = Team.createTeam(createTeamRequest.getTeamName(), inviteCode,codeGeneratedTime,teamCreator,imgUrl);
         teamRepository.save(newTeam);
 
         return new CreateTeamResponse(newTeam.getId(), newTeam.getInviteCode());
+    }
+
+    private String updateTeamImg(MultipartFile file) {
+        // 새로운 이미지 S3에 업로드
+        String fileName = storageService.getFileName(file, StorageDomain.TEAM);
+        String imgUrl = storageService.uploadToS3(file, fileName);
+        return imgUrl;
     }
 
     public String generateInviteCode() {

@@ -71,24 +71,16 @@ public class Team {
     }
 
     //==생성 메서드==//
-    public static Team createTeam(String teamName, String inviteCode, Date codeGeneratedTime, Member teamCreator, MultipartFile file){
+    public static Team createTeam(String teamName, String inviteCode, Date codeGeneratedTime, Member teamCreator, String imgUrl){
         Team team = new Team();
         team.name=teamName;
         team.inviteCode=inviteCode;
         team.codeGeneratedTime=codeGeneratedTime;
+        team.imgUrl=imgUrl;
+
         TeamMember teamMember=TeamMember.createTeamMember(team,teamCreator);
         team.addTeamMember(teamMember);
 
-        String imgUrl = updateTeamImg(file, team.id);
-        team.imgUrl=imgUrl;
-
         return team;
-    }
-
-    private static String updateTeamImg(MultipartFile file, Long teamId) {
-        // 새로운 이미지 S3에 업로드
-        String fileName = StorageService.getFileName(file, StorageDomain.TEAM, teamId);
-        String imgUrl = StorageService.uploadToS3(file, fileName);
-        return imgUrl;
     }
 }

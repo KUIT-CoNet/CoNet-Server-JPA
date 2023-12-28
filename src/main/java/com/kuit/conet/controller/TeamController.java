@@ -24,7 +24,7 @@ import java.util.List;
 public class TeamController {
     private final TeamService teamService;
 
-    @PostMapping("/")
+    @PostMapping
     public BaseResponse<CreateTeamResponse> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequest createTeamRequest, HttpServletRequest httpRequest, @RequestParam(value = "file") MultipartFile file) {
         CreateTeamResponse response = teamService.createTeam(createTeamRequest, httpRequest, file);
         return new BaseResponse<CreateTeamResponse>(response);

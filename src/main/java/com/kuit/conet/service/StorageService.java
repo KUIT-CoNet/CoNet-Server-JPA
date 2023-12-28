@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.BAD_REQUEST;
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.INVALID_FILE_EXTENSION;
@@ -26,13 +27,13 @@ import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.
 @RequiredArgsConstructor
 public class StorageService {
     @Value("${cloud.aws.s3.bucket}")
-    private static String bucketName;
+    private String bucketName;
     @Autowired
-    private static AmazonS3Client amazonS3Client;
+    private AmazonS3Client amazonS3Client;
     private static final String SPLITER = "/";
 
-    public static String getFileName(MultipartFile file, StorageDomain storage, Long id) {
-        String fileName = id + "-" + storage.getStorage() + "Image-" + LocalDateTime.now();
+    public static String getFileName(MultipartFile file, StorageDomain storage) {
+        String fileName = UUID.randomUUID() + "-" + storage.getStorage() + "Image-" + LocalDateTime.now();
         fileName = fileName.replace(" ", "-").replace(":", "-").replace(".", "-") + ".";
 
         String extension = null;
@@ -59,7 +60,7 @@ public class StorageService {
         return fileName;
     }
 
-    public static String uploadToS3(MultipartFile file, String fileName) {
+    public String uploadToS3(MultipartFile file, String fileName) {
         long size = file.getSize(); // 파일 크기
         ObjectMetadata objectMetaData = new ObjectMetadata();
         objectMetaData.setContentType(file.getContentType());
