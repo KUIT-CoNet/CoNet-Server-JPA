@@ -54,7 +54,8 @@ public class TeamService {
                 .build();
         Long teamId = teamRepository.save(newTeam);
 
-        updateTeamImg(file, teamId, newTeam);
+        String imgUrl = updateTeamImg(file, teamId);
+        newTeam.updateImg(imgUrl);
 
         // teamMember 에 user 추가
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
@@ -65,13 +66,13 @@ public class TeamService {
         return new CreateTeamResponse(newTeam.getId(), newTeam.getInviteCode());
     }
 
-    private void updateTeamImg(MultipartFile file, Long teamId, Team newTeam) {
+    private String updateTeamImg(MultipartFile file, Long teamId) {
         // 새로운 이미지 S3에 업로드
         String fileName = storageService.getFileName(file, StorageDomain.TEAM, teamId);
         String imgUrl = storageService.uploadToS3(file, fileName);
 
         /*        StorageImgResponse response = teamDao.updateImg(teamId, imgUrl);*/
-        newTeam.updateImg(imgUrl);
+        return imgUrl;
     }
 
     public String generateInviteCode() {
