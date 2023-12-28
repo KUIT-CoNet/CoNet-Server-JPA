@@ -14,14 +14,16 @@ public class JwtTokenProvider {
     private final long validityInMilliseconds;
     private final JwtParser jwtParser;
 
-    private static final long ACCESS_TOKEN_EXPIRED_IN = 24 * 60 * 60 * 1000; // 24시간
+    private final long ACCESS_TOKEN_EXPIRED_IN;
     private static final long REFRESH_TOKEN_EXPIRED_IN = 15L * 24 * 60 * 60 * 1000; // 15일
 
     public JwtTokenProvider(@Value("${secret.jwt-secret-key}") String secretKey,
-                            @Value("${secret.jwt-expired-in}") long validityInMilliseconds) {
+                            @Value("${secret.jwt-expired-in}") long validityInMilliseconds,
+                            @Value("${accesstoken.expired-date}") Long accesstokenExpiredDate) {
         this.secretKey = secretKey;
         this.validityInMilliseconds = validityInMilliseconds;
         this.jwtParser = Jwts.parser().setSigningKey(secretKey);
+        this.ACCESS_TOKEN_EXPIRED_IN = accesstokenExpiredDate;
     }
 
     public String createAccessToken(Long userId) {
