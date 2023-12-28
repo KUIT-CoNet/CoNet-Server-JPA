@@ -25,7 +25,7 @@ public class UserDao {
     }
 
     public List<Long> findByPlatformAndPlatformId(Platform platform, String platformId) {
-        String sql = "select user_id from user where platform=:platform and platform_id=:platform_id and status=1";
+        String sql = "select member_id from member where platform=:platform and platform_id=:platform_id and status=1";
         Map<String, String> param = Map.of(
                 "platform", platform.getPlatform(),
                 "platform_id", platformId);
@@ -36,12 +36,12 @@ public class UserDao {
     }
 
     public User findById(Long userId) {
-        String sql = "select * from user where user_id=:user_id and status=1";
-        Map<String, Long> param = Map.of("user_id", userId);
+        String sql = "select * from member where member_id=:member_id and status=1";
+        Map<String, Long> param = Map.of("member_id", userId);
 
         RowMapper<User> mapper = (rs, rowNum) -> {
             User user = new User();
-            user.setUserId(rs.getLong("user_id"));
+            user.setUserId(rs.getLong("member_id"));
             user.setName(rs.getString("name"));
             user.setEmail(rs.getString("email"));
             user.setUserImgUrl(rs.getString("img_url"));
@@ -58,21 +58,21 @@ public class UserDao {
 
     public User save(User oauthUser) {
         // 회원가입 -> insert 한 후, 넣은 애 반환
-        String sql = "insert into user (email, platform, platform_id) values (:email, :platform, :platform_id)";
+        String sql = "insert into member (email, platform, platform_id) values (:email, :platform, :platform_id)";
         Map<String, String> param = Map.of("email", oauthUser.getEmail(),
                 "platform", oauthUser.getPlatform().toString(),
                 "platform_id", oauthUser.getPlatformId());
 
         jdbcTemplate.update(sql, param);
 
-        String returnSql = "select * from user where platform=:platform and platform_id=:platform_id";
+        String returnSql = "select * from member where platform=:platform and platform_id=:platform_id";
         Map<String, String> returnParam = Map.of(
                 "platform", oauthUser.getPlatform().toString(),
                 "platform_id", oauthUser.getPlatformId());
 
         RowMapper<User> returnMapper = (rs, rowNum) -> {
             User user = new User();
-            user.setUserId(rs.getLong("user_id"));
+            user.setUserId(rs.getLong("member_id"));
             user.setName(rs.getString("name"));
             user.setEmail(rs.getString("email"));
             user.setUserImgUrl(rs.getString("img_url"));
@@ -88,20 +88,20 @@ public class UserDao {
     }
 
     public User agreeTermAndPutName(String name, Boolean optionTerm, Long userId) {
-        String sql = "update user set name=:name, service_term=1, option_term=:option_term where user_id=:user_id and status=1";
+        String sql = "update member set name=:name, service_term=1, option_term=:option_term where member_id=:member_id and status=1";
         Map<String, Object> param = Map.of(
                 "name", name,
                 "option_term", optionTerm,
-                "user_id", userId);
+                "member_id", userId);
 
         jdbcTemplate.update(sql, param);
 
-        String returnSql = "select * from user where user_id=:user_id";
-        Map<String, Object> returnParam = Map.of("user_id", userId);
+        String returnSql = "select * from member where member_id=:member_id";
+        Map<String, Object> returnParam = Map.of("member_id", userId);
 
         RowMapper<User> returnMapper = (rs, rowNum) -> {
             User user = new User();
-            user.setUserId(rs.getLong("user_id"));
+            user.setUserId(rs.getLong("member_id"));
             user.setName(rs.getString("name"));
             user.setEmail(rs.getString("email"));
             user.setUserImgUrl(rs.getString("img_url"));
@@ -216,7 +216,7 @@ public class UserDao {
     public void updateOptionTerm(OptionTermRequest optionTermRequest, Long userId) {
         String sql = "update user set option_term=:option_term where user_id=:user_id and status=1";
         Map<String, Object> param = Map.of("option_term", optionTermRequest.getOption(),
-                                            "user_id", userId);
+                "user_id", userId);
         jdbcTemplate.update(sql, param);
     }
 }

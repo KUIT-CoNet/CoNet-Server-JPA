@@ -25,10 +25,13 @@ public class TeamMember {
     @Column(columnDefinition = "integer default 0")
     private Integer bookMark;
 
-    public TeamMember(Team team, Member member) {
-        this.team = team;
-        this.member = member;
 
-        team.addTeamMember(this);
+    //==생성 메서드==//
+    public static TeamMember createTeamMember(Team team, Member teamCreator) {
+        TeamMember teamMember = new TeamMember();
+        teamMember.member=teamCreator;
+        teamMember.team=team;
+
+        return teamMember;
     }
 }

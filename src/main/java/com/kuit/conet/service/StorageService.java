@@ -26,12 +26,12 @@ import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.
 @RequiredArgsConstructor
 public class StorageService {
     @Value("${cloud.aws.s3.bucket}")
-    private String bucketName;
+    private static String bucketName;
     @Autowired
-    private AmazonS3Client amazonS3Client;
-    private final String SPLITER = "/";
+    private static AmazonS3Client amazonS3Client;
+    private static final String SPLITER = "/";
 
-    public String getFileName(MultipartFile file, StorageDomain storage, Long id) {
+    public static String getFileName(MultipartFile file, StorageDomain storage, Long id) {
         String fileName = id + "-" + storage.getStorage() + "Image-" + LocalDateTime.now();
         fileName = fileName.replace(" ", "-").replace(":", "-").replace(".", "-") + ".";
 
@@ -59,7 +59,7 @@ public class StorageService {
         return fileName;
     }
 
-    public String uploadToS3(MultipartFile file, String fileName) {
+    public static String uploadToS3(MultipartFile file, String fileName) {
         long size = file.getSize(); // 파일 크기
         ObjectMetadata objectMetaData = new ObjectMetadata();
         objectMetaData.setContentType(file.getContentType());

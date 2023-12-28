@@ -13,6 +13,7 @@ import com.kuit.conet.jpa.repository.UserRepository;
 import com.kuit.conet.service.StorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,32 +48,16 @@ public class TeamService {
         // 모임 생성 시간 찍기
         Timestamp codeGeneratedTime = Timestamp.valueOf(LocalDateTime.now());
 
-        // team 생성
-        Team newTeam = Team.builder().teamName(createTeamRequest.getTeamName())
-                .inviteCode(inviteCode)
-                .codeGeneratedTime(codeGeneratedTime)
-                .build();
-        Long teamId = teamRepository.save(newTeam);
-
-        String imgUrl = updateTeamImg(file, teamId);
-        newTeam.updateImg(imgUrl);
-
-        // teamMember 에 user 추가
+        // 팀 만든 멤버 정보 추출
+        System.out.println((String) httpRequest.getAttribute("userId"));
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         Member teamCreator = userRepository.findById(userId);
-        TeamMember teamMember = new TeamMember(newTeam, teamCreator);
-        teamMemberRepository.save(teamMember);
+
+        // team 생성
+        Team newTeam = Team.createTeam(createTeamRequest.getTeamName(), inviteCode,codeGeneratedTime,teamCreator,file);
+        teamRepository.save(newTeam);
 
         return new CreateTeamResponse(newTeam.getId(), newTeam.getInviteCode());
-    }
-
-    private String updateTeamImg(MultipartFile file, Long teamId) {
-        // 새로운 이미지 S3에 업로드
-        String fileName = storageService.getFileName(file, StorageDomain.TEAM, teamId);
-        String imgUrl = storageService.uploadToS3(file, fileName);
-
-        /*        StorageImgResponse response = teamDao.updateImg(teamId, imgUrl);*/
-        return imgUrl;
     }
 
     public String generateInviteCode() {
