@@ -50,22 +50,9 @@ public class PlanService {
     }
 
     public TeamPlanOnDayResponse getPlanOnDay(TeamFixedPlanOnDayRequest request) {
-        Team team = teamRepository.findById(request.getTeamId());
-        List<Plan> fixedPlansOnTeam = team.getFixedPlans();
-        List<TeamFixedPlanOnDay> plansOnDay = getPlansOnDay(fixedPlansOnTeam, new java.sql.Date(request.getSearchDate().getTime()));
+        List<TeamFixedPlanOnDay> fixedPlansOnDay = planRepository.getFixedPlansOnDay(request.getTeamId(), request.getSearchDate());
 
-        return new TeamPlanOnDayResponse(plansOnDay.size(), plansOnDay);
+        return new TeamPlanOnDayResponse(fixedPlansOnDay.size(), fixedPlansOnDay);
     }
 
-    private static List<TeamFixedPlanOnDay> getPlansOnDay(List<Plan> plansOnTeam, Date searchDate) {
-        return plansOnTeam.stream()
-                .filter(plan -> plan.getFixedDate().equals(searchDate))
-                .map(plan -> new TeamFixedPlanOnDay(
-                        plan.getId(),
-                        plan.getName(),
-                        plan.getFixedTime()
-                ))
-                .sorted(Comparator.comparing(TeamFixedPlanOnDay::getTime)) // 시간 오름차순
-                .toList();
-    }
 }
