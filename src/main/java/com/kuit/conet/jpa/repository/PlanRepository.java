@@ -2,6 +2,7 @@ package com.kuit.conet.jpa.repository;
 
 import com.kuit.conet.domain.plan.TeamFixedPlanOnDay;
 import com.kuit.conet.jpa.domain.plan.Plan;
+import com.kuit.conet.jpa.domain.plan.PlanStatus;
 import com.kuit.conet.jpa.domain.team.Team;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
@@ -25,9 +26,11 @@ public class PlanRepository {
     public List<TeamFixedPlanOnDay> getFixedPlansOnDay(Long teamId, Date searchDate) {
         return em.createQuery("select new com.kuit.conet.domain.plan.TeamFixedPlanOnDay(p.id, p.name, p.fixedTime)" +
                         "from Plan p join p.team t on t.id=:teamId " +
-                        "where p.fixedDate=:searchDate " +
+                        "where p.status=:status " +
+                        "and p.fixedDate=:searchDate " +
                         "order by p.fixedTime")
                 .setParameter("teamId", teamId)
+                .setParameter("status", PlanStatus.FIXED)
                 .setParameter("searchDate", searchDate)
                 .getResultList();
     }
