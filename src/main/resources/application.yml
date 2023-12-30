@@ -54,7 +54,7 @@ spring:
     expired-date: ${ACCESSTOKEN_EXPIREDDATE}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
