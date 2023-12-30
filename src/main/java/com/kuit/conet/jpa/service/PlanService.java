@@ -3,13 +3,15 @@ package com.kuit.conet.jpa.service;
 
 import com.kuit.conet.domain.plan.TeamFixedPlanOnDay;
 import com.kuit.conet.dto.request.plan.CreatePlanRequest;
-import com.kuit.conet.dto.request.plan.TeamFixedPlanOnDayRequest;
+import com.kuit.conet.dto.request.plan.TeamFixedPlanRequest;
 import com.kuit.conet.dto.response.plan.CreatePlanResponse;
+import com.kuit.conet.dto.response.plan.MonthPlanResponse;
 import com.kuit.conet.dto.response.plan.TeamPlanOnDayResponse;
 import com.kuit.conet.jpa.domain.plan.Plan;
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.repository.PlanRepository;
 import com.kuit.conet.jpa.repository.TeamRepository;
+import com.kuit.conet.utils.DateFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -49,10 +49,18 @@ public class PlanService {
         return Date.valueOf(endDate);
     }
 
-    public TeamPlanOnDayResponse getPlanOnDay(TeamFixedPlanOnDayRequest request) {
+    public TeamPlanOnDayResponse getFixedPlanOnDay(TeamFixedPlanRequest request) {
         List<TeamFixedPlanOnDay> fixedPlansOnDay = planRepository.getFixedPlansOnDay(request.getTeamId(), request.getSearchDate());
 
         return new TeamPlanOnDayResponse(fixedPlansOnDay.size(), fixedPlansOnDay);
     }
+
+    public MonthPlanResponse getFixedPlanInMonth(TeamFixedPlanRequest request) {
+        List<Date> fixedPlansInMonth = planRepository.getFixedPlansInMonth(request.getTeamId(), request.getSearchDate());
+        List<Integer> planDates = DateFormatter.datesToIntegerList(fixedPlansInMonth);
+
+        return new MonthPlanResponse(planDates.size(), planDates);
+    }
+
 
 }

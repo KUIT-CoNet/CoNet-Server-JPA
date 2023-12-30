@@ -10,10 +10,9 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class TeamFixedPlanOnDayRequest {
+public class TeamFixedPlanRequest {
     private Long teamId;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date searchDate; // String to Date
-    // TODO: 프론트에 변경 사항 알리기
+    private String searchDate;
     // 특정 날짜 조회: "yyyy-MM-dd"
+    // 특정 달 조회: "yyyy-MM"
 }
