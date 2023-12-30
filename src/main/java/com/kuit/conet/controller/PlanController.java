@@ -30,10 +30,20 @@ public class PlanController {
      * - '나'의 직접적인 참여 여부와 무관
      * */
     @GetMapping("/day")
-    public BaseResponse<TeamPlanOnDayResponse> getPlanOnDay(@ModelAttribute @Valid TeamFixedPlanOnDayRequest planRequest) {
-        TeamPlanOnDayResponse response = planService.getPlanOnDay(planRequest);
+    public BaseResponse<TeamPlanOnDayResponse> getFixedPlanOnDay(@ModelAttribute @Valid TeamFixedPlanRequest request) {
+        TeamPlanOnDayResponse response = planService.getFixedPlanOnDay(request);
         return new BaseResponse<>(response);
     }
+
+    /**
+     * 모임 내 특정 달의 약속이 존재하는 날짜 조회 - 날짜 (dd)
+     */
+    @GetMapping("/month")
+    public BaseResponse<MonthPlanResponse> getFixedPlanInMonth(@ModelAttribute @Valid TeamFixedPlanRequest request) {
+        MonthPlanResponse response = planService.getFixedPlanInMonth(request);
+        return new BaseResponse<>(response);
+    }
+
 
 /*
     @PostMapping("/time")
@@ -59,16 +69,6 @@ public class PlanController {
         String response = planService.fixPlan(fixPlanRequest);
         return new BaseResponse<>(response);
     }
-
-    *//**
-     * 모임 내 특정 달의 약속 조회 - 날짜 (dd)
-     * *//*
-    @GetMapping("/month")
-    public BaseResponse<MonthPlanResponse> getPlanInMonth(@ModelAttribute @Valid TeamFixedPlanRequest planRequest) {
-        MonthPlanResponse response = planService.getPlanInMonth(planRequest);
-        return new BaseResponse<>(response);
-    }
-
 
     *//**
      * 모임 내 대기 중인 약속 조회 - 날짜(yyyy-MM-dd) / 시각(hh-mm) / 약속 명 / 모임 명

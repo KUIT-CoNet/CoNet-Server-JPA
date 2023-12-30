@@ -245,18 +245,6 @@ public class PlanService {
         return "약속 확정에 성공하였습니다.";
     }
 
-    public MonthPlanResponse getPlanInMonth(TeamFixedPlanRequest planRequest) {
-        List<Integer> planDates = new ArrayList<>();
-
-        List<String> dateList = planDao.getPlanInMonth(planRequest.getTeamId(), planRequest.getSearchDate()); // yyyy-MM
-        for(String tempDate : dateList) {
-            Integer date = Integer.parseInt(tempDate.split("-")[2]);
-            planDates.add(date);
-        }
-
-        return new MonthPlanResponse(planDates.size(), planDates);
-    }
-
     public TeamPlanOnDayResponse getPlanOnDay(TeamFixedPlanRequest planRequest) {
         List<TeamFixedPlanOnDay> plans = planDao.getPlanOnDay(planRequest.getTeamId(), planRequest.getSearchDate()); // yyyy-MM-dd
 
