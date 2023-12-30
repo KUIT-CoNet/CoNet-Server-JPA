@@ -43,7 +43,7 @@ public class Plan {
     @Temporal(TemporalType.TIME)
     private Time fixedTime;
 
-    @ColumnDefault("WAITING")
+    @ColumnDefault("'WAITING'")
     @Enumerated(EnumType.STRING)
     private PlanStatus status;
 
