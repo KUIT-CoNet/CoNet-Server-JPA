@@ -38,6 +38,6 @@ public class HomeService {
                 .map(tempDate -> Integer.parseInt(tempDate.split("-")[2]))
                 .toList();
 
-        return new MonthPlanResponse(planDates.size(), planDates)
+        return new MonthPlanResponse(planDates.size(), planDates);
     }
 }
