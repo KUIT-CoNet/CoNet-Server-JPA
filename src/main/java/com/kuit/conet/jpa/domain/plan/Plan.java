@@ -43,8 +43,9 @@ public class Plan {
     @Temporal(TemporalType.TIME)
     private Time fixedTime;
 
-    @ColumnDefault("1")
-    private Integer status;
+    @ColumnDefault("WAITING")
+    @Enumerated(EnumType.STRING)
+    private PlanStatus status;
 
     @OneToMany(mappedBy = "plan")// 다대다(다대일, 일대다) 양방향 연관 관계 / 연관 관계 주인의 반대편
     private List<PlanMember> plans = new ArrayList<>();

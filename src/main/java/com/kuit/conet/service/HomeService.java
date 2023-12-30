@@ -1,3 +1,4 @@
+/*
 package com.kuit.conet.service;
 
 import com.kuit.conet.dao.HomeDao;
@@ -52,4 +53,4 @@ public class HomeService {
 
         return new WaitingPlanResponse(plans.size(), plans);
     }
-}
+}*/
