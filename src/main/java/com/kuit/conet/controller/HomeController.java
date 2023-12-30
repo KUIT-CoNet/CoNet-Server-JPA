@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/home")
+@RequestMapping("/plan")
 public class HomeController {
     private final HomeService homeService;
 
