@@ -42,4 +42,19 @@ public class TeamRepository {
                 .setParameter("userId",userId)
                 .getSingleResult();
     }
+
+    public List<Team> findByUserId(Long userId) {
+        return em.createQuery("select t from Team t join t.teamMembers tm on tm.member.id=:userId", Team.class)
+                .setParameter("userId", userId)
+                .getResultList();
+    }
+
+    public Long getMemberCount(Long id) {
+        return em.createQuery("select count(tm) from Team t join t.teamMembers tm on tm.team.id=:teamId",Long.class)
+                .setParameter("teamId",id)
+                .getSingleResult();
+    }
+
+    public Boolean isBookmark(Long userId, Long id) {
+    }
 }
