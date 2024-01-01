@@ -37,6 +37,8 @@ public class TeamRepository {
     }
 
     public boolean isExistUser(Long id, Long userId) {
-
+        return em.createQuery("select count(tm.id) > 0 from Team t join t.teamMembers tm on tm.member.id=:userId",Boolean.class)
+                .setParameter("userId",userId)
+                .getSingleResult();
     }
 }
