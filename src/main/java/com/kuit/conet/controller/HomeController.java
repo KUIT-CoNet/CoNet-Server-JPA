@@ -4,7 +4,6 @@ import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.request.plan.HomePlanRequest;
 import com.kuit.conet.dto.response.plan.HomePlanOnDayResponse;
 import com.kuit.conet.dto.response.plan.MonthPlanResponse;
-import com.kuit.conet.dto.response.plan.WaitingPlanResponse;
 import com.kuit.conet.jpa.service.HomeService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -23,8 +22,8 @@ public class HomeController {
      * 홈 특정 달의 확정 약속이 존재하는 날짜 조회 - 날짜 (dd)
      * */
     @GetMapping("/month")
-    public BaseResponse<MonthPlanResponse> getPlanInMonth(HttpServletRequest httpRequest, @ModelAttribute @Valid HomePlanRequest planRequest) {
-        MonthPlanResponse response = homeService.getPlanInMonth(httpRequest, planRequest);
+    public BaseResponse<MonthPlanResponse> getHomeFixedPlanInMonth(HttpServletRequest httpRequest, @ModelAttribute @Valid HomePlanRequest planRequest) {
+        MonthPlanResponse response = homeService.getHomeFixedPlanInMonth(httpRequest, planRequest);
         return new BaseResponse<>(response);
     }
 
@@ -32,11 +31,11 @@ public class HomeController {
      * 홈 특정 날짜의 확정 약속 조회 - 날짜(yyyy-MM-dd) / 시각(hh-mm) / 모임 명 / 약속 명
      * - '나'의 직접적인 참여 여부와 무관
      * */
-/*    @GetMapping("/day")
-    public BaseResponse<HomePlanOnDayResponse> getPlanOnDay(HttpServletRequest httpRequest, @ModelAttribute @Valid HomePlanRequest planRequest) {
-        HomePlanOnDayResponse response = homeService.getPlanOnDay(httpRequest, planRequest);
+    @GetMapping("/day")
+    public BaseResponse<HomePlanOnDayResponse> getHomeFixedPlanOnDay(HttpServletRequest httpRequest, @ModelAttribute @Valid HomePlanRequest planRequest) {
+        HomePlanOnDayResponse response = homeService.getHomeFixedPlanOnDay(httpRequest, planRequest);
         return new BaseResponse<>(response);
-    }*/
+    }
 
     /**
      * 홈 대기 중인 약속 조회 - 날짜(yyyy-MM-dd) / 시각(hh-mm) / 모임 명 / 약속 명

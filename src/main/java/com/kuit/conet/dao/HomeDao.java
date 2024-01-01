@@ -1,3 +1,4 @@
+/*
 package com.kuit.conet.dao;
 
 import com.kuit.conet.domain.plan.HomeFixedPlanOnDay;
@@ -88,4 +89,4 @@ public class HomeDao {
 
         return jdbcTemplate.query(sql, param, mapper);
     }
-}
+}*/
