@@ -22,12 +22,13 @@ public class TeamMember {
     @JoinColumn(name = "member_id") // 다대다(다대일, 일대다) 양방향 연관 관계 / 연관 관계의 주인
     private Member member;
 
-    @Column(columnDefinition = "integer default 0")
-    private Integer bookMark;
+    @Column(columnDefinition = "boolean default false")
+    private boolean bookMark;
 
     public TeamMember(Team team, Member member) {
         this.team = team;
         this.member = member;
+        this.bookMark = false;
     }
 
     public void setTeam(Team team) {
