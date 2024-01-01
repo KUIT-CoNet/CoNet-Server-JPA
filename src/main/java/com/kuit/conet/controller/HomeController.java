@@ -4,6 +4,7 @@ import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.request.plan.HomePlanRequest;
 import com.kuit.conet.dto.response.plan.HomePlanOnDayResponse;
 import com.kuit.conet.dto.response.plan.MonthPlanResponse;
+import com.kuit.conet.dto.response.plan.WaitingPlanResponse;
 import com.kuit.conet.jpa.service.HomeService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -41,9 +42,9 @@ public class HomeController {
      * 홈 대기 중인 약속 조회 - 날짜(yyyy-MM-dd) / 시각(hh-mm) / 모임 명 / 약속 명
      * - '나'의 직접적인 참여 여부와 무관
      * */
-/*    @GetMapping("/waiting")
-    public BaseResponse<WaitingPlanResponse> getWaitingPlan(HttpServletRequest httpRequest) {
-        WaitingPlanResponse response = homeService.getWaitingPlan(httpRequest);
+    @GetMapping("/waiting")
+    public BaseResponse<WaitingPlanResponse> getHomeWaitingPlan(HttpServletRequest httpRequest) {
+        WaitingPlanResponse response = homeService.getHomeWaitingPlan(httpRequest);
         return new BaseResponse<>(response);
-    }*/
+    }
 }

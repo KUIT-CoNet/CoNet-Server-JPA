@@ -1,9 +1,11 @@
 package com.kuit.conet.jpa.service;
 
 import com.kuit.conet.domain.plan.HomeFixedPlanOnDay;
+import com.kuit.conet.domain.plan.WaitingPlan;
 import com.kuit.conet.dto.request.plan.HomePlanRequest;
 import com.kuit.conet.dto.response.plan.HomePlanOnDayResponse;
 import com.kuit.conet.dto.response.plan.MonthPlanResponse;
+import com.kuit.conet.dto.response.plan.WaitingPlanResponse;
 import com.kuit.conet.jpa.repository.HomeRepository;
 import com.kuit.conet.utils.DateFormatter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +37,13 @@ public class HomeService {
         List<HomeFixedPlanOnDay> plans = homeRepository.getHomeFixedPlansOnDay(userId, planRequest.getSearchDate());
 
         return new HomePlanOnDayResponse(plans.size(), plans);
+    }
+
+    public WaitingPlanResponse getHomeWaitingPlan(HttpServletRequest httpRequest) {
+        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+        List<WaitingPlan> plans = homeRepository.getHomeWaitingPlans(userId);
+
+        return new WaitingPlanResponse(plans.size(), plans);
     }
 
 }

@@ -5,14 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class WaitingPlan {
     private Long planId;
-    private String startDate; // yyyy-MM-dd
-    private String endDate; // yyyy-MM-dd
+    private Date startDate; // yyyy-MM-dd
+    private Date endDate; // yyyy-MM-dd
     private String teamName;
     private String planName;
 }
