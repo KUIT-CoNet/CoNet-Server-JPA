@@ -36,7 +36,7 @@ public class Team {
     private LocalDateTime codeGeneratedTime;
 
     @CreationTimestamp
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "team") // 다대일 양방향 연관 관계 / 연관 관계 주인의 반대편
     private List<Plan> plans = new ArrayList<>();
@@ -55,9 +55,6 @@ public class Team {
     public void updateImg(String imgUrl) {
         this.imgUrl = imgUrl;
     }
-
-
-
     public void addPlan(Plan plan) { plans.add(plan); }
 
     public List<Plan> getFixedPlans() {
