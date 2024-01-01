@@ -1,6 +1,7 @@
 package com.kuit.conet.jpa.repository;
 
 import com.kuit.conet.domain.plan.HomeFixedPlanOnDay;
+import com.kuit.conet.domain.plan.WaitingPlan;
 import com.kuit.conet.jpa.domain.plan.PlanStatus;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
@@ -41,6 +42,22 @@ public class HomeRepository {
                 .setParameter("userId", userId)
                 .setParameter("status", PlanStatus.FIXED)
                 .setParameter("searchDate", searchDate)
+                .getResultList();
+    }
+
+    public List<WaitingPlan> getHomeWaitingPlans(Long userId) {
+        // 유저가 속한 모든 모임의 tm.userId=:user_id & tm.team_id = p.team_id
+        // 모든 대기 중인 약속 중에서 p.status=WAITING
+        // 시작 날짜가 오늘 이후 plan_start_period >= current_date();
+
+        return em.createQuery("select new com.kuit.conet.domain.plan.WaitingPlan(p.id, p.startPeriod, p.endPeriod, p.team.name, p.name) " +
+                        "from TeamMember tm join Plan p on tm.team.id = p.team.id " +
+                        "where tm.member.id = :userId " +
+                        "and p.status=:status " +
+                        "and p.startPeriod >= current_date() " +
+                        "order by p.startPeriod", WaitingPlan.class)
+                .setParameter("userId", userId)
+                .setParameter("status", PlanStatus.WAITING)
                 .getResultList();
     }
 }
