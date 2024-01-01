@@ -36,18 +36,18 @@ public class TeamController {
         return new BaseResponse<ParticipateTeamResponse>(response);
     }
 
+    @GetMapping
+    public BaseResponse<List<GetTeamResponse>> getTeam(HttpServletRequest httpRequest) {
+        List<GetTeamResponse> responses = teamService.getTeam(httpRequest);
+        return new BaseResponse<List<GetTeamResponse>>(responses);
+    }
+
     /*
 
     @PostMapping("/code")
     public BaseResponse<RegenerateCodeResponse> regenerateCode(@RequestBody @Valid TeamIdRequest request) {
         RegenerateCodeResponse response = teamService.regenerateCode(request);
         return new BaseResponse<>(response);
-    }
-
-    @GetMapping
-    public BaseResponse<List<GetTeamResponse>> getTeam(HttpServletRequest httpRequest) {
-        List<GetTeamResponse> responses = teamService.getTeam(httpRequest);
-        return new BaseResponse<List<GetTeamResponse>>(responses);
     }
 
     @PostMapping("/leave")
