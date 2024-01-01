@@ -1,7 +1,6 @@
 package com.kuit.conet.jpa.repository;
 
 import com.kuit.conet.domain.plan.HomeFixedPlanOnDay;
-import com.kuit.conet.domain.plan.TeamFixedPlanOnDay;
 import com.kuit.conet.jpa.domain.plan.PlanStatus;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,7 +16,7 @@ import java.util.Map;
 public class HomeRepository {
     private final EntityManager em;
 
-    public List<Date> getPlanInMonth(Long userId, String searchDate) {
+    public List<Date> getHomeFixedPlansInMonth(Long userId, String searchDate) {
         // 해당 년, 월에 유저가 포함된 모든 모임의 모든 약속 -> fixed_date 만 distinct 로 검색
         // team_member(userId, status) -> plan(teamId, fixed_date, status)
 
@@ -33,7 +31,7 @@ public class HomeRepository {
                 .getResultList();
     }
 
-    public List<HomeFixedPlanOnDay> getPlanOnDay(Long userId, String searchDate) {
+    public List<HomeFixedPlanOnDay> getHomeFixedPlansOnDay(Long userId, String searchDate) {
         return em.createQuery("select new com.kuit.conet.domain.plan.HomeFixedPlanOnDay(p.id, p.fixedTime, p.team.name, p.name) " +
                         "from TeamMember tm join Plan p on tm.team.id = p.team.id " +
                         "where tm.member.id = :userId " +

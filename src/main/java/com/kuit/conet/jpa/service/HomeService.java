@@ -8,7 +8,6 @@ import com.kuit.conet.jpa.repository.HomeRepository;
 import com.kuit.conet.utils.DateFormatter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,17 +22,17 @@ import java.util.List;
 public class HomeService {
     private final HomeRepository homeRepository;
 
-    public MonthPlanResponse getPlanInMonth(HttpServletRequest httpRequest, HomePlanRequest planRequest) {
+    public MonthPlanResponse getHomeFixedPlanInMonth(HttpServletRequest httpRequest, HomePlanRequest planRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-        List<Date> fixedPlansInMonth = homeRepository.getPlanInMonth(userId, planRequest.getSearchDate());
+        List<Date> fixedPlansInMonth = homeRepository.getHomeFixedPlansInMonth(userId, planRequest.getSearchDate());
         List<Integer> planDates = DateFormatter.datesToIntegerList(fixedPlansInMonth);
 
         return new MonthPlanResponse(planDates.size(), planDates);
     }
 
-    public HomePlanOnDayResponse getPlanOnDay(HttpServletRequest httpRequest, HomePlanRequest planRequest) {
+    public HomePlanOnDayResponse getHomeFixedPlanOnDay(HttpServletRequest httpRequest, HomePlanRequest planRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-        List<HomeFixedPlanOnDay> plans = homeRepository.getPlanOnDay(userId, planRequest.getSearchDate());
+        List<HomeFixedPlanOnDay> plans = homeRepository.getHomeFixedPlansOnDay(userId, planRequest.getSearchDate());
 
         return new HomePlanOnDayResponse(plans.size(), plans);
     }
