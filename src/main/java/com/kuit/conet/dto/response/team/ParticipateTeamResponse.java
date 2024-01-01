@@ -12,5 +12,5 @@ import lombok.ToString;
 public class ParticipateTeamResponse {
     private String userName;
     private String teamName;
-    private Boolean status;
+    private Integer status;
 }

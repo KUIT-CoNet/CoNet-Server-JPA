@@ -1,5 +1,6 @@
 package com.kuit.conet.jpa.repository;
 
+import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.team.Team;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
