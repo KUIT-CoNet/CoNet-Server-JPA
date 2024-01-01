@@ -1,11 +1,14 @@
 package com.kuit.conet.jpa.service;
 
+import com.kuit.conet.domain.plan.HomeFixedPlanOnDay;
 import com.kuit.conet.dto.request.plan.HomePlanRequest;
+import com.kuit.conet.dto.response.plan.HomePlanOnDayResponse;
 import com.kuit.conet.dto.response.plan.MonthPlanResponse;
 import com.kuit.conet.jpa.repository.HomeRepository;
 import com.kuit.conet.utils.DateFormatter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,4 +30,12 @@ public class HomeService {
 
         return new MonthPlanResponse(planDates.size(), planDates);
     }
+
+    public HomePlanOnDayResponse getPlanOnDay(HttpServletRequest httpRequest, HomePlanRequest planRequest) {
+        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+        List<HomeFixedPlanOnDay> plans = homeRepository.getPlanOnDay(userId, planRequest.getSearchDate());
+
+        return new HomePlanOnDayResponse(plans.size(), plans);
+    }
+
 }

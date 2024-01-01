@@ -1,5 +1,8 @@
 package com.kuit.conet.jpa.repository;
 
+import com.kuit.conet.domain.plan.HomeFixedPlanOnDay;
+import com.kuit.conet.domain.plan.TeamFixedPlanOnDay;
+import com.kuit.conet.jpa.domain.plan.PlanStatus;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,9 +25,23 @@ public class HomeRepository {
         return em.createQuery("select distinct p.fixedDate " +
                         "from TeamMember tm join Plan p on tm.team.id = p.team.id " +
                         "where tm.member.id = :userId " +
-                        "and p.status = 'FIXED' " +
+                        "and p.status = :status " +
                         "and FUNCTION('DATE_FORMAT', p.fixedDate, '%Y-%m') = :searchDate", Date.class)
                 .setParameter("userId", userId)
+                .setParameter("status", PlanStatus.FIXED)
+                .setParameter("searchDate", searchDate)
+                .getResultList();
+    }
+
+    public List<HomeFixedPlanOnDay> getPlanOnDay(Long userId, String searchDate) {
+        return em.createQuery("select new com.kuit.conet.domain.plan.HomeFixedPlanOnDay(p.id, p.fixedTime, p.team.name, p.name) " +
+                        "from TeamMember tm join Plan p on tm.team.id = p.team.id " +
+                        "where tm.member.id = :userId " +
+                        "and p.status=:status " +
+                        "and FUNCTION('DATE_FORMAT', p.fixedDate, '%Y-%m-%d')=:searchDate " +
+                        "order by p.fixedTime", HomeFixedPlanOnDay.class)
+                .setParameter("userId", userId)
+                .setParameter("status", PlanStatus.FIXED)
                 .setParameter("searchDate", searchDate)
                 .getResultList();
     }
