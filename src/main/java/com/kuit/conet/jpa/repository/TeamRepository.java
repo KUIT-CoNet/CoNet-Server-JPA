@@ -55,4 +55,5 @@ public class TeamRepository {
                 .setParameter("teamId",id)
                 .getSingleResult();
     }
+
 }

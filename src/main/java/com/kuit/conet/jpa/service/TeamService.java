@@ -2,6 +2,7 @@ package com.kuit.conet.jpa.service;
 
 import com.kuit.conet.common.exception.TeamException;
 import com.kuit.conet.dto.request.team.ParticipateTeamRequest;
+import com.kuit.conet.dto.request.team.TeamIdRequest;
 import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.team.TeamMember;
 import com.kuit.conet.jpa.domain.team.*;
@@ -159,6 +160,22 @@ public class TeamService {
         }
 
         return teamReturnResponses;
+    }
+
+    public String leaveTeam(TeamIdRequest teamIdRequest, HttpServletRequest httpRequest) {
+        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+        Team team = teamRepository.findById(teamIdRequest.getTeamId());
+        
+        // 모임 존재 여부 확인
+        if (team==null) {
+            throw new TeamException(NOT_FOUND_TEAM);
+        }
+
+        //변경 감지 이용
+        TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(team.getId(), userId);
+        team.deleteMember(teamMember);
+
+        return "모임 탈퇴에 성공하였습니다.";
     }
 
     //TODO: com.kuit.conet.service.TeamService 에 주석 처리된 코드 참고

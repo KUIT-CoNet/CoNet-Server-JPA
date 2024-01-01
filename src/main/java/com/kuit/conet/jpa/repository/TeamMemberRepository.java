@@ -23,4 +23,11 @@ public class TeamMemberRepository {
                 .setParameter("teamId",teamId)
                 .getSingleResult();
     }
+
+    public TeamMember findByTeamIdAndUserId(Long teamId, Long userId) {
+        return em.createQuery("select tm from TeamMember tm where tm.team.id=:teamId and tm.member.id=:userId", TeamMember.class)
+                .setParameter("teamId",teamId)
+                .setParameter("userId",userId)
+                .getSingleResult();
+    }
 }

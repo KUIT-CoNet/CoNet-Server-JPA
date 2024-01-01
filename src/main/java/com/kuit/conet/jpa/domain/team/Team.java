@@ -70,4 +70,8 @@ public class Team {
         team.teamMembers.add(newTeamMember);
         newTeamMember.setTeam(team);
     }
+
+    public void deleteMember(TeamMember teamMember) {
+        this.teamMembers.remove(teamMember);
+    }
 }
