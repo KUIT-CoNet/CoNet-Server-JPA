@@ -16,4 +16,11 @@ public class TeamMemberRepository {
         em.persist(teamMember);
         return teamMember.getId();
     }
+
+    public Boolean isBookmark(Long userId, Long teamId) {
+        return em.createQuery("select tm.bookMark from TeamMember tm where tm.team.id=:teamId and tm.member.id=:userId",boolean.class)
+                .setParameter("userId",userId)
+                .setParameter("teamId",teamId)
+                .getSingleResult();
+    }
 }
