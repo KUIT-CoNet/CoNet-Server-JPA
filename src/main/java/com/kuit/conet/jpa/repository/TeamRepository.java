@@ -37,9 +37,10 @@ public class TeamRepository {
                 .getSingleResult();
     }
 
-    public boolean isExistUser(Long id, Long userId) {
-        return em.createQuery("select count(tm.id) > 0 from Team t join t.teamMembers tm on tm.member.id=:userId",Boolean.class)
+    public boolean isExistUser(Long teamId, Long userId) {
+        return em.createQuery("select count(tm.id) > 0 from Team t join t.teamMembers tm on t.id =:teamId and  tm.member.id=:userId",Boolean.class)
                 .setParameter("userId",userId)
+                .setParameter("teamId",teamId)
                 .getSingleResult();
     }
 
@@ -53,8 +54,5 @@ public class TeamRepository {
         return em.createQuery("select count(tm) from Team t join t.teamMembers tm on tm.team.id=:teamId",Long.class)
                 .setParameter("teamId",id)
                 .getSingleResult();
-    }
-
-    public Boolean isBookmark(Long userId, Long id) {
     }
 }
