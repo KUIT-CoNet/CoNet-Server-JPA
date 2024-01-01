@@ -29,4 +29,10 @@ public class TeamRepository {
                 .setParameter("inviteCode", inviteCode)
                 .getResultList();
     }
+
+    public boolean isExistInviteCode(String inviteCode) {
+        return em.createQuery("select count(t.id) > 0 from Team t where t.inviteCode=:inviteCode",Boolean.class)
+                .setParameter("inviteCode",inviteCode)
+                .getSingleResult();
+    }
 }
