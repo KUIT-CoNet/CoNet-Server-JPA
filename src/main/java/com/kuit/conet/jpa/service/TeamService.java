@@ -1,5 +1,7 @@
 package com.kuit.conet.jpa.service;
 
+import com.kuit.conet.common.exception.TeamException;
+import com.kuit.conet.dto.request.team.ParticipateTeamRequest;
 import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.team.TeamMember;
 import com.kuit.conet.jpa.domain.team.*;
@@ -18,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Random;
 
@@ -42,10 +43,10 @@ public class TeamService {
         // 초대 코드 생성 및 코드 중복 확인
         do {
             inviteCode = generateInviteCode();
-        } while (!teamRepository.findByInviteCode(inviteCode).isEmpty());  // 중복되면 true 반환
+        } while (teamRepository.isExistInviteCode(inviteCode));  // 중복되면 true 반환
 
         // 모임 생성 시간 찍기
-        Timestamp codeGeneratedTime = Timestamp.valueOf(LocalDateTime.now());
+        LocalDateTime codeGeneratedTime = LocalDateTime.now();
 
         // team 생성
         Team newTeam = Team.builder().teamName(createTeamRequest.getTeamName())
@@ -88,6 +89,47 @@ public class TeamService {
                 .toString();
 
         return generatedString;
+    }
+
+    public ParticipateTeamResponse participateTeam(ParticipateTeamRequest participateRequest, HttpServletRequest httpRequest) {
+        // 모임 참가 요청 시간 찍기
+        LocalDateTime participateRequestTime = LocalDateTime.now();
+
+        // 초대 코드 존재 확인
+        String inviteCode = participateRequest.getInviteCode();
+        if (!teamRepository.isExistInviteCode(inviteCode)) {
+            throw new TeamException(NOT_FOUND_INVITE_CODE);
+        }
+
+        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+
+        Member user = userRepository.findById(userId);
+
+        Team team = teamRepository.findByInviteCode(inviteCode);
+
+        // 모임에 이미 존재하는 회원인지 확인
+        if (teamRepository.isExistUser(team.getId(), userId)) {
+            throw new TeamException(EXIST_USER_IN_TEAM);
+        }
+
+        // 초대 코드 생성 시간과 모임 참가 요청 시간 비교
+        LocalDateTime generatedTime = team.getCodeGeneratedTime();
+        LocalDateTime expirationDateTime = generatedTime.plusDays(1);
+
+        //log.info("Team invite code generated time: {}", generatedTime);
+        log.info("Team invite code expiration date time: {}", expirationDateTime);
+        log.info("Team participation requested time: {}", participateRequestTime);
+
+        if (participateRequestTime.isAfter(expirationDateTime)) {
+            // 초대 코드 생성 시간으로부터 1일이 지났으면 exception
+            log.error("유효 기간 만료: {}", EXPIRED_INVITE_CODE.getMessage());
+            throw new TeamException(EXPIRED_INVITE_CODE);
+        }
+
+        // team에 teamMember 추가 (변경 감지)
+        team.addTeamMember(team,user);
+
+        return new ParticipateTeamResponse(user.getName(), team.getName(), user.getStatus());
     }
 
     //TODO: com.kuit.conet.service.TeamService 에 주석 처리된 코드 참고

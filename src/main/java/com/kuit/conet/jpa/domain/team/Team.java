@@ -1,5 +1,6 @@
 package com.kuit.conet.jpa.domain.team;
 
+import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.plan.Plan;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +33,7 @@ public class Team {
     private String inviteCode;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date codeGeneratedTime;
+    private LocalDateTime codeGeneratedTime;
 
     @CreationTimestamp
     private Date createdAt;
@@ -39,11 +41,11 @@ public class Team {
     @OneToMany(mappedBy = "team") // 다대일 양방향 연관 관계 / 연관 관계 주인의 반대편
     private List<Plan> plans = new ArrayList<>();
 
-    @OneToMany(mappedBy = "team") // 다대다(다대일, 일대다) 양방향 연관 관계 / 연관 관계 주인의 반대편
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL) // 다대다(다대일, 일대다) 양방향 연관 관계 / 연관 관계 주인의 반대편
     private List<TeamMember> teamMembers = new ArrayList<>();
 
     @Builder
-    public Team(String teamName, String inviteCode, Date codeGeneratedTime) {
+    public Team(String teamName, String inviteCode, LocalDateTime codeGeneratedTime) {
         this.name = teamName;
         this.imgUrl = "";
         this.inviteCode = inviteCode;
@@ -54,9 +56,7 @@ public class Team {
         this.imgUrl = imgUrl;
     }
 
-    public void addTeamMember(TeamMember teamMember) {
-        teamMembers.add(teamMember);
-    }
+
 
     public void addPlan(Plan plan) { plans.add(plan); }
 
@@ -64,5 +64,13 @@ public class Team {
         return plans.stream()
                 .filter(Plan::isFixed)
                 .toList();
+    }
+
+    //== 연관관계 편의 메서드 ==//
+    public void addTeamMember(Team team, Member user) {
+        TeamMember newTeamMember = new TeamMember(team,user);
+
+        team.teamMembers.add(newTeamMember);
+        newTeamMember.setTeam(team);
     }
 }

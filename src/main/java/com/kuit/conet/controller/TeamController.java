@@ -30,11 +30,13 @@ public class TeamController {
         return new BaseResponse<CreateTeamResponse>(response);
     }
 
-/*    @PostMapping("/participate")
+    @PostMapping("/participate")
     public BaseResponse<ParticipateTeamResponse> participateTeam(@RequestBody @Valid ParticipateTeamRequest participateRequest, HttpServletRequest httpRequest) {
         ParticipateTeamResponse response = teamService.participateTeam(participateRequest, httpRequest);
         return new BaseResponse<ParticipateTeamResponse>(response);
     }
+
+    /*
 
     @PostMapping("/code")
     public BaseResponse<RegenerateCodeResponse> regenerateCode(@RequestBody @Valid TeamIdRequest request) {
