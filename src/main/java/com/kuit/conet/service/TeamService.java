@@ -62,76 +62,7 @@ public class TeamService {
         return new RegenerateCodeResponse(request.getTeamId(), newCode, codeDeadlineStr);
     }
 
-    public ParticipateTeamResponse participateTeam(ParticipateTeamRequest participateRequest, HttpServletRequest httpRequest) {
-        // 모임 참가 요청 시간 찍기
-        LocalDateTime participateRequestTime = LocalDateTime.now();
 
-        // 초대 코드 존재 확인
-        String inviteCode = participateRequest.getInviteCode();
-        if (!teamDao.validateDuplicateCode(inviteCode)) {
-            throw new TeamException(NOT_FOUND_INVITE_CODE);
-        }
-
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-
-        String userName = userDao.getUserName(userId);
-
-        Team team = teamDao.getTeamFromInviteCode(inviteCode);
-
-        // 모임에 이미 존재하는 회원인지 확인
-        if (teamDao.isExistingUser(team.getTeamId(), userId)) {
-            throw new TeamException(EXIST_USER_IN_TEAM);
-        }
-
-        // 초대 코드 생성 시간과 모임 참가 요청 시간 비교
-        LocalDateTime generatedTime = team.getCodeGeneratedTime().toLocalDateTime();
-        LocalDateTime expirationDateTime = generatedTime.plusDays(1);
-
-        //log.info("Team invite code generated time: {}", generatedTime);
-        log.info("Team invite code expiration date time: {}", expirationDateTime);
-        log.info("Team participation requested time: {}", participateRequestTime);
-
-        if (participateRequestTime.isAfter(expirationDateTime)) {
-            // 초대 코드 생성 시간으로부터 1일이 지났으면 exception
-            log.error("유효 기간 만료: {}", EXPIRED_INVITE_CODE.getMessage());
-            throw new TeamException(EXPIRED_INVITE_CODE);
-        }
-
-        // teamMember 에 userId 추가
-        TeamMember newTeamMember = new TeamMember(team.getTeamId(), userId);
-        TeamMember savedTeamMember = teamDao.saveTeamMember(newTeamMember);
-
-        return new ParticipateTeamResponse(userName, team.getTeamName(), savedTeamMember.getStatus());
-    }
-
-    public List<GetTeamResponse> getTeam(HttpServletRequest httpRequest) {
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-
-        List<Team> teamResponses = teamDao.getTeam(userId);
-        List<GetTeamResponse> teamReturnResponses = new ArrayList<>();
-
-        // 모임의 created_at 시간 비교해서 3일 안지났으면 isNew 값 true, 지났으면 false로 반환
-        for(Team list : teamResponses) {
-            log.info("{}", list.getTeamName());
-            Timestamp createdTime = teamDao.getCreatedTime(list.getTeamId());
-            // Timestamp를 Instant로 변환
-            Instant instant = createdTime.toInstant();
-            // Instant를 LocalDateTime으로 변환 (기본 시스템의 ZoneId 사용)
-            LocalDateTime time = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
-
-            LocalDateTime now = LocalDateTime.now();
-
-            if(now.minusDays(3).isAfter(time)) {
-                GetTeamResponse teamResponse = new GetTeamResponse(list.getTeamId(), list.getTeamName(), list.getTeamImgUrl(), teamDao.getTeamMemberCount(list.getTeamId()), false, teamDao.getBookmark(userId, list.getTeamId()));
-                teamReturnResponses.add(teamResponse);
-            }else {
-                GetTeamResponse teamResponse = new GetTeamResponse(list.getTeamId(), list.getTeamName(), list.getTeamImgUrl(), teamDao.getTeamMemberCount(list.getTeamId()), true, teamDao.getBookmark(userId, list.getTeamId()));
-                teamReturnResponses.add(teamResponse);
-            }
-        }
-
-        return teamReturnResponses;
-    }
 
     public String leaveTeam(TeamIdRequest teamIdRequest, HttpServletRequest httpRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));

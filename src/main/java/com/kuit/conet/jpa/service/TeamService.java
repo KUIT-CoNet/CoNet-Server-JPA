@@ -21,6 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.*;
@@ -130,6 +133,32 @@ public class TeamService {
         team.addTeamMember(team,user);
 
         return new ParticipateTeamResponse(user.getName(), team.getName(), user.getStatus());
+    }
+
+    public List<GetTeamResponse> getTeam(HttpServletRequest httpRequest) {
+        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+
+        List<Team> teams = teamRepository.findByUserId(userId);
+        List<GetTeamResponse> teamReturnResponses = new ArrayList<>();
+
+        // 모임의 created_at 시간 비교해서 3일 안지났으면 isNew 값 true, 지났으면 false로 반환
+        for(Team team : teams) {
+            log.info("{}",  team.getName());
+            LocalDateTime createdAt = team.getCreatedAt();
+            LocalDateTime now = LocalDateTime.now();
+
+            GetTeamResponse teamResponse;
+            if(now.minusDays(3).isAfter(createdAt)) {
+                teamResponse = new GetTeamResponse(team.getId(), team.getName(), team.getImgUrl(), teamRepository.getMemberCount(team.getId()),
+                        false, teamMemberRepository.isBookmark(userId, team.getId()));
+            }else {
+                teamResponse = new GetTeamResponse(team.getId(), team.getName(), team.getImgUrl(), teamRepository.getMemberCount(team.getId()),
+                        true, teamMemberRepository.isBookmark(userId, team.getId()));
+            }
+            teamReturnResponses.add(teamResponse);
+        }
+
+        return teamReturnResponses;
     }
 
     //TODO: com.kuit.conet.service.TeamService 에 주석 처리된 코드 참고

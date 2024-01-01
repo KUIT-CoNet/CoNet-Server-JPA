@@ -37,9 +37,22 @@ public class TeamRepository {
                 .getSingleResult();
     }
 
-    public boolean isExistUser(Long id, Long userId) {
-        return em.createQuery("select count(tm.id) > 0 from Team t join t.teamMembers tm on tm.member.id=:userId",Boolean.class)
+    public boolean isExistUser(Long teamId, Long userId) {
+        return em.createQuery("select count(tm.id) > 0 from Team t join t.teamMembers tm on t.id =:teamId and  tm.member.id=:userId",Boolean.class)
                 .setParameter("userId",userId)
+                .setParameter("teamId",teamId)
+                .getSingleResult();
+    }
+
+    public List<Team> findByUserId(Long userId) {
+        return em.createQuery("select t from Team t join t.teamMembers tm on tm.member.id=:userId", Team.class)
+                .setParameter("userId", userId)
+                .getResultList();
+    }
+
+    public Long getMemberCount(Long id) {
+        return em.createQuery("select count(tm) from Team t join t.teamMembers tm on tm.team.id=:teamId",Long.class)
+                .setParameter("teamId",id)
                 .getSingleResult();
     }
 }
