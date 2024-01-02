@@ -62,8 +62,6 @@ public class TeamService {
         return new RegenerateCodeResponse(request.getTeamId(), newCode, codeDeadlineStr);
     }
 
-
-
     public String leaveTeam(TeamIdRequest teamIdRequest, HttpServletRequest httpRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
 
