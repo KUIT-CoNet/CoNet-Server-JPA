@@ -50,8 +50,7 @@ public class Plan {
     @OneToMany(mappedBy = "plan")// 다대다(다대일, 일대다) 양방향 연관 관계 / 연관 관계 주인의 반대편
     private List<PlanMember> plans = new ArrayList<>();
 
-    @Builder
-    public Plan(Team team, String name, Date startPeriod, Date endPeriod) {
+    private Plan(Team team, String name, Date startPeriod, Date endPeriod) {
         this.team = team;
         this.name = name;
         this.startPeriod = startPeriod;
@@ -60,7 +59,7 @@ public class Plan {
         team.addPlan(this);
     }
 
-    public boolean isFixed() {
-        return this.fixedDate != null && this.fixedTime != null;
+    public static Plan createPlan(Team team, String name, Date startPeriod, Date endPeriod) {
+        return new Plan(team, name, startPeriod, endPeriod);
     }
 }

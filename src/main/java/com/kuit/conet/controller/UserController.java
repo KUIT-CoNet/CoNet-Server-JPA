@@ -1,9 +1,9 @@
 package com.kuit.conet.controller;
 
 import com.kuit.conet.common.response.BaseResponse;
-import com.kuit.conet.dto.request.user.NameRequest;
-import com.kuit.conet.dto.response.StorageImgResponse;
-import com.kuit.conet.dto.response.user.UserResponse;
+import com.kuit.conet.dto.web.request.user.NameRequest;
+import com.kuit.conet.dto.web.response.StorageImgResponse;
+import com.kuit.conet.dto.web.response.user.UserResponse;
 import com.kuit.conet.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

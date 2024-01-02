@@ -2,10 +2,9 @@ package com.kuit.conet.dao;
 
 import com.kuit.conet.domain.team.Team;
 import com.kuit.conet.domain.team.TeamMember;
-import com.kuit.conet.domain.user.User;
-import com.kuit.conet.dto.response.StorageImgResponse;
-import com.kuit.conet.dto.response.team.GetTeamMemberResponse;
-import com.kuit.conet.dto.response.team.GetTeamResponse;
+import com.kuit.conet.dto.web.response.StorageImgResponse;
+import com.kuit.conet.dto.web.response.team.GetTeamMemberResponse;
+import com.kuit.conet.dto.web.response.team.GetTeamResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

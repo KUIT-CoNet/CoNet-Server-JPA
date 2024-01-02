@@ -1,8 +1,11 @@
 package com.kuit.conet.controller;
 
 import com.kuit.conet.common.response.BaseResponse;
-import com.kuit.conet.dto.request.plan.*;
-import com.kuit.conet.dto.response.plan.*;
+import com.kuit.conet.dto.web.request.plan.CreatePlanRequest;
+import com.kuit.conet.dto.web.request.plan.TeamFixedPlanRequest;
+import com.kuit.conet.dto.web.response.plan.CreatePlanResponse;
+import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponse;
+import com.kuit.conet.dto.web.response.plan.TeamPlanOnDayResponse;
 import com.kuit.conet.jpa.service.PlanService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +23,8 @@ public class PlanController {
      * @apiNote 약속 생성 api
      * */
     @PostMapping
-    public BaseResponse<CreatePlanResponse> createPlan(@RequestBody @Valid CreatePlanRequest request) {
-        CreatePlanResponse response = planService.createPlan(request);
+    public BaseResponse<CreatePlanResponse> createPlan(@RequestBody @Valid CreatePlanRequest planRequest) {
+        CreatePlanResponse response = planService.createPlan(planRequest);
         return new BaseResponse<>(response);
     }
 
@@ -30,8 +33,8 @@ public class PlanController {
      * - '나'의 직접적인 참여 여부와 무관
      * */
     @GetMapping("/day")
-    public BaseResponse<TeamPlanOnDayResponse> getFixedPlanOnDay(@ModelAttribute @Valid TeamFixedPlanRequest request) {
-        TeamPlanOnDayResponse response = planService.getFixedPlanOnDay(request);
+    public BaseResponse<TeamPlanOnDayResponse> getFixedPlanOnDay(@ModelAttribute @Valid TeamFixedPlanRequest planRequest) {
+        TeamPlanOnDayResponse response = planService.getFixedPlanOnDay(planRequest);
         return new BaseResponse<>(response);
     }
 
@@ -39,8 +42,8 @@ public class PlanController {
      * 모임 내 특정 달의 약속이 존재하는 날짜 조회 - 날짜 (dd)
      */
     @GetMapping("/month")
-    public BaseResponse<MonthPlanResponse> getFixedPlanInMonth(@ModelAttribute @Valid TeamFixedPlanRequest request) {
-        MonthPlanResponse response = planService.getFixedPlanInMonth(request);
+    public BaseResponse<PlanDateOnMonthResponse> getFixedPlanInMonth(@ModelAttribute @Valid TeamFixedPlanRequest planRequest) {
+        PlanDateOnMonthResponse response = planService.getFixedPlanInMonth(planRequest);
         return new BaseResponse<>(response);
     }
 

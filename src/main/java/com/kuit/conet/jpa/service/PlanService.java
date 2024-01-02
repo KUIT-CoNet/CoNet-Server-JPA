@@ -1,12 +1,12 @@
 package com.kuit.conet.jpa.service;
 
 
-import com.kuit.conet.domain.plan.TeamFixedPlanOnDay;
-import com.kuit.conet.dto.request.plan.CreatePlanRequest;
-import com.kuit.conet.dto.request.plan.TeamFixedPlanRequest;
-import com.kuit.conet.dto.response.plan.CreatePlanResponse;
-import com.kuit.conet.dto.response.plan.MonthPlanResponse;
-import com.kuit.conet.dto.response.plan.TeamPlanOnDayResponse;
+import com.kuit.conet.dto.plan.TeamFixedPlanOnDay;
+import com.kuit.conet.dto.web.request.plan.CreatePlanRequest;
+import com.kuit.conet.dto.web.request.plan.TeamFixedPlanRequest;
+import com.kuit.conet.dto.web.response.plan.CreatePlanResponse;
+import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponse;
+import com.kuit.conet.dto.web.response.plan.TeamPlanOnDayResponse;
 import com.kuit.conet.jpa.domain.plan.Plan;
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.repository.PlanRepository;
@@ -29,16 +29,11 @@ public class PlanService {
     private final TeamRepository teamRepository;
     private final PlanRepository planRepository;
 
-    public CreatePlanResponse createPlan(CreatePlanRequest request) {
-        Date endDate = setEndDate(new java.sql.Date(request.getPlanStartDate().getTime())); // TODO: Date 관련 타입
-        Team team = teamRepository.findById(request.getTeamId());
+    public CreatePlanResponse createPlan(CreatePlanRequest planRequest) {
+        Date endDate = setEndDate(planRequest.getPlanStartDate());
+        Team team = teamRepository.findById(planRequest.getTeamId());
 
-        Plan newPlan = Plan.builder()
-                .team(team)
-                .name(request.getPlanName())
-                .startPeriod(request.getPlanStartDate())
-                .endPeriod(endDate)
-                .build();
+        Plan newPlan = Plan.createPlan(team, planRequest.getPlanName(), planRequest.getPlanStartDate(), endDate);
         Long planId = planRepository.save(newPlan);
 
         return new CreatePlanResponse(planId);
@@ -49,17 +44,17 @@ public class PlanService {
         return Date.valueOf(endDate);
     }
 
-    public TeamPlanOnDayResponse getFixedPlanOnDay(TeamFixedPlanRequest request) {
-        List<TeamFixedPlanOnDay> fixedPlansOnDay = planRepository.getFixedPlansOnDay(request.getTeamId(), request.getSearchDate());
+    public TeamPlanOnDayResponse getFixedPlanOnDay(TeamFixedPlanRequest planRequest) {
+        List<TeamFixedPlanOnDay> fixedPlansOnDay = planRepository.getFixedPlansOnDay(planRequest.getTeamId(), planRequest.getSearchDate());
 
         return new TeamPlanOnDayResponse(fixedPlansOnDay.size(), fixedPlansOnDay);
     }
 
-    public MonthPlanResponse getFixedPlanInMonth(TeamFixedPlanRequest request) {
-        List<Date> fixedPlansInMonth = planRepository.getFixedPlansInMonth(request.getTeamId(), request.getSearchDate());
+    public PlanDateOnMonthResponse getFixedPlanInMonth(TeamFixedPlanRequest planRequest) {
+        List<Date> fixedPlansInMonth = planRepository.getFixedPlansInMonth(planRequest.getTeamId(), planRequest.getSearchDate());
         List<Integer> planDates = DateFormatter.datesToIntegerList(fixedPlansInMonth);
 
-        return new MonthPlanResponse(planDates.size(), planDates);
+        return new PlanDateOnMonthResponse(planDates.size(), planDates);
     }
 
 

@@ -2,10 +2,10 @@ package com.kuit.conet.jpa.service;
 
 import com.kuit.conet.domain.plan.HomeFixedPlanOnDay;
 import com.kuit.conet.domain.plan.WaitingPlan;
-import com.kuit.conet.dto.request.plan.HomePlanRequest;
-import com.kuit.conet.dto.response.plan.HomePlanOnDayResponse;
-import com.kuit.conet.dto.response.plan.MonthPlanResponse;
-import com.kuit.conet.dto.response.plan.WaitingPlanResponse;
+import com.kuit.conet.dto.web.request.plan.HomePlanRequest;
+import com.kuit.conet.dto.web.response.plan.HomePlanOnDayResponse;
+import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponse;
+import com.kuit.conet.dto.web.response.plan.WaitingPlanResponse;
 import com.kuit.conet.jpa.repository.HomeRepository;
 import com.kuit.conet.utils.DateFormatter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,17 +24,17 @@ import java.util.List;
 public class HomeService {
     private final HomeRepository homeRepository;
 
-    public MonthPlanResponse getHomeFixedPlanInMonth(HttpServletRequest httpRequest, HomePlanRequest planRequest) {
+    public PlanDateOnMonthResponse getHomeFixedPlanInMonth(HttpServletRequest httpRequest, HomePlanRequest homeRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-        List<Date> fixedPlansInMonth = homeRepository.getHomeFixedPlansInMonth(userId, planRequest.getSearchDate());
+        List<Date> fixedPlansInMonth = homeRepository.getHomeFixedPlansInMonth(userId, homeRequest.getSearchDate());
         List<Integer> planDates = DateFormatter.datesToIntegerList(fixedPlansInMonth);
 
-        return new MonthPlanResponse(planDates.size(), planDates);
+        return new PlanDateOnMonthResponse(planDates.size(), planDates);
     }
 
-    public HomePlanOnDayResponse getHomeFixedPlanOnDay(HttpServletRequest httpRequest, HomePlanRequest planRequest) {
+    public HomePlanOnDayResponse getHomeFixedPlanOnDay(HttpServletRequest httpRequest, HomePlanRequest homeRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-        List<HomeFixedPlanOnDay> plans = homeRepository.getHomeFixedPlansOnDay(userId, planRequest.getSearchDate());
+        List<HomeFixedPlanOnDay> plans = homeRepository.getHomeFixedPlansOnDay(userId, homeRequest.getSearchDate());
 
         return new HomePlanOnDayResponse(plans.size(), plans);
     }
