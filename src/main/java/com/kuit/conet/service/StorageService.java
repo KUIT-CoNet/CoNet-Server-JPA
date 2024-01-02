@@ -33,7 +33,7 @@ public class StorageService {
     private static final String SPLITER = "/";
 
     public static String getFileName(MultipartFile file, StorageDomain storage) {
-        String fileName = UUID.randomUUID() + "-" + storage.getStorage() + "Image-" + LocalDateTime.now();
+        String fileName = storage.getStorage() + "Image-" +  + LocalDateTime.now();
         fileName = fileName.replace(" ", "-").replace(":", "-").replace(".", "-") + ".";
 
         String extension = null;
