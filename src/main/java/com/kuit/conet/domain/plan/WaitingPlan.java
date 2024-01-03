@@ -1,23 +1,23 @@
 package com.kuit.conet.domain.plan;
 
-import lombok.AllArgsConstructor;
+import com.kuit.conet.utils.DateFormatter;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.sql.Date;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class WaitingPlan {
     private Long planId;
-    private Date startDate; // yyyy-MM-dd
-    private Date endDate; // yyyy-MM-dd
+    private String startDate; // yyyy. MM. dd
+    private String endDate; // yyyy. MM. dd
     private String teamName;
     private String planName;
+
+    public WaitingPlan(Long planId, Date startDate, Date endDate, String teamName, String planName) {
+        this.planId = planId;
+        this.startDate = DateFormatter.dateToStringWithDot(startDate);
+        this.endDate = DateFormatter.dateToStringWithDot(endDate);
+        this.teamName = teamName;
+        this.planName = planName;
+    }
 }
-/**
- * 시작 날짜 / 마감 날짜 / 모임 명 / 약속 명
- * */
