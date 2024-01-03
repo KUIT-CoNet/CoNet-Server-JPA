@@ -55,6 +55,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     EXIST_USER_IN_TEAM(5503, HttpStatus.BAD_REQUEST.value(),"모임에 이미 참여 중입니다."),
     USER_NOT_EXIST_IN_TEAM(5504, HttpStatus.BAD_REQUEST.value(),"모임에 참여하고 있지 않습니다."),
     NOT_FOUND_TEAM(5505, HttpStatus.NOT_FOUND.value(),"존재하지 않는 모임입니다."),
+    FILE_IS_EMPTY(5506, HttpStatus.BAD_REQUEST.value(),"이미지 파일이 존재하지 않습니다."),
     /**
      * 6000: 약속(Plan) 정보 오류
      * */
