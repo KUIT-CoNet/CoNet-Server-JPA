@@ -15,17 +15,14 @@ import com.kuit.conet.dto.web.request.team.CreateTeamRequest;
 import com.kuit.conet.jpa.repository.TeamMemberRepository;
 import com.kuit.conet.jpa.repository.TeamRepository;
 import com.kuit.conet.jpa.repository.UserRepository;
-import com.kuit.conet.jpa.service.validator.TeamValidator;
 import com.kuit.conet.service.StorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,39 +67,7 @@ public class TeamService {
         return new CreateTeamResponse(newTeam.getId(), newTeam.getInviteCode());
     }
 
-    private String getRandomInviteCode() {
-        String inviteCode = generateInviteCode();
-        while(true){
-            if(validateDuplicateInviteCode(teamRepository, inviteCode))
-                break;
-            inviteCode = generateInviteCode();
-        }
-        return inviteCode;
-    }
-
-    private String updateTeamImg(MultipartFile file) {
-        // 새로운 이미지 S3에 업로드
-        String fileName = storageService.getFileName(file, StorageDomain.TEAM);
-        String imgUrl = storageService.uploadToS3(file, fileName);
-        return imgUrl;
-    }
-
-    public String generateInviteCode() {
-        Random random = new Random();
-
-        String generatedString = random.ints(LEFT_LIMIT, RIGHT_LIMIT+1)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                .limit(TARGET_STRING_LENGTH)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
-
-        return generatedString;
-    }
-
     public ParticipateTeamResponse participateTeam(ParticipateTeamRequest teamRequest, HttpServletRequest httpRequest) {
-        // 모임 참가 요청 시간 찍기
-        LocalDateTime participateRequestTime = LocalDateTime.now();
-
         // 필요한 정보 조회
         String inviteCode = getInviteCodeFromRequest(teamRequest);
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
@@ -113,30 +78,13 @@ public class TeamService {
         validateNewMemberInTeam(teamRepository,userId, team);
 
         // 초대 코드 생성 시간과 모임 참가 요청 시간 비교
-        LocalDateTime generatedTime = team.getCodeGeneratedTime();
-        LocalDateTime expirationDateTime = generatedTime.plusDays(1);
-
-        //log.info("Team invite code generated time: {}", generatedTime);
-        log.info("Team invite code expiration date time: {}", expirationDateTime);
-        log.info("Team participation requested time: {}", participateRequestTime);
-
-        if (participateRequestTime.isAfter(expirationDateTime)) {
-            // 초대 코드 생성 시간으로부터 1일이 지났으면 exception
-            log.error("유효 기간 만료: {}", EXPIRED_INVITE_CODE.getMessage());
-            throw new TeamException(EXPIRED_INVITE_CODE);
-        }
+        compareInviteCodeAndRequestTime(team);
 
         // team에 teamMember 추가 (변경 감지)
         TeamMember teamMember = TeamMember.createTeamMember(team, user);
         team.addTeamMember(teamMember);
 
         return new ParticipateTeamResponse(user.getName(), team.getName(), user.getStatus());
-    }
-
-    private String getInviteCodeFromRequest(ParticipateTeamRequest teamRequest) {
-        String inviteCode = teamRequest.getInviteCode();
-        validateInviteCodeExisting(teamRepository,inviteCode);
-        return inviteCode;
     }
 
     public List<GetTeamResponse> getTeam(HttpServletRequest httpRequest) {
@@ -179,6 +127,42 @@ public class TeamService {
         team.deleteMember(teamMember);
 
         return "모임 탈퇴에 성공하였습니다.";
+    }
+
+
+    private String getRandomInviteCode() {
+        String inviteCode = generateInviteCode();
+        while(true){
+            if(validateDuplicateInviteCode(teamRepository, inviteCode))
+                break;
+            inviteCode = generateInviteCode();
+        }
+        return inviteCode;
+    }
+
+    private String updateTeamImg(MultipartFile file) {
+        // 새로운 이미지 S3에 업로드
+        String fileName = storageService.getFileName(file, StorageDomain.TEAM);
+        String imgUrl = storageService.uploadToS3(file, fileName);
+        return imgUrl;
+    }
+
+    public String generateInviteCode() {
+        Random random = new Random();
+
+        String generatedString = random.ints(LEFT_LIMIT, RIGHT_LIMIT+1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(TARGET_STRING_LENGTH)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+
+        return generatedString;
+    }
+
+    private String getInviteCodeFromRequest(ParticipateTeamRequest teamRequest) {
+        String inviteCode = teamRequest.getInviteCode();
+        validateInviteCodeExisting(teamRepository,inviteCode);
+        return inviteCode;
     }
 
     //TODO: com.kuit.conet.service.TeamService 에 주석 처리된 코드 참고
