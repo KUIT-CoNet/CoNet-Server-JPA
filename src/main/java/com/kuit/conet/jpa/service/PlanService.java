@@ -4,7 +4,7 @@ package com.kuit.conet.jpa.service;
 import com.kuit.conet.dto.plan.WaitingPlan;
 import com.kuit.conet.dto.plan.TeamFixedPlanOnDay;
 import com.kuit.conet.dto.web.request.plan.CreatePlanRequest;
-import com.kuit.conet.dto.web.request.plan.TeamFixedPlanRequest;
+import com.kuit.conet.dto.web.request.plan.TeamFixedPlanOnDateRequest;
 import com.kuit.conet.dto.web.request.plan.TeamWaitingPlanRequest;
 import com.kuit.conet.dto.web.response.plan.CreatePlanResponse;
 import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponse;
@@ -47,13 +47,13 @@ public class PlanService {
         return Date.valueOf(endDate);
     }
 
-    public TeamPlanOnDayResponse getFixedPlanOnDay(TeamFixedPlanRequest planRequest) {
+    public TeamPlanOnDayResponse getFixedPlanOnDay(TeamFixedPlanOnDateRequest planRequest) {
         List<TeamFixedPlanOnDay> fixedPlansOnDay = planRepository.getFixedPlansOnDay(planRequest.getTeamId(), planRequest.getSearchDate());
 
         return new TeamPlanOnDayResponse(fixedPlansOnDay.size(), fixedPlansOnDay);
     }
 
-    public PlanDateOnMonthResponse getFixedPlanInMonth(TeamFixedPlanRequest planRequest) {
+    public PlanDateOnMonthResponse getFixedPlanInMonth(TeamFixedPlanOnDateRequest planRequest) {
         List<Date> fixedPlansInMonth = planRepository.getFixedPlansInMonth(planRequest.getTeamId(), planRequest.getSearchDate());
         List<Integer> planDates = DateFormatter.datesToIntegerList(fixedPlansInMonth);
 
@@ -66,5 +66,9 @@ public class PlanService {
         return new WaitingPlanResponse(teamWaitingPlans.size(), teamWaitingPlans);
     }
 
+    /*public List<SideMenuFixedPlan> getFixedPlan(TeamIdRequest planRequest) {
+        Long teamId = planRequest.getTeamId();
+        return planDao.getFixedPlan(teamId);
+    }*/
 
 }
