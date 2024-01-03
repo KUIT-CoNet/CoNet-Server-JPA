@@ -31,7 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.*;
+import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.*;;
+import static com.kuit.conet.jpa.service.validator.TeamValidator.*;
 
 @Slf4j
 @Service
@@ -50,7 +51,7 @@ public class TeamService {
 
     public CreateTeamResponse createTeam(CreateTeamRequest teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
         // 초대 코드 생성 및 코드 중복 확인
-        String inviteCode = getInviteCode();
+        String inviteCode = getRandomInviteCode();
 
         // 모임 생성 시간 찍기
         LocalDateTime codeGeneratedTime = LocalDateTime.now();
@@ -69,10 +70,10 @@ public class TeamService {
         return new CreateTeamResponse(newTeam.getId(), newTeam.getInviteCode());
     }
 
-    private String getInviteCode() {
+    private String getRandomInviteCode() {
         String inviteCode = generateInviteCode();
         while(true){
-            if(TeamValidator.validateDuplicateInviteCode(teamRepository, inviteCode))
+            if(validateDuplicateInviteCode(teamRepository, inviteCode))
                 break;
             inviteCode = generateInviteCode();
         }
@@ -102,23 +103,14 @@ public class TeamService {
         // 모임 참가 요청 시간 찍기
         LocalDateTime participateRequestTime = LocalDateTime.now();
 
-        // 초대 코드 존재 확인
-        //todo method 추출하기
-        String inviteCode = teamRequest.getInviteCode();
-        if (!teamRepository.isExistInviteCode(inviteCode)) {
-            throw new TeamException(NOT_FOUND_INVITE_CODE);
-        }
-
+        // 필요한 정보 조회
+        String inviteCode = getInviteCodeFromRequest(teamRequest);
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-
         Member user = userRepository.findById(userId);
-
         Team team = teamRepository.findByInviteCode(inviteCode);
 
         // 모임에 이미 존재하는 회원인지 확인
-        if (teamRepository.isExistUser(team.getId(), userId)) {
-            throw new TeamException(EXIST_USER_IN_TEAM);
-        }
+        validateNewMemberInTeam(teamRepository,userId, team);
 
         // 초대 코드 생성 시간과 모임 참가 요청 시간 비교
         LocalDateTime generatedTime = team.getCodeGeneratedTime();
@@ -139,6 +131,12 @@ public class TeamService {
         team.addTeamMember(teamMember);
 
         return new ParticipateTeamResponse(user.getName(), team.getName(), user.getStatus());
+    }
+
+    private String getInviteCodeFromRequest(ParticipateTeamRequest teamRequest) {
+        String inviteCode = teamRequest.getInviteCode();
+        validateInviteCodeExisting(teamRepository,inviteCode);
+        return inviteCode;
     }
 
     public List<GetTeamResponse> getTeam(HttpServletRequest httpRequest) {
