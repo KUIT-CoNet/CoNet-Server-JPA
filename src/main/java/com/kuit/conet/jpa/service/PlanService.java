@@ -1,12 +1,15 @@
 package com.kuit.conet.jpa.service;
 
 
+import com.kuit.conet.dto.plan.WaitingPlan;
 import com.kuit.conet.dto.plan.TeamFixedPlanOnDay;
 import com.kuit.conet.dto.web.request.plan.CreatePlanRequest;
 import com.kuit.conet.dto.web.request.plan.TeamFixedPlanRequest;
+import com.kuit.conet.dto.web.request.plan.TeamWaitingPlanRequest;
 import com.kuit.conet.dto.web.response.plan.CreatePlanResponse;
 import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponse;
 import com.kuit.conet.dto.web.response.plan.TeamPlanOnDayResponse;
+import com.kuit.conet.dto.web.response.plan.WaitingPlanResponse;
 import com.kuit.conet.jpa.domain.plan.Plan;
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.repository.PlanRepository;
@@ -55,6 +58,12 @@ public class PlanService {
         List<Integer> planDates = DateFormatter.datesToIntegerList(fixedPlansInMonth);
 
         return new PlanDateOnMonthResponse(planDates.size(), planDates);
+    }
+
+    public WaitingPlanResponse getTeamWaitingPlan(TeamWaitingPlanRequest planRequest) {
+        List<WaitingPlan> teamWaitingPlans = planRepository.getTeamWaitingPlan(planRequest.getTeamId());
+
+        return new WaitingPlanResponse(teamWaitingPlans.size(), teamWaitingPlans);
     }
 
 

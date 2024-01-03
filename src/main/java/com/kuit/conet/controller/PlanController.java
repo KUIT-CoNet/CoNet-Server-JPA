@@ -44,6 +44,17 @@ public class PlanController {
         return new BaseResponse<>(response);
     }
 
+    /**
+     * @apiNote [사이드바] 모임 내 대기 중인 약속 조회 api
+     * / '나'의 직접적인 참여 여부와 무관
+     */
+    @GetMapping("/waiting")
+    public BaseResponse<WaitingPlanResponse> getWaitingPlan(@ModelAttribute @Valid TeamWaitingPlanRequest planRequest) {
+        WaitingPlanResponse response = planService.getTeamWaitingPlan(planRequest);
+        return new BaseResponse<>(response);
+    }
+
+
 /*
     @PostMapping("/time")
     public BaseResponse<String> registerTime(HttpServletRequest httpRequest, @RequestBody @Valid PossibleTimeRequest request) {
