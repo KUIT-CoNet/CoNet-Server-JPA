@@ -31,9 +31,10 @@ public class StorageService {
     @Autowired
     private AmazonS3Client amazonS3Client;
     private static final String SPLITER = "/";
+    private static int sequenceNum = 1;
 
     public static String getFileName(MultipartFile file, StorageDomain storage) {
-        String fileName = UUID.randomUUID() + "-" + storage.getStorage() + "Image-" + LocalDateTime.now();
+        String fileName = sequenceNum + "-" + storage.getStorage() + "Image-" + LocalDateTime.now();
         fileName = fileName.replace(" ", "-").replace(":", "-").replace(".", "-") + ".";
 
         String extension = null;
@@ -57,6 +58,7 @@ public class StorageService {
         }
         fileName += extension;
 
+        sequenceNum++;
         return fileName;
     }
 
