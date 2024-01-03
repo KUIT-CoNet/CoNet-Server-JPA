@@ -5,6 +5,8 @@ import lombok.Getter;
 
 import java.sql.Date;
 
+import static com.kuit.conet.utils.DateFormatter.*;
+
 @Getter
 public class WaitingPlan {
     private Long planId;
@@ -15,8 +17,8 @@ public class WaitingPlan {
 
     public WaitingPlan(Long planId, Date startDate, Date endDate, String teamName, String planName) {
         this.planId = planId;
-        this.startDate = DateFormatter.dateToStringWithDot(startDate);
-        this.endDate = DateFormatter.dateToStringWithDot(endDate);
+        this.startDate = dateToStringWithDot(startDate);
+        this.endDate = dateToStringWithDot(endDate);
         this.teamName = teamName;
         this.planName = planName;
     }

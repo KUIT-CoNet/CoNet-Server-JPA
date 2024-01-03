@@ -6,6 +6,8 @@ import lombok.Getter;
 
 import java.sql.Time;
 
+import static com.kuit.conet.utils.DateFormatter.*;
+
 @Getter
 @AllArgsConstructor
 public class HomeFixedPlanOnDay {
@@ -16,7 +18,7 @@ public class HomeFixedPlanOnDay {
 
     public HomeFixedPlanOnDay(Long planId, Time time, String teamName, String planName) {
         this.planId = planId;
-        this.time = DateFormatter.timeDeleteSecondsAndToString(time);
+        this.time = timeDeleteSecondsAndToString(time);
         this.teamName = teamName;
         this.planName = planName;
     }

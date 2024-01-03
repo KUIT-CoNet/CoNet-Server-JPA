@@ -23,6 +23,8 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.kuit.conet.utils.DateFormatter.*;
+
 @Slf4j
 @Service
 @Transactional
@@ -54,7 +56,7 @@ public class PlanService {
 
     public PlanDateOnMonthResponse getFixedPlanInMonth(TeamFixedPlanOnDateRequest planRequest) {
         List<Date> fixedPlansInMonth = planRepository.getFixedPlansInMonth(planRequest.getTeamId(), planRequest.getSearchDate());
-        List<Integer> planDates = DateFormatter.datesToIntegerList(fixedPlansInMonth);
+        List<Integer> planDates = datesToIntegerList(fixedPlansInMonth);
 
         return new PlanDateOnMonthResponse(planDates.size(), planDates);
     }
