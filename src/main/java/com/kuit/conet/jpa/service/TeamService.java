@@ -45,6 +45,8 @@ public class TeamService {
     final int RIGHT_LIMIT = 122;
     final int TARGET_STRING_LENGTH = 8;
 
+    final String SUCCESS_LEAVE_TEAM = "모임 탈퇴에 성공하였습니다.";
+
 
     public CreateTeamResponse createTeam(CreateTeamRequest teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
         // 초대 코드 생성 및 코드 중복 확인
@@ -106,7 +108,7 @@ public class TeamService {
         TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(team.getId(), userId);
         team.deleteMember(teamMember);
 
-        return "모임 탈퇴에 성공하였습니다.";
+        return SUCCESS_LEAVE_TEAM;
     }
 
 
