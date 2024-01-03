@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.BAD_REQUEST;
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.INVALID_FILE_EXTENSION;
@@ -29,10 +30,11 @@ public class StorageService {
     private String bucketName;
     @Autowired
     private AmazonS3Client amazonS3Client;
-    private final String SPLITER = "/";
+    private static final String SPLITER = "/";
+    private static int sequenceNum = 1;
 
-    public String getFileName(MultipartFile file, StorageDomain storage, Long id) {
-        String fileName = id + "-" + storage.getStorage() + "Image-" + LocalDateTime.now();
+    public static String getFileName(MultipartFile file, StorageDomain storage) {
+        String fileName = sequenceNum + "-" + storage.getStorage() + "Image-" + LocalDateTime.now();
         fileName = fileName.replace(" ", "-").replace(":", "-").replace(".", "-") + ".";
 
         String extension = null;
@@ -56,6 +58,7 @@ public class StorageService {
         }
         fileName += extension;
 
+        sequenceNum++;
         return fileName;
     }
 

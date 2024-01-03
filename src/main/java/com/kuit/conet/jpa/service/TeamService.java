@@ -15,14 +15,17 @@ import com.kuit.conet.dto.web.request.team.CreateTeamRequest;
 import com.kuit.conet.jpa.repository.TeamMemberRepository;
 import com.kuit.conet.jpa.repository.TeamRepository;
 import com.kuit.conet.jpa.repository.UserRepository;
+import com.kuit.conet.jpa.service.validator.TeamValidator;
 import com.kuit.conet.service.StorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,48 +39,46 @@ import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.
 @RequiredArgsConstructor
 public class TeamService {
     private final StorageService storageService;
-//    private final TeamDao teamDao;
-//    private final UserDao userDao;
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final TeamMemberRepository teamMemberRepository;
 
     public CreateTeamResponse createTeam(CreateTeamRequest teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
-        String inviteCode;
-
         // 초대 코드 생성 및 코드 중복 확인
-        do {
-            inviteCode = generateInviteCode();
-        } while (teamRepository.isExistInviteCode(inviteCode));  // 중복되면 true 반환
+        String inviteCode = getInviteCode();
 
         // 모임 생성 시간 찍기
         LocalDateTime codeGeneratedTime = LocalDateTime.now();
 
-        // team 생성
-        Team newTeam = Team.builder().teamName(teamRequest.getTeamName())
-                .inviteCode(inviteCode)
-                .codeGeneratedTime(codeGeneratedTime)
-                .build();
-        Long teamId = teamRepository.save(newTeam);
-
-        updateTeamImg(file, teamId, newTeam);
-
-        // teamMember 에 user 추가
+        // 팀 만든 멤버 정보 추출
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         Member teamCreator = userRepository.findById(userId);
-        TeamMember teamMember = new TeamMember(newTeam, teamCreator);
-        teamMemberRepository.save(teamMember);
+
+        //이미지 s3 업로드
+        String imgUrl = updateTeamImg(file);
+
+        // team 생성
+        Team newTeam = Team.createTeam(teamRequest.getTeamName(), inviteCode,codeGeneratedTime,teamCreator,imgUrl);
+        teamRepository.save(newTeam);
 
         return new CreateTeamResponse(newTeam.getId(), newTeam.getInviteCode());
     }
 
-    private void updateTeamImg(MultipartFile file, Long teamId, Team newTeam) {
-        // 새로운 이미지 S3에 업로드
-        String fileName = storageService.getFileName(file, StorageDomain.TEAM, teamId);
-        String imgUrl = storageService.uploadToS3(file, fileName);
+    private String getInviteCode() {
+        String inviteCode = generateInviteCode();
+        while(true){
+            if(TeamValidator.validateDuplicateInviteCode(teamRepository, inviteCode))
+                break;
+            inviteCode = generateInviteCode();
+        }
+        return inviteCode;
+    }
 
-        /*        StorageImgResponse response = teamDao.updateImg(teamId, imgUrl);*/
-        newTeam.updateImg(imgUrl);
+    private String updateTeamImg(MultipartFile file) {
+        // 새로운 이미지 S3에 업로드
+        String fileName = storageService.getFileName(file, StorageDomain.TEAM);
+        String imgUrl = storageService.uploadToS3(file, fileName);
+        return imgUrl;
     }
 
     public String generateInviteCode() {
@@ -133,7 +134,8 @@ public class TeamService {
         }
 
         // team에 teamMember 추가 (변경 감지)
-        team.addTeamMember(team, user);
+        TeamMember teamMember = TeamMember.createTeamMember(team, user);
+        team.addTeamMember(teamMember);
 
         return new ParticipateTeamResponse(user.getName(), team.getName(), user.getStatus());
     }
@@ -167,7 +169,7 @@ public class TeamService {
     public String leaveTeam(TeamIdRequest teamRequest, HttpServletRequest httpRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         Team team = teamRepository.findById(teamRequest.getTeamId());
-        
+
         // 모임 존재 여부 확인
         if (team==null) {
             throw new TeamException(NOT_FOUND_TEAM);

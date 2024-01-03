@@ -216,7 +216,7 @@ public class UserDao {
     public void updateOptionTerm(OptionTermRequest optionTermRequest, Long userId) {
         String sql = "update user set option_term=:option_term where user_id=:user_id and status=1";
         Map<String, Object> param = Map.of("option_term", optionTermRequest.getOption(),
-                                            "user_id", userId);
+                "user_id", userId);
         jdbcTemplate.update(sql, param);
     }
 }

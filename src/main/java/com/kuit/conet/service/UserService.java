@@ -55,7 +55,7 @@ public class UserService {
 
         // 저장할 파일명 만들기
         // 받은 파일이 이미지 타입이 아닌 경우에 대한 유효성 검사 진행
-        String fileName = storageService.getFileName(file, StorageDomain.USER, userId);
+        String fileName = storageService.getFileName(file, StorageDomain.USER);
 
         /*
         유저의 프로필 이미지가 기본 프로필 이미지인지 확인 -> 기본 이미지가 아니면 기존 이미지를 S3에서 이미지 삭제
