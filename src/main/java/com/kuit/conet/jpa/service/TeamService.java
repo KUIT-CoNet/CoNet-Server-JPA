@@ -43,6 +43,11 @@ public class TeamService {
     private final UserRepository userRepository;
     private final TeamMemberRepository teamMemberRepository;
 
+    final int LEFT_LIMIT = 48;
+    final int RIGHT_LIMIT = 122;
+    final int TARGET_STRING_LENGTH = 8;
+
+
     public CreateTeamResponse createTeam(CreateTeamRequest teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
         // 초대 코드 생성 및 코드 중복 확인
         String inviteCode = getInviteCode();
@@ -82,15 +87,11 @@ public class TeamService {
     }
 
     public String generateInviteCode() {
-        int leftLimit = 48;
-        int rightLimit = 122;
-        int targetStringLength = 8;
-
         Random random = new Random();
 
-        String generatedString = random.ints(leftLimit, rightLimit+1)
+        String generatedString = random.ints(LEFT_LIMIT, RIGHT_LIMIT+1)
                 .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                .limit(targetStringLength)
+                .limit(TARGET_STRING_LENGTH)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
 
