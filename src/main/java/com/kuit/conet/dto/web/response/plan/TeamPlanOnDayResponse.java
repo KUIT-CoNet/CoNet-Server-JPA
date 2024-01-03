@@ -7,7 +7,6 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-@ToString
 public class TeamPlanOnDayResponse {
     int count;
     List<TeamFixedPlanOnDay> plans;

@@ -7,7 +7,6 @@ import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
-@ToString
 public class CreatePlanResponse {
     private Long planId;
 }

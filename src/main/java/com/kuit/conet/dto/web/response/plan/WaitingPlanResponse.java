@@ -7,7 +7,6 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-@ToString
 public class WaitingPlanResponse {
     private int count;
     private List<WaitingPlan> plans;
