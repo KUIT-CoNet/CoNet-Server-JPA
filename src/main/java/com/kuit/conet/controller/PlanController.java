@@ -67,7 +67,6 @@ public class PlanController {
 
         // 지난 약속
         if (planRequest.getPeriod() == PlanPeriod.PAST) {
-            log.info("period: {}", planRequest.getPeriod());
             response = planService.getFixedPastPlan(httpRequest, planRequest.getTeamId());
             return new BaseResponse<>(response);
         }
