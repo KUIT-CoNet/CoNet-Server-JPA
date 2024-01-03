@@ -58,22 +58,22 @@ public class PlanController {
     }
 
     /**
-     * @apiNote [사이드바 > 내 약속] 모임 내 확정된 약속 조회 api
+     * @apiNote [사이드바 > 내 약속] 모임 내 확정된 (지난/다가오는) 약속 조회 api
      * / 조회한 유저의 참여 여부 포함
      */
     @GetMapping("/fixed")
-    public BaseResponse<SideMenuFixedPlanResponse> getFixedPlan(/*HttpServletRequest httpRequest, */@ModelAttribute TeamFixedPlanInPeriodRequest planRequest) {
+    public BaseResponse<SideMenuFixedPlanResponse> getFixedPlan(HttpServletRequest httpRequest, @ModelAttribute TeamFixedPlanInPeriodRequest planRequest) {
         SideMenuFixedPlanResponse response;
 
         // 지난 약속
         if (planRequest.getPeriod() == PlanPeriod.PAST) {
             log.info("period: {}", planRequest.getPeriod());
-            response = planService.getFixedPastPlan(/*httpRequest,*/ planRequest.getTeamId());
+            response = planService.getFixedPastPlan(httpRequest, planRequest.getTeamId());
             return new BaseResponse<>(response);
         }
 
         // 다가오는 약속
-        response = planService.getFixedFuturePlan(/*httpRequest,*/ planRequest.getTeamId());
+        response = planService.getFixedFuturePlan(httpRequest, planRequest.getTeamId());
         return new BaseResponse<>(response);
     }
 

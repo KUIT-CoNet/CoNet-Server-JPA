@@ -65,16 +65,14 @@ public class PlanService {
         return new WaitingPlanResponse(teamWaitingPlans.size(), teamWaitingPlans);
     }
 
-    public SideMenuFixedPlanResponse getFixedPastPlan(/*HttpServletRequest httpRequest, */Long teamId) {
-//        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-        Long userId = 3L;
+    public SideMenuFixedPlanResponse getFixedPastPlan(HttpServletRequest httpRequest, Long teamId) {
+        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         List<SideMenuFixedPlan> fixedPastPlans = planRepository.getFixedPastPlans(teamId, userId);
         return new SideMenuFixedPlanResponse(fixedPastPlans.size(), fixedPastPlans);
     }
 
-    public SideMenuFixedPlanResponse getFixedFuturePlan(/*HttpServletRequest httpRequest, */Long teamId) {
-//        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-        Long userId = 3L;
+    public SideMenuFixedPlanResponse getFixedFuturePlan(HttpServletRequest httpRequest, Long teamId) {
+        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         List<SideMenuFixedPlan> fixedPastPlans = planRepository.getFixedFuturePlans(teamId, userId);
         return new SideMenuFixedPlanResponse(fixedPastPlans.size(), fixedPastPlans);
     }
