@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -59,6 +60,13 @@ public class BaseExceptionControllerAdvice {
     public BaseErrorResponse handle_IOException(IOException e) {
         log.error("[handle_IOException]", e);
         return new BaseErrorResponse(BAD_REQUEST, e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public BaseErrorResponse handle_MethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("[handle_MethodArgumentNotValidException]", e);
+        return new BaseErrorResponse(INAPPROPRIATE_DATA);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

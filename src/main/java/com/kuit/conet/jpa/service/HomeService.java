@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
 import java.util.List;
 
+import static com.kuit.conet.utils.DateFormatter.*;
+
 @Slf4j
 @Service
 @Transactional
@@ -28,7 +30,7 @@ public class HomeService {
         //TODO: utils/DateFormatValidator 생성 후, request에 날짜가 형식에 맞추어 잘 왔는지 검사하기 (정규표현식으로)
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         List<Date> fixedPlansInMonth = homeRepository.getHomeFixedPlansInMonth(userId, homeRequest.getSearchDate());
-        List<Integer> planDates = DateFormatter.datesToIntegerList(fixedPlansInMonth);
+        List<Integer> planDates = datesToIntegerList(fixedPlansInMonth);
 
         return new PlanDateOnMonthResponse(planDates.size(), planDates);
     }

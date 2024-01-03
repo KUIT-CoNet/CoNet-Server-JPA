@@ -1,16 +1,13 @@
 package com.kuit.conet.dto.web.response.plan;
 
-import com.kuit.conet.domain.plan.SideMenuFixedPlan;
+import com.kuit.conet.dto.plan.SideMenuFixedPlan;
 import lombok.*;
 
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@ToString
-public class SideMenuFixedPlanOnDayResponse {
+public class SideMenuFixedPlanResponse {
     int count;
     List<SideMenuFixedPlan> plans;
 }

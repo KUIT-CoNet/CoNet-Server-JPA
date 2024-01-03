@@ -245,12 +245,6 @@ public class PlanService {
         return "약속 확정에 성공하였습니다.";
     }
 
-    public TeamPlanOnDayResponse getPlanOnDay(TeamFixedPlanRequest planRequest) {
-        List<TeamFixedPlanOnDay> plans = planDao.getPlanOnDay(planRequest.getTeamId(), planRequest.getSearchDate()); // yyyy-MM-dd
-
-        return new TeamPlanOnDayResponse(plans.size(), plans);
-    }
-
     public PlanDetail getPlanDetail(PlanIdRequest planRequest) {
         //TODO: history 내용 삭제
         Long planId = planRequest.getPlanId();
@@ -339,17 +333,6 @@ public class PlanService {
         }
 
         return "약속 정보를 수정하였습니다.";
-    }
-
-    public List<PastPlan> getPastPlan(TeamIdRequest planRequest) {
-        Long teamId = planRequest.getTeamId();
-        return planDao.getPastPlan(teamId);
-    }
-
-    // 팀 사이드바 - 지나지 않은 확정 약속 조회
-    public List<SideMenuFixedPlan> getFixedPlan(TeamIdRequest planRequest) {
-        Long teamId = planRequest.getTeamId();
-        return planDao.getFixedPlan(teamId);
     }
 
     public List<MemberIsInPlanResponse> getMemberIsInPlan(PlanIdRequest planIdRequest) {

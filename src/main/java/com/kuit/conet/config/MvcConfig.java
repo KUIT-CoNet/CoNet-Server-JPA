@@ -1,9 +1,11 @@
 package com.kuit.conet.config;
 
 import com.kuit.conet.utils.BearerAuthInterceptor;
+import com.kuit.conet.utils.StringToEnumConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -21,6 +23,11 @@ public class MvcConfig implements WebMvcConfigurer {
         resolvers.add(clientIpResolver);
     }
 
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new StringToEnumConverter());
+    }
+
     public void addInterceptors(InterceptorRegistry registry){
         log.info("Interceptor 등록");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/auth/regenerate-token");
@@ -36,6 +43,7 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/leave");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/bookmark");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/bookmark/delete");
+        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/plan/fixed");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/plan/time");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/plan/user-time");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/home/plan/month");
