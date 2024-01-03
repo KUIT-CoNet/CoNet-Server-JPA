@@ -29,7 +29,7 @@ public class PlanController {
     }
 
     /**
-     * 모임 내 특정 날짜 확정 약속 조회 - 날짜(yyyy-MM-dd) / 시각(hh-mm)
+     * @apiNote 모임 내 특정 날짜 확정 약속 조회 api
      * - '나'의 직접적인 참여 여부와 무관
      * */
     @GetMapping("/day")
@@ -39,7 +39,8 @@ public class PlanController {
     }
 
     /**
-     * 모임 내 특정 달의 약속이 존재하는 날짜 조회 - 날짜 (dd)
+     * @apiNote  모임 내 특정 달의 약속이 존재하는 날짜 조회 api
+     * 날짜 (dd)
      */
     @GetMapping("/month")
     public BaseResponse<PlanDateOnMonthResponse> getFixedPlanInMonth(@ModelAttribute @Valid TeamFixedPlanRequest planRequest) {

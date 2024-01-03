@@ -14,5 +14,5 @@ import java.sql.Time;
 public class TeamFixedPlanOnDay {
     private Long planId;
     private String planName;
-    private Time time; // hh:mm
+    private Time time; // hh:mm:ss
 }
