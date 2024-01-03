@@ -25,10 +25,15 @@ public class TeamMember {
     @Column(columnDefinition = "boolean default false")
     private boolean bookMark;
 
-    public TeamMember(Team team, Member member) {
-        this.team = team;
-        this.member = member;
-        this.bookMark = false;
+
+    //==생성 메서드==//
+    public static TeamMember createTeamMember(Team team, Member member) {
+        TeamMember teamMember = new TeamMember();
+        teamMember.member = member;
+        teamMember.team = team;
+        teamMember.bookMark = false;
+
+        return teamMember;
     }
 
     public void setTeam(Team team) {
