@@ -4,7 +4,9 @@ import com.kuit.conet.common.exception.TeamException;
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.repository.TeamRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.time.LocalDateTime;
 
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.*;
@@ -22,6 +24,11 @@ public class TeamValidator {
         if (!teamRepository.isExistInviteCode(inviteCode)) {
             throw new TeamException(NOT_FOUND_INVITE_CODE);
         }
+    }
+
+    public static void validateFileExisting(MultipartFile file){
+        if(file.isEmpty())
+            throw new TeamException(FILE_IS_EMPTY);
     }
 
     public static void validateNewMemberInTeam(TeamRepository teamRepository, Long userId, Team team) {

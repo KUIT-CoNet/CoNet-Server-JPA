@@ -49,6 +49,9 @@ public class TeamService {
 
 
     public CreateTeamResponse createTeam(CreateTeamRequest teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
+        // 이미지 파일 확인
+        validateFileExisting(file);
+
         // 초대 코드 생성 및 코드 중복 확인
         String inviteCode = getRandomInviteCode();
 
