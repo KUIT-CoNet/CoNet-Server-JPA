@@ -1,4 +1,4 @@
-package com.kuit.conet.domain.plan;
+package com.kuit.conet.dto.plan;
 
 import com.kuit.conet.utils.DateFormatter;
 import lombok.Getter;

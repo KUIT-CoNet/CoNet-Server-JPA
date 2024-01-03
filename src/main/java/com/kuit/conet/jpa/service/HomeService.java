@@ -1,7 +1,7 @@
 package com.kuit.conet.jpa.service;
 
 import com.kuit.conet.domain.plan.HomeFixedPlanOnDay;
-import com.kuit.conet.domain.plan.WaitingPlan;
+import com.kuit.conet.dto.plan.WaitingPlan;
 import com.kuit.conet.dto.web.request.plan.HomePlanRequest;
 import com.kuit.conet.dto.web.response.plan.HomePlanOnDayResponse;
 import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponse;
