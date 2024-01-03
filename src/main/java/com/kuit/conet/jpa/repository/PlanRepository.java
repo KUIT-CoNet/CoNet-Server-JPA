@@ -1,7 +1,8 @@
 package com.kuit.conet.jpa.repository;
 
+import com.kuit.conet.dto.plan.SideMenuFixedPlan;
 import com.kuit.conet.dto.plan.WaitingPlan;
-import com.kuit.conet.dto.plan.TeamFixedPlanOnDay;
+import com.kuit.conet.dto.plan.FixedPlanOnDay;
 import com.kuit.conet.jpa.domain.plan.Plan;
 import com.kuit.conet.jpa.domain.plan.PlanStatus;
 import jakarta.persistence.EntityManager;
@@ -23,12 +24,12 @@ public class PlanRepository {
         return plan.getId();
     }
 
-    public List<TeamFixedPlanOnDay> getFixedPlansOnDay(Long teamId, String searchDate) {
-        return em.createQuery("select new com.kuit.conet.dto.plan.TeamFixedPlanOnDay(p.id, p.name, p.fixedTime) " +
+    public List<FixedPlanOnDay> getFixedPlansOnDay(Long teamId, String searchDate) {
+        return em.createQuery("select new com.kuit.conet.dto.plan.FixedPlanOnDay(p.id, p.name, p.fixedTime) " +
                 "from Plan p join p.team t on t.id=:teamId " +
                 "where p.status=:status " +
                 "and FUNCTION('DATE_FORMAT', p.fixedDate, '%Y-%m-%d')=:searchDate " +
-                "order by p.fixedTime", TeamFixedPlanOnDay.class)
+                "order by p.fixedTime", FixedPlanOnDay.class)
                 .setParameter("teamId", teamId)
                 .setParameter("status", PlanStatus.FIXED)
                 .setParameter("searchDate", searchDate)
@@ -55,6 +56,40 @@ public class PlanRepository {
                         "order by p.startPeriod", WaitingPlan.class)
                 .setParameter("teamId", teamId)
                 .setParameter("status", PlanStatus.WAITING)
+                .getResultList();
+    }
+
+    public List<SideMenuFixedPlan> getFixedPastPlans(Long teamId, Long userId) {
+        return em.createQuery("select new com.kuit.conet.dto.plan.SideMenuFixedPlan(p.id, p.name, p.fixedDate, p.fixedTime, " +
+                        "                                                                       function('DATEDIFF', CURRENT_DATE, p.fixedDate), " + // 약속이 지난 지 며칠 ?
+                        "                                                                       (select count(pm.id)>0 " +
+                        "                                                                        from PlanMember pm " +
+                        "                                                                        where pm.plan.id=p.id and pm.member.id=:userId)) " +
+                        "from Plan p " +
+                        "where p.team.id=:teamId " +
+                        "and p.status=:status " +
+                        "and p.fixedDate < CURRENT_DATE or (p.fixedDate = CURRENT_DATE and p.fixedTime < CURRENT_TIME) " +
+                        "order by p.fixedDate desc, p.fixedTime desc ", SideMenuFixedPlan.class)
+                .setParameter("teamId", teamId)
+                .setParameter("status", PlanStatus.FIXED)
+                .setParameter("userId", userId)
+                .getResultList();
+    }
+
+    public List<SideMenuFixedPlan> getFixedFuturePlans(Long teamId, Long userId) {
+        return em.createQuery("select new com.kuit.conet.dto.plan.SideMenuFixedPlan(p.id, p.name, p.fixedDate, p.fixedTime, " +
+                        "                                                                       function('DATEDIFF', p.fixedDate, CURRENT_DATE), " + // 며칠 남은 약속 ?
+                        "                                                                       (select count(pm.id)>0 " +
+                        "                                                                        from PlanMember pm " +
+                        "                                                                        where pm.plan.id=p.id and pm.member.id=:userId)) " +
+                        "from Plan p " +
+                        "where p.team.id=:teamId " +
+                        "and p.status=:status " +
+                        "and p.fixedDate > CURRENT_DATE or (p.fixedDate = CURRENT_DATE and p.fixedTime >= CURRENT_TIME) " +
+                        "order by p.fixedDate, p.fixedTime ", SideMenuFixedPlan.class)
+                .setParameter("teamId", teamId)
+                .setParameter("status", PlanStatus.FIXED)
+                .setParameter("userId", userId)
                 .getResultList();
     }
 }

@@ -1,20 +1,19 @@
 package com.kuit.conet.jpa.service;
 
 
+import com.kuit.conet.dto.plan.SideMenuFixedPlan;
 import com.kuit.conet.dto.plan.WaitingPlan;
-import com.kuit.conet.dto.plan.TeamFixedPlanOnDay;
+import com.kuit.conet.dto.plan.FixedPlanOnDay;
 import com.kuit.conet.dto.web.request.plan.CreatePlanRequest;
 import com.kuit.conet.dto.web.request.plan.TeamFixedPlanOnDateRequest;
 import com.kuit.conet.dto.web.request.plan.TeamWaitingPlanRequest;
-import com.kuit.conet.dto.web.response.plan.CreatePlanResponse;
-import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponse;
-import com.kuit.conet.dto.web.response.plan.TeamPlanOnDayResponse;
-import com.kuit.conet.dto.web.response.plan.WaitingPlanResponse;
+import com.kuit.conet.dto.web.response.plan.*;
 import com.kuit.conet.jpa.domain.plan.Plan;
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.repository.PlanRepository;
 import com.kuit.conet.jpa.repository.TeamRepository;
 import com.kuit.conet.utils.DateFormatter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,7 +47,7 @@ public class PlanService {
     }
 
     public TeamPlanOnDayResponse getFixedPlanOnDay(TeamFixedPlanOnDateRequest planRequest) {
-        List<TeamFixedPlanOnDay> fixedPlansOnDay = planRepository.getFixedPlansOnDay(planRequest.getTeamId(), planRequest.getSearchDate());
+        List<FixedPlanOnDay> fixedPlansOnDay = planRepository.getFixedPlansOnDay(planRequest.getTeamId(), planRequest.getSearchDate());
 
         return new TeamPlanOnDayResponse(fixedPlansOnDay.size(), fixedPlansOnDay);
     }
@@ -66,9 +65,18 @@ public class PlanService {
         return new WaitingPlanResponse(teamWaitingPlans.size(), teamWaitingPlans);
     }
 
-    /*public List<SideMenuFixedPlan> getFixedPlan(TeamIdRequest planRequest) {
-        Long teamId = planRequest.getTeamId();
-        return planDao.getFixedPlan(teamId);
-    }*/
+    public SideMenuFixedPlanResponse getFixedPastPlan(/*HttpServletRequest httpRequest, */Long teamId) {
+//        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+        Long userId = 3L;
+        List<SideMenuFixedPlan> fixedPastPlans = planRepository.getFixedPastPlans(teamId, userId);
+        return new SideMenuFixedPlanResponse(fixedPastPlans.size(), fixedPastPlans);
+    }
+
+    public SideMenuFixedPlanResponse getFixedFuturePlan(/*HttpServletRequest httpRequest, */Long teamId) {
+//        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+        Long userId = 3L;
+        List<SideMenuFixedPlan> fixedPastPlans = planRepository.getFixedFuturePlans(teamId, userId);
+        return new SideMenuFixedPlanResponse(fixedPastPlans.size(), fixedPastPlans);
+    }
 
 }

@@ -4,13 +4,13 @@ import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.plan.TeamFixedPlanInPeriodRequest;
 import com.kuit.conet.dto.web.request.plan.*;
 import com.kuit.conet.dto.web.response.plan.*;
+import com.kuit.conet.jpa.domain.plan.PlanPeriod;
 import com.kuit.conet.jpa.service.PlanService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -57,6 +57,25 @@ public class PlanController {
         return new BaseResponse<>(response);
     }
 
+    /**
+     * @apiNote [사이드바 > 내 약속] 모임 내 확정된 약속 조회 api
+     * / 조회한 유저의 참여 여부 포함
+     */
+    @GetMapping("/fixed")
+    public BaseResponse<SideMenuFixedPlanResponse> getFixedPlan(/*HttpServletRequest httpRequest, */@ModelAttribute TeamFixedPlanInPeriodRequest planRequest) {
+        SideMenuFixedPlanResponse response;
+
+        // 지난 약속
+        if (planRequest.getPeriod() == PlanPeriod.PAST) {
+            log.info("period: {}", planRequest.getPeriod());
+            response = planService.getFixedPastPlan(/*httpRequest,*/ planRequest.getTeamId());
+            return new BaseResponse<>(response);
+        }
+
+        // 다가오는 약속
+        response = planService.getFixedFuturePlan(/*httpRequest,*/ planRequest.getTeamId());
+        return new BaseResponse<>(response);
+    }
 
 /*
     @PostMapping("/time")
