@@ -49,9 +49,8 @@ public class PlanRepository {
 
     public List<WaitingPlan> getTeamWaitingPlan(Long teamId) {
         return em.createQuery("select new com.kuit.conet.dto.plan.WaitingPlan(p.id, p.startPeriod, p.endPeriod, p.team.name, p.name) " +
-                        "from TeamMember tm join Plan p on tm.team.id=p.team.id " +
-                        "where p.team.id=:teamId " +
-                        "and p.status=:status " +
+                        "from Plan p join p.team t on t.id=:teamId " +
+                        "where p.status=:status " +
                         "and p.startPeriod>=current_date() " +
                         "order by p.startPeriod", WaitingPlan.class)
                 .setParameter("teamId", teamId)
