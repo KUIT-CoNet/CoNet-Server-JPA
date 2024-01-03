@@ -27,7 +27,7 @@ public class TeamController {
     /**
      * @apiNote 모임 생성 api
      * */
-    @PostMapping("/create")
+    @PostMapping
     public BaseResponse<CreateTeamResponse> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequest teamRequest, HttpServletRequest httpRequest, @RequestParam(value = "file") MultipartFile file) {
         CreateTeamResponse response = teamService.createTeam(teamRequest, httpRequest, file);
         return new BaseResponse<CreateTeamResponse>(response);
