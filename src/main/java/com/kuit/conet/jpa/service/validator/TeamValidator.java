@@ -45,4 +45,12 @@ public class TeamValidator {
             throw new TeamException(EXPIRED_INVITE_CODE);
         }
     }
+
+    public static boolean isNewTeam(Team team){
+        log.info("{}",  team.getName());
+        LocalDateTime createdAt = team.getCreatedAt();
+        LocalDateTime now = LocalDateTime.now();
+
+        return !(now.minusDays(3).isAfter(createdAt));
+    }
 }

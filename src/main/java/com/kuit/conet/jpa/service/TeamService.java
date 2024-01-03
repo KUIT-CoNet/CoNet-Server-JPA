@@ -91,26 +91,9 @@ public class TeamService {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
 
         List<Team> teams = teamRepository.findByUserId(userId);
-        List<GetTeamResponse> teamReturnResponses = new ArrayList<>();
 
         // 모임의 created_at 시간 비교해서 3일 안지났으면 isNew 값 true, 지났으면 false로 반환
-        for(Team team : teams) {
-            log.info("{}",  team.getName());
-            LocalDateTime createdAt = team.getCreatedAt();
-            LocalDateTime now = LocalDateTime.now();
-
-            GetTeamResponse teamResponse;
-            if(now.minusDays(3).isAfter(createdAt)) {
-                teamResponse = new GetTeamResponse(team.getId(), team.getName(), team.getImgUrl(), teamRepository.getMemberCount(team.getId()),
-                        false, teamMemberRepository.isBookmark(userId, team.getId()));
-            }else {
-                teamResponse = new GetTeamResponse(team.getId(), team.getName(), team.getImgUrl(), teamRepository.getMemberCount(team.getId()),
-                        true, teamMemberRepository.isBookmark(userId, team.getId()));
-            }
-            teamReturnResponses.add(teamResponse);
-        }
-
-        return teamReturnResponses;
+        return generateTeamReturnResponse(teams, userId);
     }
 
     public String leaveTeam(TeamIdRequest teamRequest, HttpServletRequest httpRequest) {
@@ -163,6 +146,26 @@ public class TeamService {
         String inviteCode = teamRequest.getInviteCode();
         validateInviteCodeExisting(teamRepository,inviteCode);
         return inviteCode;
+    }
+
+    private List<GetTeamResponse> generateTeamReturnResponse(List<Team> teams, Long userId) {
+        List<GetTeamResponse> teamReturnResponses = new ArrayList<>();
+
+        for(Team team : teams) {
+            GetTeamResponse teamResponse;
+            if(!isNewTeam(team)) {
+                teamResponse = generateTeamResponse(team,userId, false);
+            }else {
+                teamResponse = generateTeamResponse(team,userId, true);
+            }
+            teamReturnResponses.add(teamResponse);
+        }
+        return teamReturnResponses;
+    }
+
+    private GetTeamResponse generateTeamResponse(Team team, Long userId, boolean b) {
+        return new GetTeamResponse(team.getId(), team.getName(), team.getImgUrl(), teamRepository.getMemberCount(team.getId()),
+                false, teamMemberRepository.isBookmark(userId, team.getId()));
     }
 
     //TODO: com.kuit.conet.service.TeamService 에 주석 처리된 코드 참고
