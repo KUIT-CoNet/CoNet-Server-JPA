@@ -15,6 +15,7 @@ import com.kuit.conet.dto.web.request.team.CreateTeamRequest;
 import com.kuit.conet.jpa.repository.TeamMemberRepository;
 import com.kuit.conet.jpa.repository.TeamRepository;
 import com.kuit.conet.jpa.repository.UserRepository;
+import com.kuit.conet.jpa.service.validator.TeamValidator;
 import com.kuit.conet.service.StorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -43,12 +44,8 @@ public class TeamService {
     private final TeamMemberRepository teamMemberRepository;
 
     public CreateTeamResponse createTeam(CreateTeamRequest teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
-        String inviteCode;
-
         // 초대 코드 생성 및 코드 중복 확인
-        do {
-            inviteCode = generateInviteCode();
-        } while (teamRepository.isExistInviteCode(inviteCode));  // 중복되면 true 반환
+        String inviteCode = getInviteCode();
 
         // 모임 생성 시간 찍기
         LocalDateTime codeGeneratedTime = LocalDateTime.now();
@@ -65,6 +62,16 @@ public class TeamService {
         teamRepository.save(newTeam);
 
         return new CreateTeamResponse(newTeam.getId(), newTeam.getInviteCode());
+    }
+
+    private String getInviteCode() {
+        String inviteCode = generateInviteCode();
+        while(true){
+            if(TeamValidator.validateDuplicateInviteCode(teamRepository, inviteCode))
+                break;
+            inviteCode = generateInviteCode();
+        }
+        return inviteCode;
     }
 
     private String updateTeamImg(MultipartFile file) {
