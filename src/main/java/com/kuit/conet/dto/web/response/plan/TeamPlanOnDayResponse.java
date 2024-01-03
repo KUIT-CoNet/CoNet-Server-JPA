@@ -1,6 +1,6 @@
 package com.kuit.conet.dto.web.response.plan;
 
-import com.kuit.conet.dto.plan.TeamFixedPlanOnDay;
+import com.kuit.conet.dto.plan.FixedPlanOnDay;
 import lombok.*;
 
 import java.util.List;
@@ -9,5 +9,5 @@ import java.util.List;
 @AllArgsConstructor
 public class TeamPlanOnDayResponse {
     int count;
-    List<TeamFixedPlanOnDay> plans;
+    List<FixedPlanOnDay> plans;
 }
