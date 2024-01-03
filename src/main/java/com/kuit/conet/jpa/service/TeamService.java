@@ -92,7 +92,6 @@ public class TeamService {
 
         List<Team> teams = teamRepository.findByUserId(userId);
 
-        // 모임의 created_at 시간 비교해서 3일 안지났으면 isNew 값 true, 지났으면 false로 반환
         return generateTeamReturnResponse(teams, userId);
     }
 
@@ -101,9 +100,7 @@ public class TeamService {
         Team team = teamRepository.findById(teamRequest.getTeamId());
 
         // 모임 존재 여부 확인
-        if (team==null) {
-            throw new TeamException(NOT_FOUND_TEAM);
-        }
+        validateTeamExisting(team);
 
         //변경 감지 이용
         TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(team.getId(), userId);
@@ -149,6 +146,7 @@ public class TeamService {
     }
 
     private List<GetTeamResponse> generateTeamReturnResponse(List<Team> teams, Long userId) {
+        // 모임의 created_at 시간 비교해서 3일 안지났으면 isNew 값 true, 지났으면 false로 반환
         List<GetTeamResponse> teamReturnResponses = new ArrayList<>();
 
         for(Team team : teams) {

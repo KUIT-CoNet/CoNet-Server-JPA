@@ -53,4 +53,10 @@ public class TeamValidator {
 
         return !(now.minusDays(3).isAfter(createdAt));
     }
+
+    public static void validateTeamExisting(Team team){
+        if (team==null) {
+            throw new TeamException(NOT_FOUND_TEAM);
+        }
+    }
 }
