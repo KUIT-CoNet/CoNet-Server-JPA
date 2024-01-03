@@ -1,9 +1,11 @@
 package com.kuit.conet.config;
 
 import com.kuit.conet.utils.BearerAuthInterceptor;
+import com.kuit.conet.utils.StringToEnumConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -19,6 +21,11 @@ public class MvcConfig implements WebMvcConfigurer {
 
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(clientIpResolver);
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new StringToEnumConverter());
     }
 
     public void addInterceptors(InterceptorRegistry registry){
