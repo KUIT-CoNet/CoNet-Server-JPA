@@ -18,16 +18,16 @@ public class TeamMemberRepository {
     }
 
     public Boolean isBookmark(Long userId, Long teamId) {
-        return em.createQuery("select tm.bookMark from TeamMember tm where tm.team.id=:teamId and tm.member.id=:userId",boolean.class)
-                .setParameter("userId",userId)
-                .setParameter("teamId",teamId)
+        return em.createQuery("select tm.bookMark from TeamMember tm where tm.team.id=:teamId and tm.member.id=:userId", boolean.class)
+                .setParameter("userId", userId)
+                .setParameter("teamId", teamId)
                 .getSingleResult();
     }
 
     public TeamMember findByTeamIdAndUserId(Long teamId, Long userId) {
         return em.createQuery("select tm from TeamMember tm where tm.team.id=:teamId and tm.member.id=:userId", TeamMember.class)
-                .setParameter("teamId",teamId)
-                .setParameter("userId",userId)
+                .setParameter("teamId", teamId)
+                .setParameter("userId", userId)
                 .getSingleResult();
     }
 }

@@ -2,9 +2,9 @@ package com.kuit.conet.dao;
 
 import com.kuit.conet.domain.auth.Platform;
 import com.kuit.conet.domain.user.User;
-import com.kuit.conet.dto.request.auth.OptionTermRequest;
-import com.kuit.conet.dto.response.StorageImgResponse;
-import com.kuit.conet.dto.response.user.UserResponse;
+import com.kuit.conet.dto.web.request.auth.OptionTermRequest;
+import com.kuit.conet.dto.web.response.StorageImgResponse;
+import com.kuit.conet.dto.web.response.user.UserResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;

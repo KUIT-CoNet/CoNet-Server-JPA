@@ -1,6 +1,6 @@
 package com.kuit.conet.service;
 
-import com.kuit.conet.dto.request.auth.OptionTermRequest;
+import com.kuit.conet.dto.web.request.auth.OptionTermRequest;
 import com.kuit.conet.utils.JwtParser;
 import com.kuit.conet.utils.auth.JwtTokenProvider;
 import com.kuit.conet.auth.apple.AppleUserProvider;
@@ -10,12 +10,12 @@ import com.kuit.conet.common.exception.UserException;
 import com.kuit.conet.dao.UserDao;
 import com.kuit.conet.domain.auth.Platform;
 import com.kuit.conet.domain.user.User;
-import com.kuit.conet.dto.request.auth.LoginRequest;
-import com.kuit.conet.dto.request.auth.PutOptionTermAndNameRequest;
-import com.kuit.conet.dto.response.auth.AgreeTermAndPutNameResponse;
-import com.kuit.conet.dto.response.auth.ApplePlatformUserResponse;
-import com.kuit.conet.dto.response.auth.KakaoPlatformUserResponse;
-import com.kuit.conet.dto.response.auth.LoginResponse;
+import com.kuit.conet.dto.web.request.auth.LoginRequest;
+import com.kuit.conet.dto.web.request.auth.PutOptionTermAndNameRequest;
+import com.kuit.conet.dto.web.response.auth.AgreeTermAndPutNameResponse;
+import com.kuit.conet.dto.web.response.auth.ApplePlatformUserResponse;
+import com.kuit.conet.dto.web.response.auth.KakaoPlatformUserResponse;
+import com.kuit.conet.dto.web.response.auth.LoginResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

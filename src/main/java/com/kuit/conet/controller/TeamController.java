@@ -1,12 +1,12 @@
 package com.kuit.conet.controller;
 
 import com.kuit.conet.common.response.BaseResponse;
-import com.kuit.conet.dto.request.team.CreateTeamRequest;
-import com.kuit.conet.dto.request.team.ParticipateTeamRequest;
-import com.kuit.conet.dto.request.team.TeamIdRequest;
-import com.kuit.conet.dto.request.team.UpdateTeamRequest;
-import com.kuit.conet.dto.response.StorageImgResponse;
-import com.kuit.conet.dto.response.team.*;
+import com.kuit.conet.dto.web.request.team.CreateTeamRequest;
+import com.kuit.conet.dto.web.request.team.ParticipateTeamRequest;
+import com.kuit.conet.dto.web.request.team.TeamIdRequest;
+import com.kuit.conet.dto.web.response.team.CreateTeamResponse;
+import com.kuit.conet.dto.web.response.team.GetTeamResponse;
+import com.kuit.conet.dto.web.response.team.ParticipateTeamResponse;
 import com.kuit.conet.jpa.service.TeamService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -24,27 +24,39 @@ import java.util.List;
 public class TeamController {
     private final TeamService teamService;
 
+    /**
+     * @apiNote 모임 생성 api
+     * */
     @PostMapping("/create")
-    public BaseResponse<CreateTeamResponse> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequest createTeamRequest, HttpServletRequest httpRequest, @RequestParam(value = "file") MultipartFile file) {
-        CreateTeamResponse response = teamService.createTeam(createTeamRequest, httpRequest, file);
+    public BaseResponse<CreateTeamResponse> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequest teamRequest, HttpServletRequest httpRequest, @RequestParam(value = "file") MultipartFile file) {
+        CreateTeamResponse response = teamService.createTeam(teamRequest, httpRequest, file);
         return new BaseResponse<CreateTeamResponse>(response);
     }
 
+    /**
+     * @apiNote 모임 참가 api
+     * */
     @PostMapping("/participate")
-    public BaseResponse<ParticipateTeamResponse> participateTeam(@RequestBody @Valid ParticipateTeamRequest participateRequest, HttpServletRequest httpRequest) {
-        ParticipateTeamResponse response = teamService.participateTeam(participateRequest, httpRequest);
+    public BaseResponse<ParticipateTeamResponse> participateTeam(@RequestBody @Valid ParticipateTeamRequest teamRequest, HttpServletRequest httpRequest) {
+        ParticipateTeamResponse response = teamService.participateTeam(teamRequest, httpRequest);
         return new BaseResponse<ParticipateTeamResponse>(response);
     }
 
+    /**
+     * @apiNote 모임 리스트 조회 api
+     * */
     @GetMapping
     public BaseResponse<List<GetTeamResponse>> getTeam(HttpServletRequest httpRequest) {
         List<GetTeamResponse> responses = teamService.getTeam(httpRequest);
         return new BaseResponse<List<GetTeamResponse>>(responses);
     }
 
+    /**
+     * @apiNote 모임 탈퇴 api
+     * */
     @PostMapping("/leave")
-    public BaseResponse<String> leaveTeam(@RequestBody @Valid TeamIdRequest request, HttpServletRequest httpRequest) {
-        String response = teamService.leaveTeam(request, httpRequest);
+    public BaseResponse<String> leaveTeam(@RequestBody @Valid TeamIdRequest teamRequest, HttpServletRequest httpRequest) {
+        String response = teamService.leaveTeam(teamRequest, httpRequest);
         return new BaseResponse<String>(response);
     }
 

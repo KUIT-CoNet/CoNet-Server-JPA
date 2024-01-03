@@ -1,15 +1,17 @@
 package com.kuit.conet.jpa.service;
 
 import com.kuit.conet.common.exception.TeamException;
-import com.kuit.conet.dto.request.team.ParticipateTeamRequest;
-import com.kuit.conet.dto.request.team.TeamIdRequest;
+import com.kuit.conet.dto.web.request.team.ParticipateTeamRequest;
+import com.kuit.conet.dto.web.request.team.TeamIdRequest;
+import com.kuit.conet.dto.web.response.team.CreateTeamResponse;
+import com.kuit.conet.dto.web.response.team.GetTeamResponse;
+import com.kuit.conet.dto.web.response.team.ParticipateTeamResponse;
 import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.team.TeamMember;
 import com.kuit.conet.jpa.domain.team.*;
 
 import com.kuit.conet.domain.storage.StorageDomain;
-import com.kuit.conet.dto.request.team.CreateTeamRequest;
-import com.kuit.conet.dto.response.team.*;
+import com.kuit.conet.dto.web.request.team.CreateTeamRequest;
 import com.kuit.conet.jpa.repository.TeamMemberRepository;
 import com.kuit.conet.jpa.repository.TeamRepository;
 import com.kuit.conet.jpa.repository.UserRepository;
@@ -23,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -41,7 +42,7 @@ public class TeamService {
     private final UserRepository userRepository;
     private final TeamMemberRepository teamMemberRepository;
 
-    public CreateTeamResponse createTeam(CreateTeamRequest createTeamRequest, HttpServletRequest httpRequest, MultipartFile file) {
+    public CreateTeamResponse createTeam(CreateTeamRequest teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
         String inviteCode;
 
         // 초대 코드 생성 및 코드 중복 확인
@@ -53,7 +54,7 @@ public class TeamService {
         LocalDateTime codeGeneratedTime = LocalDateTime.now();
 
         // team 생성
-        Team newTeam = Team.builder().teamName(createTeamRequest.getTeamName())
+        Team newTeam = Team.builder().teamName(teamRequest.getTeamName())
                 .inviteCode(inviteCode)
                 .codeGeneratedTime(codeGeneratedTime)
                 .build();
@@ -95,12 +96,13 @@ public class TeamService {
         return generatedString;
     }
 
-    public ParticipateTeamResponse participateTeam(ParticipateTeamRequest participateRequest, HttpServletRequest httpRequest) {
+    public ParticipateTeamResponse participateTeam(ParticipateTeamRequest teamRequest, HttpServletRequest httpRequest) {
         // 모임 참가 요청 시간 찍기
         LocalDateTime participateRequestTime = LocalDateTime.now();
 
         // 초대 코드 존재 확인
-        String inviteCode = participateRequest.getInviteCode();
+        //todo method 추출하기
+        String inviteCode = teamRequest.getInviteCode();
         if (!teamRepository.isExistInviteCode(inviteCode)) {
             throw new TeamException(NOT_FOUND_INVITE_CODE);
         }
@@ -131,7 +133,7 @@ public class TeamService {
         }
 
         // team에 teamMember 추가 (변경 감지)
-        team.addTeamMember(team,user);
+        team.addTeamMember(team, user);
 
         return new ParticipateTeamResponse(user.getName(), team.getName(), user.getStatus());
     }
@@ -162,9 +164,9 @@ public class TeamService {
         return teamReturnResponses;
     }
 
-    public String leaveTeam(TeamIdRequest teamIdRequest, HttpServletRequest httpRequest) {
+    public String leaveTeam(TeamIdRequest teamRequest, HttpServletRequest httpRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-        Team team = teamRepository.findById(teamIdRequest.getTeamId());
+        Team team = teamRepository.findById(teamRequest.getTeamId());
         
         // 모임 존재 여부 확인
         if (team==null) {

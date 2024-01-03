@@ -57,18 +57,11 @@ public class Team {
     }
     public void addPlan(Plan plan) { plans.add(plan); }
 
-    public List<Plan> getFixedPlans() {
-        return plans.stream()
-                .filter(Plan::isFixed)
-                .toList();
-    }
-
     //== 연관관계 편의 메서드 ==//
     public void addTeamMember(Team team, Member user) {
-        TeamMember newTeamMember = new TeamMember(team,user);
+        TeamMember newTeamMember = new TeamMember(team, user);
 
         team.teamMembers.add(newTeamMember);
-        newTeamMember.setTeam(team);
     }
 
     public void deleteMember(TeamMember teamMember) {

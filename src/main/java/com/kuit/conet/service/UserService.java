@@ -2,9 +2,9 @@ package com.kuit.conet.service;
 
 import com.kuit.conet.common.exception.UserException;
 import com.kuit.conet.domain.storage.StorageDomain;
-import com.kuit.conet.dto.request.user.NameRequest;
-import com.kuit.conet.dto.response.StorageImgResponse;
-import com.kuit.conet.dto.response.user.UserResponse;
+import com.kuit.conet.dto.web.request.user.NameRequest;
+import com.kuit.conet.dto.web.response.StorageImgResponse;
+import com.kuit.conet.dto.web.response.user.UserResponse;
 import com.kuit.conet.dao.UserDao;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
