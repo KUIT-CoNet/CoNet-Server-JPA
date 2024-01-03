@@ -20,11 +20,13 @@ public class DateFormatter {
     }
 
     public static String dateToStringWithDot(Date date) {
+        // yyyy-MM-dd -> yyyy. MM. dd
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy. MM. dd");
         return dateFormat.format(date);
     }
 
     public static String timeDeleteSecondsAndToString(Time time) {
+        // HH:mm:ss -> HH:mm
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         return dateFormat.format(time);
     }

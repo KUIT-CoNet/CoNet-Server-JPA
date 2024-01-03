@@ -251,12 +251,6 @@ public class PlanService {
         return new TeamPlanOnDayResponse(plans.size(), plans);
     }
 
-    public WaitingPlanResponse getWaitingPlan(TeamWaitingPlanRequest planRequest) {
-        List<WaitingPlan> plans = planDao.getWaitingPlanInTeam(planRequest.getTeamId());
-
-        return new WaitingPlanResponse(plans.size(), plans);
-    }
-
     public PlanDetail getPlanDetail(PlanIdRequest planRequest) {
         //TODO: history 내용 삭제
         Long planId = planRequest.getPlanId();

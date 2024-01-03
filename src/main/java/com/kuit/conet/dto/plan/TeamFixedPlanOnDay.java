@@ -12,7 +12,7 @@ import java.sql.Time;
 public class TeamFixedPlanOnDay {
     private Long planId;
     private String planName;
-    private String time; // hh:mm
+    private String time; // HH:mm
 
     public TeamFixedPlanOnDay(Long planId, String planName, Time time) {
         this.planId = planId;
