@@ -1,11 +1,8 @@
 package com.kuit.conet.controller;
 
 import com.kuit.conet.common.response.BaseResponse;
-import com.kuit.conet.dto.web.request.plan.CreatePlanRequest;
-import com.kuit.conet.dto.web.request.plan.TeamFixedPlanRequest;
-import com.kuit.conet.dto.web.response.plan.CreatePlanResponse;
-import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponse;
-import com.kuit.conet.dto.web.response.plan.TeamPlanOnDayResponse;
+import com.kuit.conet.dto.web.request.plan.*;
+import com.kuit.conet.dto.web.response.plan.*;
 import com.kuit.conet.jpa.service.PlanService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +26,8 @@ public class PlanController {
     }
 
     /**
-     * 모임 내 특정 날짜 확정 약속 조회 - 날짜(yyyy-MM-dd) / 시각(hh-mm)
-     * - '나'의 직접적인 참여 여부와 무관
+     * @apiNote 모임 내 특정 날짜 확정 약속 조회 api
+     * / '나'의 직접적인 참여 여부와 무관
      * */
     @GetMapping("/day")
     public BaseResponse<TeamPlanOnDayResponse> getFixedPlanOnDay(@ModelAttribute @Valid TeamFixedPlanRequest planRequest) {
@@ -39,11 +36,21 @@ public class PlanController {
     }
 
     /**
-     * 모임 내 특정 달의 약속이 존재하는 날짜 조회 - 날짜 (dd)
+     * @apiNote  모임 내 특정 달의 약속이 존재하는 날짜 조회 api
      */
     @GetMapping("/month")
     public BaseResponse<PlanDateOnMonthResponse> getFixedPlanInMonth(@ModelAttribute @Valid TeamFixedPlanRequest planRequest) {
         PlanDateOnMonthResponse response = planService.getFixedPlanInMonth(planRequest);
+        return new BaseResponse<>(response);
+    }
+
+    /**
+     * @apiNote [사이드바] 모임 내 대기 중인 약속 조회 api
+     * / '나'의 직접적인 참여 여부와 무관
+     */
+    @GetMapping("/waiting")
+    public BaseResponse<WaitingPlanResponse> getWaitingPlan(@ModelAttribute @Valid TeamWaitingPlanRequest planRequest) {
+        WaitingPlanResponse response = planService.getTeamWaitingPlan(planRequest);
         return new BaseResponse<>(response);
     }
 
@@ -70,17 +77,6 @@ public class PlanController {
     @PostMapping("/fix")
     public BaseResponse<String> fixPlan(@RequestBody @Valid FixPlanRequest fixPlanRequest) {
         String response = planService.fixPlan(fixPlanRequest);
-        return new BaseResponse<>(response);
-    }
-
-    *//**
-     * 모임 내 대기 중인 약속 조회 - 날짜(yyyy-MM-dd) / 시각(hh-mm) / 약속 명 / 모임 명
-     * - '나'의 직접적인 참여 여부와 무관
-     * - 모임 명은 필요 없지만 하나의 dto 를 공유하기 위하여 반환함
-     * *//*
-    @GetMapping("/waiting")
-    public BaseResponse<WaitingPlanResponse> getWaitingPlan(@ModelAttribute @Valid TeamWaitingPlanRequest planRequest) {
-        WaitingPlanResponse response = planService.getWaitingPlan(planRequest);
         return new BaseResponse<>(response);
     }
 

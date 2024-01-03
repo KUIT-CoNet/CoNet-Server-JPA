@@ -3,7 +3,7 @@ package com.kuit.conet.service;
 
 import com.kuit.conet.dao.HomeDao;
 import com.kuit.conet.domain.plan.HomeFixedPlanOnDay;
-import com.kuit.conet.domain.plan.WaitingPlan;
+import com.kuit.conet.dto.plan.WaitingPlan;
 import com.kuit.conet.dto.request.plan.HomePlanRequest;
 import com.kuit.conet.dto.response.plan.HomePlanOnDayResponse;
 import com.kuit.conet.dto.response.plan.MonthPlanResponse;

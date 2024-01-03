@@ -1,7 +1,7 @@
 package com.kuit.conet.jpa.repository;
 
 import com.kuit.conet.domain.plan.HomeFixedPlanOnDay;
-import com.kuit.conet.domain.plan.WaitingPlan;
+import com.kuit.conet.dto.plan.WaitingPlan;
 import com.kuit.conet.jpa.domain.plan.PlanStatus;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
@@ -50,7 +50,7 @@ public class HomeRepository {
         // 모든 대기 중인 약속 중에서 p.status=WAITING
         // 시작 날짜가 오늘 이후 plan_start_period >= current_date();
 
-        return em.createQuery("select new com.kuit.conet.domain.plan.WaitingPlan(p.id, p.startPeriod, p.endPeriod, p.team.name, p.name) " +
+        return em.createQuery("select new com.kuit.conet.dto.plan.WaitingPlan(p.id, p.startPeriod, p.endPeriod, p.team.name, p.name) " +
                         "from TeamMember tm join Plan p on tm.team.id=p.team.id " +
                         "where tm.member.id=:userId " +
                         "and p.status=:status " +
