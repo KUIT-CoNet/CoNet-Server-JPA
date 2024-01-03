@@ -59,10 +59,9 @@ public class Team {
 
     //== 연관관계 편의 메서드 ==//
     public void addTeamMember(Team team, Member user) {
-        TeamMember newTeamMember = new TeamMember(team,user);
+        TeamMember newTeamMember = new TeamMember(team, user);
 
         team.teamMembers.add(newTeamMember);
-        newTeamMember.setTeam(team);
     }
 
     public void deleteMember(TeamMember teamMember) {

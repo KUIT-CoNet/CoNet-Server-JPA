@@ -101,6 +101,7 @@ public class TeamService {
         LocalDateTime participateRequestTime = LocalDateTime.now();
 
         // 초대 코드 존재 확인
+        //todo method 추출하기
         String inviteCode = teamRequest.getInviteCode();
         if (!teamRepository.isExistInviteCode(inviteCode)) {
             throw new TeamException(NOT_FOUND_INVITE_CODE);
@@ -132,7 +133,7 @@ public class TeamService {
         }
 
         // team에 teamMember 추가 (변경 감지)
-        team.addTeamMember(team,user);
+        team.addTeamMember(team, user);
 
         return new ParticipateTeamResponse(user.getName(), team.getName(), user.getStatus());
     }

@@ -24,24 +24,36 @@ import java.util.List;
 public class TeamController {
     private final TeamService teamService;
 
+    /**
+     * @apiNote 모임 생성 api
+     * */
     @PostMapping("/create")
     public BaseResponse<CreateTeamResponse> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequest teamRequest, HttpServletRequest httpRequest, @RequestParam(value = "file") MultipartFile file) {
         CreateTeamResponse response = teamService.createTeam(teamRequest, httpRequest, file);
         return new BaseResponse<CreateTeamResponse>(response);
     }
 
+    /**
+     * @apiNote 모임 참가 api
+     * */
     @PostMapping("/participate")
     public BaseResponse<ParticipateTeamResponse> participateTeam(@RequestBody @Valid ParticipateTeamRequest teamRequest, HttpServletRequest httpRequest) {
         ParticipateTeamResponse response = teamService.participateTeam(teamRequest, httpRequest);
         return new BaseResponse<ParticipateTeamResponse>(response);
     }
 
+    /**
+     * @apiNote 모임 리스트 조회 api
+     * */
     @GetMapping
     public BaseResponse<List<GetTeamResponse>> getTeam(HttpServletRequest httpRequest) {
         List<GetTeamResponse> responses = teamService.getTeam(httpRequest);
         return new BaseResponse<List<GetTeamResponse>>(responses);
     }
 
+    /**
+     * @apiNote 모임 탈퇴 api
+     * */
     @PostMapping("/leave")
     public BaseResponse<String> leaveTeam(@RequestBody @Valid TeamIdRequest teamRequest, HttpServletRequest httpRequest) {
         String response = teamService.leaveTeam(teamRequest, httpRequest);
