@@ -25,6 +25,8 @@ public class TeamMember {
     @Column(columnDefinition = "boolean default false")
     private boolean bookMark;
 
+    @Enumerated
+    private TeamMemberStatus status;
 
     //==생성 메서드==//
     public static TeamMember createTeamMember(Team team, Member member) {
@@ -32,11 +34,16 @@ public class TeamMember {
         teamMember.member = member;
         teamMember.team = team;
         teamMember.bookMark = false;
+        teamMember.status = TeamMemberStatus.MEMBER;
 
         return teamMember;
     }
 
     public void setTeam(Team team) {
         this.team=team;
+    }
+
+    public void setStatus(TeamMemberStatus creator) {
+        this.status=creator;
     }
 }
