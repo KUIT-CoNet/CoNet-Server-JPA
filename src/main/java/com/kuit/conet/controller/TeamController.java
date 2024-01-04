@@ -55,8 +55,17 @@ public class TeamController {
      * @apiNote 모임 탈퇴 api
      * */
     @PostMapping("/leave")
-    public BaseResponse<String> leaveTeam(@RequestBody @Valid TeamIdRequest request, HttpServletRequest httpRequest) {
-        String response = teamService.leaveTeam(request, httpRequest);
+    public BaseResponse<String> leaveTeam(@RequestBody @Valid TeamIdRequest teamRequest, HttpServletRequest httpRequest) {
+        String response = teamService.leaveTeam(teamRequest, httpRequest);
+        return new BaseResponse<String>(response);
+    }
+
+    /**
+     * @apiNote 모임 삭제 api
+     * */
+    @DeleteMapping("/{teamId}")
+    public BaseResponse<String> deleteTeam(@PathVariable Long teamId, HttpServletRequest httpServletRequest) {
+        String response = teamService.deleteTeam(teamId,httpServletRequest);
         return new BaseResponse<String>(response);
     }
 
@@ -68,11 +77,6 @@ public class TeamController {
         return new BaseResponse<>(response);
     }
 
-    @PostMapping("/delete")
-    public BaseResponse<String> deleteTeam(@RequestBody @Valid TeamIdRequest request) {
-        String response = teamService.deleteTeam(request);
-        return new BaseResponse<String>(response);
-    }
 
     @PostMapping("/update")
     public BaseResponse<StorageImgResponse> updateTeam(@RequestPart(value = "request") @Valid UpdateTeamRequest updateTeamRequest, @RequestParam(value = "file") MultipartFile file) {
