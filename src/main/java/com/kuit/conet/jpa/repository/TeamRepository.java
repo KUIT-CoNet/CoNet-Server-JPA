@@ -58,4 +58,9 @@ public class TeamRepository {
                 .getSingleResult();
     }
 
+    public boolean isTeamMember(Team team, Long userId) {
+        return em.createQuery("select count(tm)>0 from TeamMember  tm join tm.member on tm.member.id=:userId", Boolean.class)
+                .setParameter("userId",userId)
+                .getSingleResult();
+    }
 }

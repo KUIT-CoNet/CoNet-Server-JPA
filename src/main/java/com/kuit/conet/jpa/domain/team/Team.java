@@ -56,8 +56,6 @@ public class Team {
         team.imgUrl=imgUrl;
 
         TeamMember teamMember=TeamMember.createTeamMember(team,teamCreator);
-        teamMember.setStatus(TeamMemberStatus.CREATOR);
-
         team.addTeamMember(teamMember);
 
         return team;
