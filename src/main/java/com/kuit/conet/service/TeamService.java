@@ -62,19 +62,6 @@ public class TeamService {
         return new RegenerateCodeResponse(request.getTeamId(), newCode, codeDeadlineStr);
     }
 
-    public String leaveTeam(TeamIdRequest teamIdRequest, HttpServletRequest httpRequest) {
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-
-        // 모임 존재 여부 확인
-        if (!teamDao.isExistTeam(teamIdRequest.getTeamId())) {
-            throw new TeamException(NOT_FOUND_TEAM);
-        }
-
-        teamDao.leaveTeam(teamIdRequest.getTeamId(), userId);
-
-        return "모임 탈퇴에 성공하였습니다.";
-    }
-
     public String deleteTeam(TeamIdRequest teamIdRequest) {
         // 모임 존재 여부 확인
         if (!teamDao.isExistTeam(teamIdRequest.getTeamId())) {

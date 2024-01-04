@@ -63,4 +63,15 @@ public class TeamRepository {
                 .setParameter("userId",userId)
                 .getSingleResult();
     }
+
+    public void deleteTeam(Long teamId) {
+        em.createQuery("delete from Team t where t.id=:teamId")
+                .setParameter("teamId",teamId);
+    }
+
+    public String getTeamImgUrl(Long teamId) {
+        return em.createQuery("select t.imgUrl from Team t where t.id=:teamId",String.class)
+                .setParameter("teamId",teamId)
+                .getSingleResult();
+    }
 }

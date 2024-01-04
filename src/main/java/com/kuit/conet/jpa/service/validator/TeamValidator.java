@@ -66,4 +66,10 @@ public class TeamValidator {
             throw new TeamException(NOT_FOUND_TEAM);
         }
     }
+
+    public static void isTeamMember(TeamRepository teamRepository, Team team, Long userId){
+        if(!teamRepository.isTeamMember(team,userId)){
+            throw new TeamException(NO_AUTHORITY);
+        }
+    }
 }
