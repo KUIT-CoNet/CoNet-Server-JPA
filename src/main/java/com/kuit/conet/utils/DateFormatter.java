@@ -25,7 +25,7 @@ public class DateFormatter {
         return dateFormat.format(date);
     }
 
-    public static String timeDeleteSecondsAndToString(Time time) {
+    public static String timeDeleteSeconds(Time time) {
         // HH:mm:ss -> HH:mm
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         return dateFormat.format(time);

@@ -1,6 +1,5 @@
 package com.kuit.conet.dto.plan;
 
-import com.kuit.conet.utils.DateFormatter;
 import lombok.Getter;
 
 import java.sql.Time;
@@ -16,6 +15,6 @@ public class FixedPlanOnDay {
     public FixedPlanOnDay(Long planId, String planName, Time time) {
         this.planId = planId;
         this.planName = planName;
-        this.time = timeDeleteSecondsAndToString(time);
+        this.time = timeDeleteSeconds(time);
     }
 }

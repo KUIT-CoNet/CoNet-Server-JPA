@@ -1,6 +1,5 @@
 package com.kuit.conet.domain.plan;
 
-import com.kuit.conet.utils.DateFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -18,7 +17,7 @@ public class HomeFixedPlanOnDay {
 
     public HomeFixedPlanOnDay(Long planId, Time time, String teamName, String planName) {
         this.planId = planId;
-        this.time = timeDeleteSecondsAndToString(time);
+        this.time = timeDeleteSeconds(time);
         this.teamName = teamName;
         this.planName = planName;
     }
