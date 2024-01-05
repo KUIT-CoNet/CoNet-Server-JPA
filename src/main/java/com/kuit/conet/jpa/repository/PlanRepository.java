@@ -24,6 +24,13 @@ public class PlanRepository {
         return plan.getId();
     }
 
+    public Plan findWithMembersById(Long planId) {
+        return em.createQuery("select p from Plan p left join fetch p.planMembers pm left join fetch pm.member " +
+                        "where p.id=:planId", Plan.class)
+                .setParameter("planId", planId)
+                .getSingleResult();
+    }
+
     public List<FixedPlanOnDay> getFixedPlansOnDay(Long teamId, String searchDate) {
         return em.createQuery("select new com.kuit.conet.dto.plan.FixedPlanOnDay(p.id, p.name, p.fixedTime) " +
                 "from Plan p join p.team t on t.id=:teamId " +
@@ -62,7 +69,7 @@ public class PlanRepository {
     public List<SideMenuFixedPlan> getFixedPastPlans(Long teamId, Long userId) {
         return em.createQuery("select new com.kuit.conet.dto.plan.SideMenuFixedPlan(p.id, p.name, p.fixedDate, p.fixedTime, " +
                         "                                                                       function('DATEDIFF', CURRENT_DATE, p.fixedDate), " + // 약속이 지난 지 며칠 ?
-                        "                                                                       (select count(pm.id)>0 " +
+                        "                                                                       (select count(pm)>0 " +
                         "                                                                        from PlanMember pm " +
                         "                                                                        where pm.plan.id=p.id and pm.member.id=:userId)) " +
                         "from Plan p " +
@@ -79,7 +86,7 @@ public class PlanRepository {
     public List<SideMenuFixedPlan> getFixedFuturePlans(Long teamId, Long userId) {
         return em.createQuery("select new com.kuit.conet.dto.plan.SideMenuFixedPlan(p.id, p.name, p.fixedDate, p.fixedTime, " +
                         "                                                                       function('DATEDIFF', p.fixedDate, CURRENT_DATE), " + // 며칠 남은 약속 ?
-                        "                                                                       (select count(pm.id)>0 " +
+                        "                                                                       (select count(pm)>0 " +
                         "                                                                        from PlanMember pm " +
                         "                                                                        where pm.plan.id=p.id and pm.member.id=:userId)) " +
                         "from Plan p " +

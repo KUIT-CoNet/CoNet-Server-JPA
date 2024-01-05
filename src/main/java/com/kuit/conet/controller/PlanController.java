@@ -1,6 +1,8 @@
 package com.kuit.conet.controller;
 
+import com.kuit.conet.common.exception.PlanException;
 import com.kuit.conet.common.response.BaseResponse;
+import com.kuit.conet.dto.web.response.plan.PlanDetailResponseDTO;
 import com.kuit.conet.dto.web.request.plan.TeamFixedPlanInPeriodRequest;
 import com.kuit.conet.dto.web.request.plan.*;
 import com.kuit.conet.dto.web.response.plan.*;
@@ -11,6 +13,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.BAD_REQUEST;
 
 @Slf4j
 @RestController
@@ -25,6 +29,15 @@ public class PlanController {
     @PostMapping
     public BaseResponse<CreatePlanResponse> createPlan(@RequestBody @Valid CreatePlanRequest planRequest) {
         CreatePlanResponse response = planService.createPlan(planRequest);
+        return new BaseResponse<>(response);
+    }
+
+    /**
+     * @apiNote 약속 상세 정보 조회 api
+     */
+    @GetMapping("/{planId}")
+    public BaseResponse<PlanDetailResponseDTO> getPlan(@PathVariable @Valid Long planId) {
+        PlanDetailResponseDTO response = planService.getPlanDetail(planId);
         return new BaseResponse<>(response);
     }
 
@@ -63,17 +76,19 @@ public class PlanController {
      */
     @GetMapping("/fixed")
     public BaseResponse<SideMenuFixedPlanResponse> getFixedPlan(HttpServletRequest httpRequest, @ModelAttribute TeamFixedPlanInPeriodRequest planRequest) {
-        SideMenuFixedPlanResponse response;
-
         // 지난 약속
         if (planRequest.getPeriod() == PlanPeriod.PAST) {
-            response = planService.getFixedPastPlan(httpRequest, planRequest.getTeamId());
+            SideMenuFixedPlanResponse response = planService.getFixedPastPlan(httpRequest, planRequest.getTeamId());
             return new BaseResponse<>(response);
         }
 
         // 다가오는 약속
-        response = planService.getFixedFuturePlan(httpRequest, planRequest.getTeamId());
-        return new BaseResponse<>(response);
+        if (planRequest.getPeriod() == PlanPeriod.ONCOMING) {
+            SideMenuFixedPlanResponse response = planService.getFixedFuturePlan(httpRequest, planRequest.getTeamId());
+            return new BaseResponse<>(response);
+        }
+
+        throw new PlanException(BAD_REQUEST);
     }
 
 /*
@@ -98,15 +113,6 @@ public class PlanController {
     @PostMapping("/fix")
     public BaseResponse<String> fixPlan(@RequestBody @Valid FixPlanRequest fixPlanRequest) {
         String response = planService.fixPlan(fixPlanRequest);
-        return new BaseResponse<>(response);
-    }
-
-    *//**
-     * 약속 상세 정보 조회
-     * *//*
-    @GetMapping("/detail")
-    public BaseResponse<PlanDetail> getPlanDetail(@ModelAttribute @Valid PlanIdRequest planRequest) {
-        PlanDetail response = planService.getPlanDetail(planRequest);
         return new BaseResponse<>(response);
     }
 

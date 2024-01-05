@@ -1,13 +1,10 @@
-package com.kuit.conet.domain.plan;
+package com.kuit.conet.dto.plan;
 
 import lombok.*;
 
 @Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@ToString
-public class PlanMember {
+public class PlanMemberDTO {
     private Long id;
     private String name;
     private String image;

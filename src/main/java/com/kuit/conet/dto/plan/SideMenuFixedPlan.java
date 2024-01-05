@@ -21,7 +21,7 @@ public class SideMenuFixedPlan {
         this.planId = planId;
         this.planName = planName;
         this.date = dateToStringWithDot(date);
-        this.time = timeDeleteSecondsAndToString(time);
+        this.time = timeDeleteSeconds(time);
         this.dDay = Long.valueOf(dDay);
         this.isParticipant = isParticipant;
     }
