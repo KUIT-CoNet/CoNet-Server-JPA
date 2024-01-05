@@ -86,13 +86,13 @@ public class TeamService {
 
         // team에 teamMember 추가 (변경 감지)
         TeamMember teamMember = TeamMember.createTeamMember(team, user);
-        team.addTeamMember(teamMember);
 
         return new ParticipateTeamResponseDTO(user.getName(), team.getName(), user.getStatus());
     }
 
     public List<GetTeamResponseDTO> getTeam(HttpServletRequest httpRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+
 
         List<Team> teams = teamRepository.findByUserId(userId);
 
