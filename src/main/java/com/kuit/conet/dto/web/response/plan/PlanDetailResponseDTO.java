@@ -6,7 +6,7 @@ import lombok.*;
 
 import java.util.List;
 
-import static com.kuit.conet.utils.DateFormatter.*;
+import static com.kuit.conet.utils.DateAndTimeFormatter.*;
 
 @Getter
 public class PlanDetailResponseDTO {

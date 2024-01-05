@@ -4,7 +4,7 @@ import lombok.Getter;
 
 import java.sql.Date;
 
-import static com.kuit.conet.utils.DateFormatter.*;
+import static com.kuit.conet.utils.DateAndTimeFormatter.*;
 
 @Getter
 public class WaitingPlanDTO {

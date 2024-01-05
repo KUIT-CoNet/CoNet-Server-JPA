@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.sql.Time;
 
-import static com.kuit.conet.utils.DateFormatter.*;
+import static com.kuit.conet.utils.DateAndTimeFormatter.*;
 
 @Getter
 @AllArgsConstructor

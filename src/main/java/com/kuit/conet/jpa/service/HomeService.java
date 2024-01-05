@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
 import java.util.List;
 
-import static com.kuit.conet.utils.DateFormatter.*;
+import static com.kuit.conet.utils.DateAndTimeFormatter.*;
 
 @Slf4j
 @Service

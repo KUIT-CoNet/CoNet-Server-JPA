@@ -1,5 +1,6 @@
 package com.kuit.conet.utils;
 
+import com.kuit.conet.dto.web.request.plan.FixPlanRequestDTO;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
@@ -8,9 +9,10 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Component
-public class DateFormatter {
+public class DateAndTimeFormatter {
     private static final String REGEX = "-";
     private static final int DATE_INDEX = 2;
+    private static final String MINUTE_AND_SECOND = ":00:00";
 
     public static List<Integer> datesToIntegerList(List<Date> dates) {
         return dates.stream()
@@ -29,6 +31,12 @@ public class DateFormatter {
         // HH:mm:ss -> HH:mm
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         return dateFormat.format(time);
+    }
+
+    public static Time timeIntegerToTime(FixPlanRequestDTO planRequest) {
+        Long longTime = planRequest.getFixedTime();
+        String strTime = longTime.toString() + MINUTE_AND_SECOND;
+        return Time.valueOf(strTime);
     }
 
 }
