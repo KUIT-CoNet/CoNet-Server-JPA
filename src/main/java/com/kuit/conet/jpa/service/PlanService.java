@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.kuit.conet.utils.DateFormatter.*;
@@ -55,6 +56,7 @@ public class PlanService {
                                 planMember.getId(),
                                 planMember.getMember().getName(),
                                 planMember.getMember().getImgUrl()))
+                .sorted(Comparator.comparing(PlanMemberDTO::getName))
                 .toList();
 
         return new PlanDetailResponseDTO(plan, planMemberList);
