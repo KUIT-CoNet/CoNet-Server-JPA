@@ -2,6 +2,7 @@ package com.kuit.conet.jpa.domain.team;
 
 import com.kuit.conet.jpa.domain.member.Member;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -9,7 +10,7 @@ import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
 public class TeamMember {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +27,6 @@ public class TeamMember {
 
     @Column(columnDefinition = "boolean default false")
     private boolean bookMark;
-
 
     //==생성 메서드==//
     public static TeamMember createTeamMember(Team team, Member member) {

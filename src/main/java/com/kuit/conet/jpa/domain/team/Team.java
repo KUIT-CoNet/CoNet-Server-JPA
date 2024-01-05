@@ -53,7 +53,6 @@ public class Team {
         team.imgUrl = imgUrl;
 
         TeamMember teamMember = TeamMember.createTeamMember(team, teamCreator);
-        team.addTeamMember(teamMember);
 
         return team;
     }
