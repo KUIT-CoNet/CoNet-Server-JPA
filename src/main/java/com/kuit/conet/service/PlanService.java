@@ -229,22 +229,6 @@ public class PlanService {
         return memberPossibleTimeResponse;
     }
 
-    public String fixPlan(FixPlanRequest fixPlanRequest) {
-        Long longTime = fixPlanRequest.getFixed_time();
-
-        String strTime = longTime.toString() + ":00:00";
-
-        Time time = Time.valueOf(strTime);
-
-        if(planDao.isFixedPlan(fixPlanRequest.getPlanId())){
-            throw new PlanException(ALREADY_FIXED_PLAN);
-        }
-        planDao.fixPlan(fixPlanRequest.getPlanId(), fixPlanRequest.getFixed_date(), time, fixPlanRequest.getUserId());
-        planDao.deletePlanMemberTime(fixPlanRequest.getPlanId());
-
-        return "약속 확정에 성공하였습니다.";
-    }
-
     public String deletePlan(PlanIdRequest planRequest) {
         //TODO: history 내용 삭제
         Long planId = planRequest.getPlanId();

@@ -149,31 +149,6 @@ public class PlanDao {
         return jdbcTemplate.queryForObject(sql, param, Long.class);
     }
 
-    public void fixPlan(Long planId, Date fixed_date, Time fixed_time, List<Long> userId) {
-        String planSql = "update plan set fixed_date=:fixed_date, fixed_time=:fixed_time, status=2 where plan_id=:plan_id and status=1";
-        Map<String, Object> planParam = Map.of("plan_id", planId,
-                "fixed_date", fixed_date,
-                "fixed_time", fixed_time);
-
-        jdbcTemplate.update(planSql, planParam);
-
-        for(Long userid : userId) {
-            String planMemberSql = "insert into plan_member (plan_id, user_id) " +
-                    "values (:plan_id, :user_id)";
-            Map<String, Object> planMemberParam = Map.of("plan_id", planId,
-                    "user_id", userid);
-
-            jdbcTemplate.update(planMemberSql, planMemberParam);
-        }
-    }
-
-    public Boolean isFixedPlan(Long planId) {
-        String sql = "select exists(select * from plan where plan_id=:plan_id and status=2)";
-        Map<String, Object> param = Map.of("plan_id", planId);
-
-        return jdbcTemplate.queryForObject(sql, param, Boolean.class);
-    }
-
     public Boolean isWaitingPlan(Long planId) {
         String sql = "select exists(select * from plan where plan_id=:plan_id and status=1)";
         Map<String, Object> param = Map.of("plan_id", planId);
