@@ -440,12 +440,6 @@ public class PlanDao {
         jdbcTemplate.update(sql, param);
     }
 
-    public void deletePlanMemberTime(Long planId) {
-        String sql = "delete from plan_member_time where plan_id=:plan_id";
-        Map<String, Object> param = Map.of("plan_id", planId);
-        jdbcTemplate.update(sql, param);
-    }
-
     public Boolean isRegisteredToPlanMemberTime(Long userId, Long planId) {
         String sql = "select exists(select * from plan_member_time where user_id=:user_id and plan_id=:plan_id)";
         Map<String, Object> param = Map.of("plan_id", planId,
