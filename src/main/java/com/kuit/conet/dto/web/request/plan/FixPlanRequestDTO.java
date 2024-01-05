@@ -6,13 +6,11 @@ import java.sql.Date;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 @Setter
+@AllArgsConstructor
 public class FixPlanRequestDTO {
     private Long planId;
-    private Date fixed_date;
-    private Long fixed_time;
-    private List<Long> userId;
+    private Date fixedDate;
+    private Long fixedTime;
+    private List<Long> userIds;
 }

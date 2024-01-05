@@ -1,9 +1,9 @@
 package com.kuit.conet.jpa.domain.plan;
 
+import com.kuit.conet.dto.plan.PlanMemberDTO;
 import com.kuit.conet.jpa.domain.team.Team;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -49,18 +49,38 @@ public class Plan {
     private PlanStatus status;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)// 다대다(다대일, 일대다) 단방향 연관 관계 / 연관 관계 주인의 반대편
-    private List<PlanMember> planMembers = new ArrayList<>();
+    private List<PlanMember> planMembers;
 
-    private Plan(Team team, String name, Date startPeriod, Date endPeriod) {
-        this.team = team;
-        this.name = name;
-        this.startPeriod = startPeriod;
-        this.endPeriod = endPeriod;
-
-        team.addPlan(this);
-    }
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)// 다대다(다대일, 일대다) 단방향 연관 관계 / 연관 관계 주인의 반대편
+    private List<PlanMemberTime> planMemberTimes;
 
     public static Plan createPlan(Team team, String name, Date startPeriod, Date endPeriod) {
-        return new Plan(team, name, startPeriod, endPeriod);
+        Plan plan = new Plan();
+
+        plan.team = team;
+        plan.name = name;
+        plan.startPeriod = startPeriod;
+        plan.endPeriod = endPeriod;
+        plan.planMembers = new ArrayList<>();
+        plan.planMemberTimes = new ArrayList<>();
+
+        team.addPlan(plan);
+
+        return plan;
     }
+
+    public void fixPlan(Date fixedDate, Time fixedTime) {
+        this.fixedDate = fixedDate;
+        this.fixedTime = fixedTime;
+        this.status = PlanStatus.FIXED;
+    }
+
+    public void addPlanMember(PlanMember planMember) {
+        this.planMembers.add(planMember);
+    }
+
+    public int getPlanMembersCount() {
+        return planMembers.size();
+    }
+
 }

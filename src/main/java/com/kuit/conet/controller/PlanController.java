@@ -52,7 +52,7 @@ public class PlanController {
     }
 
     /**
-     * @apiNote  모임 내 특정 달의 약속이 존재하는 날짜 조회 api
+     * @apiNote 모임 내 특정 달의 약속이 존재하는 날짜 조회 api
      */
     @GetMapping("/month")
     public BaseResponse<PlanDateOnMonthResponseDTO> getFixedPlanInMonth(@ModelAttribute @Valid TeamFixedPlanOnDateRequestDTO planRequest) {
@@ -91,6 +91,15 @@ public class PlanController {
         throw new PlanException(BAD_REQUEST);
     }
 
+    /**
+     * @apiNote 약속 확정 api
+     */
+    @PostMapping("/fix")
+    public BaseResponse<FixPlanResponseDTO> fixPlan(@RequestBody @Valid FixPlanRequestDTO planRequest) {
+        FixPlanResponseDTO response = planService.fixPlan(planRequest);
+        return new BaseResponse<>(response);
+    }
+
 /*
     @PostMapping("/time")
     public BaseResponse<String> registerTime(HttpServletRequest httpRequest, @RequestBody @Valid PossibleTimeRequest request) {
@@ -107,12 +116,6 @@ public class PlanController {
     @GetMapping("/member-time")
     public BaseResponse<MemberPossibleTimeResponse> getMemberTime(@ModelAttribute @Valid PlanIdRequest request) {
         MemberPossibleTimeResponse response = planService.getMemberTime(request);
-        return new BaseResponse<>(response);
-    }
-
-    @PostMapping("/fix")
-    public BaseResponse<String> fixPlan(@RequestBody @Valid FixPlanRequest fixPlanRequest) {
-        String response = planService.fixPlan(fixPlanRequest);
         return new BaseResponse<>(response);
     }
 

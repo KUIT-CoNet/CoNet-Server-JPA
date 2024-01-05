@@ -2,12 +2,13 @@ package com.kuit.conet.jpa.domain.plan;
 
 import com.kuit.conet.jpa.domain.member.Member;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PlanMember {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plan_member_id")
@@ -20,5 +21,15 @@ public class PlanMember {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id") // 다대다(다대일, 일대다) 단방향 연관 관계 / 연관 관계의 주인
     private Member member;
+
+    public static PlanMember createPlanMember(Plan plan, Member member) {
+        PlanMember planMember = new PlanMember();
+        planMember.plan = plan;
+        planMember.member = member;
+
+        plan.addPlanMember(planMember);
+
+        return planMember;
+    }
 
 }
