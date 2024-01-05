@@ -25,7 +25,7 @@ public class PlanRepository {
     }
 
     public Plan findWithMembersById(Long planId) {
-        return em.createQuery("select p from Plan p left join fetch p.planMembers pm join fetch pm.member " +
+        return em.createQuery("select p from Plan p left join fetch p.planMembers pm left join fetch pm.member " +
                         "where p.id=:planId", Plan.class)
                 .setParameter("planId", planId)
                 .getSingleResult();
