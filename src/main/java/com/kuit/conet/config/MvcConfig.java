@@ -38,6 +38,7 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/user/image");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/user/delete");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team");
+        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/{teamId}");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/create");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/participate");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/leave");
@@ -50,5 +51,6 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/home/plan/day");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/home/plan/waiting");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/detail");
+
     }
 }
