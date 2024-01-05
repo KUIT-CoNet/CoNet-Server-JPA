@@ -245,20 +245,6 @@ public class PlanService {
         return "약속 확정에 성공하였습니다.";
     }
 
-    public PlanDetail getPlanDetail(PlanIdRequest planRequest) {
-        //TODO: history 내용 삭제
-        Long planId = planRequest.getPlanId();
-
-        // 히스토리 등록 여부
-        Boolean isRegisteredToHistory = planDao.isRegisteredToHistory(planId);
-        log.info("isRegisteredToHistory: {}", isRegisteredToHistory);
-
-        // 약속 상세 정보
-        PlanDetail details = planDao.getPlanDetail(planRequest.getPlanId(), isRegisteredToHistory);
-
-        return details;
-    }
-
     public String deletePlan(PlanIdRequest planRequest) {
         //TODO: history 내용 삭제
         Long planId = planRequest.getPlanId();

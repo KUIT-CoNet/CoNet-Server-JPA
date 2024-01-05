@@ -27,8 +27,9 @@ public class TeamValidator {
     }
 
     public static void validateFileExisting(MultipartFile file){
-        if(file.isEmpty())
+        if(file.isEmpty()) {
             throw new TeamException(FILE_IS_EMPTY);
+        }
     }
 
     public static void validateNewMemberInTeam(TeamRepository teamRepository, Long userId, Team team) {
