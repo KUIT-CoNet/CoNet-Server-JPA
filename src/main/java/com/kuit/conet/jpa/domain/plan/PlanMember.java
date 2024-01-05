@@ -18,7 +18,7 @@ public class PlanMember {
     private Plan plan;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id") // 다대다(다대일, 일대다) 양방향 연관 관계 / 연관 관계의 주인
+    @JoinColumn(name = "member_id") // 다대다(다대일, 일대다) 단방향 연관 관계 / 연관 관계의 주인
     private Member member;
 
 }

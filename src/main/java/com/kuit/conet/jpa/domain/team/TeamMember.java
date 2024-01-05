@@ -5,10 +5,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@DynamicInsert
 public class TeamMember {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "team_member_id")
@@ -19,7 +21,7 @@ public class TeamMember {
     private Team team;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id") // 다대다(다대일, 일대다) 양방향 연관 관계 / 연관 관계의 주인
+    @JoinColumn(name = "member_id") // 다대다(다대일, 일대다) 단방향 연관 관계 / 연관 관계의 주인
     private Member member;
 
     @Column(columnDefinition = "boolean default false")
@@ -31,7 +33,8 @@ public class TeamMember {
         TeamMember teamMember = new TeamMember();
         teamMember.member = member;
         teamMember.team = team;
-        teamMember.bookMark = false;
+
+        team.addTeamMember(teamMember);
 
         return teamMember;
     }

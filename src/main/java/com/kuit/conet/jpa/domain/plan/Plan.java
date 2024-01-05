@@ -2,6 +2,7 @@ package com.kuit.conet.jpa.domain.plan;
 
 import com.kuit.conet.jpa.domain.team.Team;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
 public class Plan {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,7 +48,7 @@ public class Plan {
     @Enumerated(EnumType.STRING)
     private PlanStatus status;
 
-    @OneToMany(mappedBy = "plan")// 다대다(다대일, 일대다) 양방향 연관 관계 / 연관 관계 주인의 반대편
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)// 다대다(다대일, 일대다) 단방향 연관 관계 / 연관 관계 주인의 반대편
     private List<PlanMember> planMembers = new ArrayList<>();
 
     private Plan(Team team, String name, Date startPeriod, Date endPeriod) {
