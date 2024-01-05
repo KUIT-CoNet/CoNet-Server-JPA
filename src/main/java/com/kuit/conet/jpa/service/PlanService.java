@@ -53,7 +53,7 @@ public class PlanService {
         List<PlanMemberDTO> planMemberList = plan.getPlanMembers().stream()
                 .map(planMember ->
                         new PlanMemberDTO(
-                                planMember.getId(),
+                                planMember.getMember().getId(),
                                 planMember.getMember().getName(),
                                 planMember.getMember().getImgUrl()))
                 .sorted(Comparator.comparing(PlanMemberDTO::getName))
