@@ -16,6 +16,7 @@ public class PlanDetailResponseDTO {
     private String time; // hh:mm
 
     // 참여자 정보
+    private int memberCount;
     private List<PlanMemberDTO> members;
 
     public PlanDetailResponseDTO(Plan plan, List<PlanMemberDTO> members) {
@@ -23,6 +24,7 @@ public class PlanDetailResponseDTO {
         this.planName = plan.getName();
         this.date = dateToStringWithDot(plan.getFixedDate());
         this.time = timeDeleteSeconds(plan.getFixedTime());
+        this.memberCount = members.size();
         this.members = members;
     }
 }
