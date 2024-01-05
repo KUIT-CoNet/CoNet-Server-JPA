@@ -2,9 +2,9 @@ package com.kuit.conet.jpa.service;
 
 
 import com.kuit.conet.dto.plan.PlanMemberDTO;
-import com.kuit.conet.dto.plan.SideMenuFixedPlan;
-import com.kuit.conet.dto.plan.WaitingPlan;
-import com.kuit.conet.dto.plan.FixedPlanOnDay;
+import com.kuit.conet.dto.plan.SideMenuFixedPlanDTO;
+import com.kuit.conet.dto.plan.WaitingPlanDTO;
+import com.kuit.conet.dto.plan.FixedPlanOnDayDTO;
 import com.kuit.conet.dto.web.request.plan.*;
 import com.kuit.conet.dto.web.response.plan.*;
 import com.kuit.conet.jpa.domain.plan.Plan;
@@ -32,14 +32,14 @@ public class PlanService {
     private final TeamRepository teamRepository;
     private final PlanRepository planRepository;
 
-    public CreatePlanResponse createPlan(CreatePlanRequest planRequest) {
+    public CreatePlanResponseDTO createPlan(CreatePlanRequestDTO planRequest) {
         Date endDate = setEndDate(planRequest.getPlanStartDate());
         Team team = teamRepository.findById(planRequest.getTeamId());
 
         Plan newPlan = Plan.createPlan(team, planRequest.getPlanName(), planRequest.getPlanStartDate(), endDate);
         Long planId = planRepository.save(newPlan);
 
-        return new CreatePlanResponse(planId);
+        return new CreatePlanResponseDTO(planId);
     }
 
     private static Date setEndDate(Date startDate) {
@@ -62,35 +62,35 @@ public class PlanService {
         return new PlanDetailResponseDTO(plan, planMemberList);
     }
 
-    public TeamPlanOnDayResponse getFixedPlanOnDay(TeamFixedPlanOnDateRequest planRequest) {
-        List<FixedPlanOnDay> fixedPlansOnDay = planRepository.getFixedPlansOnDay(planRequest.getTeamId(), planRequest.getSearchDate());
+    public TeamPlanOnDayResponseDTO getFixedPlanOnDay(TeamFixedPlanOnDateRequestDTO planRequest) {
+        List<FixedPlanOnDayDTO> fixedPlansOnDay = planRepository.getFixedPlansOnDay(planRequest.getTeamId(), planRequest.getSearchDate());
 
-        return new TeamPlanOnDayResponse(fixedPlansOnDay.size(), fixedPlansOnDay);
+        return new TeamPlanOnDayResponseDTO(fixedPlansOnDay.size(), fixedPlansOnDay);
     }
 
-    public PlanDateOnMonthResponse getFixedPlanInMonth(TeamFixedPlanOnDateRequest planRequest) {
+    public PlanDateOnMonthResponseDTO getFixedPlanInMonth(TeamFixedPlanOnDateRequestDTO planRequest) {
         List<Date> fixedPlansInMonth = planRepository.getFixedPlansInMonth(planRequest.getTeamId(), planRequest.getSearchDate());
         List<Integer> planDates = datesToIntegerList(fixedPlansInMonth);
 
-        return new PlanDateOnMonthResponse(planDates.size(), planDates);
+        return new PlanDateOnMonthResponseDTO(planDates.size(), planDates);
     }
 
-    public WaitingPlanResponse getTeamWaitingPlan(TeamWaitingPlanRequest planRequest) {
-        List<WaitingPlan> teamWaitingPlans = planRepository.getTeamWaitingPlan(planRequest.getTeamId());
+    public WaitingPlanResponseDTO getTeamWaitingPlan(TeamWaitingPlanRequestDTO planRequest) {
+        List<WaitingPlanDTO> teamWaitingPlans = planRepository.getTeamWaitingPlan(planRequest.getTeamId());
 
-        return new WaitingPlanResponse(teamWaitingPlans.size(), teamWaitingPlans);
+        return new WaitingPlanResponseDTO(teamWaitingPlans.size(), teamWaitingPlans);
     }
 
-    public SideMenuFixedPlanResponse getFixedPastPlan(HttpServletRequest httpRequest, Long teamId) {
+    public SideMenuFixedPlanResponseDTO getFixedPastPlan(HttpServletRequest httpRequest, Long teamId) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-        List<SideMenuFixedPlan> fixedPastPlans = planRepository.getFixedPastPlans(teamId, userId);
-        return new SideMenuFixedPlanResponse(fixedPastPlans.size(), fixedPastPlans);
+        List<SideMenuFixedPlanDTO> fixedPastPlans = planRepository.getFixedPastPlans(teamId, userId);
+        return new SideMenuFixedPlanResponseDTO(fixedPastPlans.size(), fixedPastPlans);
     }
 
-    public SideMenuFixedPlanResponse getFixedFuturePlan(HttpServletRequest httpRequest, Long teamId) {
+    public SideMenuFixedPlanResponseDTO getFixedFuturePlan(HttpServletRequest httpRequest, Long teamId) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-        List<SideMenuFixedPlan> fixedPastPlans = planRepository.getFixedFuturePlans(teamId, userId);
-        return new SideMenuFixedPlanResponse(fixedPastPlans.size(), fixedPastPlans);
+        List<SideMenuFixedPlanDTO> fixedPastPlans = planRepository.getFixedFuturePlans(teamId, userId);
+        return new SideMenuFixedPlanResponseDTO(fixedPastPlans.size(), fixedPastPlans);
     }
 
 }

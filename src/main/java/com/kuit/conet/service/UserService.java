@@ -1,10 +1,10 @@
 package com.kuit.conet.service;
 
 import com.kuit.conet.common.exception.UserException;
-import com.kuit.conet.domain.storage.StorageDomain;
-import com.kuit.conet.dto.web.request.user.NameRequest;
-import com.kuit.conet.dto.web.response.StorageImgResponse;
-import com.kuit.conet.dto.web.response.user.UserResponse;
+import com.kuit.conet.jpa.domain.storage.StorageDomain;
+import com.kuit.conet.dto.web.request.user.NameRequestDTO;
+import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
+import com.kuit.conet.dto.web.response.user.UserResponseDTO;
 import com.kuit.conet.dao.UserDao;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class UserService {
         userDao.deleteUser(userId);
     }
 
-    public UserResponse getUser(HttpServletRequest httpRequest) {
+    public UserResponseDTO getUser(HttpServletRequest httpRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         isExistUser(userId);
 
@@ -49,7 +49,7 @@ public class UserService {
         return userDao.getUser(userId);
     }
 
-    public StorageImgResponse updateImg(HttpServletRequest httpRequest, MultipartFile file) {
+    public StorageImgResponseDTO updateImg(HttpServletRequest httpRequest, MultipartFile file) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         isExistUser(userId);
 
@@ -72,7 +72,7 @@ public class UserService {
         return userDao.updateImg(userId, imgUrl);
     }
 
-    public void updateName(HttpServletRequest httpRequest, NameRequest nameRequest) {
+    public void updateName(HttpServletRequest httpRequest, NameRequestDTO nameRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         isExistUser(userId);
 

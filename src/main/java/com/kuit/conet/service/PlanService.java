@@ -6,7 +6,7 @@ import com.kuit.conet.dao.PlanDao;
 import com.kuit.conet.dao.TeamDao;
 import com.kuit.conet.dao.UserDao;
 import com.kuit.conet.domain.plan.*;
-import com.kuit.conet.domain.storage.StorageDomain;
+import com.kuit.conet.jpa.domain.storage.StorageDomain;
 import com.kuit.conet.dto.request.plan.*;
 import com.kuit.conet.dto.request.team.TeamIdRequest;
 import com.kuit.conet.dto.response.plan.*;

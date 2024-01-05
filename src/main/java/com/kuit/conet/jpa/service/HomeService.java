@@ -1,13 +1,12 @@
 package com.kuit.conet.jpa.service;
 
-import com.kuit.conet.domain.plan.HomeFixedPlanOnDay;
-import com.kuit.conet.dto.plan.WaitingPlan;
-import com.kuit.conet.dto.web.request.plan.HomePlanRequest;
-import com.kuit.conet.dto.web.response.plan.HomePlanOnDayResponse;
-import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponse;
-import com.kuit.conet.dto.web.response.plan.WaitingPlanResponse;
+import com.kuit.conet.dto.home.HomeFixedPlanOnDayDTO;
+import com.kuit.conet.dto.plan.WaitingPlanDTO;
+import com.kuit.conet.dto.web.request.plan.HomePlanRequestDTO;
+import com.kuit.conet.dto.web.response.plan.HomePlanOnDayResponseDTO;
+import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponseDTO;
+import com.kuit.conet.dto.web.response.plan.WaitingPlanResponseDTO;
 import com.kuit.conet.jpa.repository.HomeRepository;
-import com.kuit.conet.utils.DateFormatter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,28 +25,28 @@ import static com.kuit.conet.utils.DateFormatter.*;
 public class HomeService {
     private final HomeRepository homeRepository;
 
-    public PlanDateOnMonthResponse getHomeFixedPlanInMonth(HttpServletRequest httpRequest, HomePlanRequest homeRequest) {
+    public PlanDateOnMonthResponseDTO getHomeFixedPlanInMonth(HttpServletRequest httpRequest, HomePlanRequestDTO homeRequest) {
         //TODO: utils/DateFormatValidator 생성 후, request에 날짜가 형식에 맞추어 잘 왔는지 검사하기 (정규표현식으로)
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         List<Date> fixedPlansInMonth = homeRepository.getHomeFixedPlansInMonth(userId, homeRequest.getSearchDate());
         List<Integer> planDates = datesToIntegerList(fixedPlansInMonth);
 
-        return new PlanDateOnMonthResponse(planDates.size(), planDates);
+        return new PlanDateOnMonthResponseDTO(planDates.size(), planDates);
     }
 
-    public HomePlanOnDayResponse getHomeFixedPlanOnDay(HttpServletRequest httpRequest, HomePlanRequest homeRequest) {
+    public HomePlanOnDayResponseDTO getHomeFixedPlanOnDay(HttpServletRequest httpRequest, HomePlanRequestDTO homeRequest) {
         //TODO: utils/DateFormatValidator 생성 후, request에 날짜가 형식에 맞추어 잘 왔는지 검사하기 (정규표현식으로)
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-        List<HomeFixedPlanOnDay> plans = homeRepository.getHomeFixedPlansOnDay(userId, homeRequest.getSearchDate());
+        List<HomeFixedPlanOnDayDTO> plans = homeRepository.getHomeFixedPlansOnDay(userId, homeRequest.getSearchDate());
 
-        return new HomePlanOnDayResponse(plans.size(), plans);
+        return new HomePlanOnDayResponseDTO(plans.size(), plans);
     }
 
-    public WaitingPlanResponse getHomeWaitingPlan(HttpServletRequest httpRequest) {
+    public WaitingPlanResponseDTO getHomeWaitingPlan(HttpServletRequest httpRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-        List<WaitingPlan> plans = homeRepository.getHomeWaitingPlans(userId);
+        List<WaitingPlanDTO> plans = homeRepository.getHomeWaitingPlans(userId);
 
-        return new WaitingPlanResponse(plans.size(), plans);
+        return new WaitingPlanResponseDTO(plans.size(), plans);
     }
 
 }

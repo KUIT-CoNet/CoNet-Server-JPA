@@ -1,9 +1,9 @@
 package com.kuit.conet.controller;
 
 import com.kuit.conet.common.response.BaseResponse;
-import com.kuit.conet.dto.web.request.user.NameRequest;
-import com.kuit.conet.dto.web.response.StorageImgResponse;
-import com.kuit.conet.dto.web.response.user.UserResponse;
+import com.kuit.conet.dto.web.request.user.NameRequestDTO;
+import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
+import com.kuit.conet.dto.web.response.user.UserResponseDTO;
 import com.kuit.conet.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -26,19 +26,19 @@ public class UserController {
     }
 
     @GetMapping
-    public BaseResponse<UserResponse> getUser(HttpServletRequest httpRequest) {
-        UserResponse response = userService.getUser(httpRequest);
+    public BaseResponse<UserResponseDTO> getUser(HttpServletRequest httpRequest) {
+        UserResponseDTO response = userService.getUser(httpRequest);
         return new BaseResponse<>(response);
     }
 
     @PostMapping("/image")
-    public BaseResponse<StorageImgResponse> updateImg(HttpServletRequest httpRequest, @RequestParam(value = "file") MultipartFile file){
-        StorageImgResponse response = userService.updateImg(httpRequest, file);
+    public BaseResponse<StorageImgResponseDTO> updateImg(HttpServletRequest httpRequest, @RequestParam(value = "file") MultipartFile file){
+        StorageImgResponseDTO response = userService.updateImg(httpRequest, file);
         return new BaseResponse<>(response);
     }
 
     @PostMapping("/name")
-    public BaseResponse<String> updateName(HttpServletRequest httpRequest, @RequestBody @Valid NameRequest nameRequest) {
+    public BaseResponse<String> updateName(HttpServletRequest httpRequest, @RequestBody @Valid NameRequestDTO nameRequest) {
         userService.updateName(httpRequest, nameRequest);
         return new BaseResponse<>("이름 변경에 성공하였습니다.");
     }

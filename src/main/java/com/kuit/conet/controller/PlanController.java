@@ -3,7 +3,7 @@ package com.kuit.conet.controller;
 import com.kuit.conet.common.exception.PlanException;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.response.plan.PlanDetailResponseDTO;
-import com.kuit.conet.dto.web.request.plan.TeamFixedPlanInPeriodRequest;
+import com.kuit.conet.dto.web.request.plan.TeamFixedPlanInPeriodRequestDTO;
 import com.kuit.conet.dto.web.request.plan.*;
 import com.kuit.conet.dto.web.response.plan.*;
 import com.kuit.conet.jpa.domain.plan.PlanPeriod;
@@ -27,8 +27,8 @@ public class PlanController {
      * @apiNote 약속 생성 api
      * */
     @PostMapping
-    public BaseResponse<CreatePlanResponse> createPlan(@RequestBody @Valid CreatePlanRequest planRequest) {
-        CreatePlanResponse response = planService.createPlan(planRequest);
+    public BaseResponse<CreatePlanResponseDTO> createPlan(@RequestBody @Valid CreatePlanRequestDTO planRequest) {
+        CreatePlanResponseDTO response = planService.createPlan(planRequest);
         return new BaseResponse<>(response);
     }
 
@@ -46,8 +46,8 @@ public class PlanController {
      * / '나'의 직접적인 참여 여부와 무관
      * */
     @GetMapping("/day")
-    public BaseResponse<TeamPlanOnDayResponse> getFixedPlanOnDay(@ModelAttribute @Valid TeamFixedPlanOnDateRequest planRequest) {
-        TeamPlanOnDayResponse response = planService.getFixedPlanOnDay(planRequest);
+    public BaseResponse<TeamPlanOnDayResponseDTO> getFixedPlanOnDay(@ModelAttribute @Valid TeamFixedPlanOnDateRequestDTO planRequest) {
+        TeamPlanOnDayResponseDTO response = planService.getFixedPlanOnDay(planRequest);
         return new BaseResponse<>(response);
     }
 
@@ -55,8 +55,8 @@ public class PlanController {
      * @apiNote  모임 내 특정 달의 약속이 존재하는 날짜 조회 api
      */
     @GetMapping("/month")
-    public BaseResponse<PlanDateOnMonthResponse> getFixedPlanInMonth(@ModelAttribute @Valid TeamFixedPlanOnDateRequest planRequest) {
-        PlanDateOnMonthResponse response = planService.getFixedPlanInMonth(planRequest);
+    public BaseResponse<PlanDateOnMonthResponseDTO> getFixedPlanInMonth(@ModelAttribute @Valid TeamFixedPlanOnDateRequestDTO planRequest) {
+        PlanDateOnMonthResponseDTO response = planService.getFixedPlanInMonth(planRequest);
         return new BaseResponse<>(response);
     }
 
@@ -65,8 +65,8 @@ public class PlanController {
      * / '나'의 직접적인 참여 여부와 무관
      */
     @GetMapping("/waiting")
-    public BaseResponse<WaitingPlanResponse> getWaitingPlan(@ModelAttribute @Valid TeamWaitingPlanRequest planRequest) {
-        WaitingPlanResponse response = planService.getTeamWaitingPlan(planRequest);
+    public BaseResponse<WaitingPlanResponseDTO> getWaitingPlan(@ModelAttribute @Valid TeamWaitingPlanRequestDTO planRequest) {
+        WaitingPlanResponseDTO response = planService.getTeamWaitingPlan(planRequest);
         return new BaseResponse<>(response);
     }
 
@@ -75,16 +75,16 @@ public class PlanController {
      * / 조회한 유저의 참여 여부 포함
      */
     @GetMapping("/fixed")
-    public BaseResponse<SideMenuFixedPlanResponse> getFixedPlan(HttpServletRequest httpRequest, @ModelAttribute TeamFixedPlanInPeriodRequest planRequest) {
+    public BaseResponse<SideMenuFixedPlanResponseDTO> getFixedPlan(HttpServletRequest httpRequest, @ModelAttribute TeamFixedPlanInPeriodRequestDTO planRequest) {
         // 지난 약속
         if (planRequest.getPeriod() == PlanPeriod.PAST) {
-            SideMenuFixedPlanResponse response = planService.getFixedPastPlan(httpRequest, planRequest.getTeamId());
+            SideMenuFixedPlanResponseDTO response = planService.getFixedPastPlan(httpRequest, planRequest.getTeamId());
             return new BaseResponse<>(response);
         }
 
         // 다가오는 약속
         if (planRequest.getPeriod() == PlanPeriod.ONCOMING) {
-            SideMenuFixedPlanResponse response = planService.getFixedFuturePlan(httpRequest, planRequest.getTeamId());
+            SideMenuFixedPlanResponseDTO response = planService.getFixedFuturePlan(httpRequest, planRequest.getTeamId());
             return new BaseResponse<>(response);
         }
 

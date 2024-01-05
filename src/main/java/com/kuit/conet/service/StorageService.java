@@ -7,7 +7,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.kuit.conet.common.exception.BaseException;
 import com.kuit.conet.common.exception.StorageException;
-import com.kuit.conet.domain.storage.StorageDomain;
+import com.kuit.conet.jpa.domain.storage.StorageDomain;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.BAD_REQUEST;
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.INVALID_FILE_EXTENSION;
@@ -50,6 +49,7 @@ public class StorageService {
             // 확장자명 설정
             extension = contentType.split(SPLITER)[1];
         } catch (Exception e) {
+            log.warn(e.getMessage());
         }
 
         if (extension == null) {
