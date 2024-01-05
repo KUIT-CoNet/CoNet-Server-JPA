@@ -2,6 +2,7 @@ package com.kuit.conet.controller;
 
 import com.kuit.conet.common.exception.PlanException;
 import com.kuit.conet.common.response.BaseResponse;
+import com.kuit.conet.dto.web.response.plan.PlanDetailResponseDTO;
 import com.kuit.conet.dto.web.request.plan.TeamFixedPlanInPeriodRequest;
 import com.kuit.conet.dto.web.request.plan.*;
 import com.kuit.conet.dto.web.response.plan.*;
@@ -28,6 +29,15 @@ public class PlanController {
     @PostMapping
     public BaseResponse<CreatePlanResponse> createPlan(@RequestBody @Valid CreatePlanRequest planRequest) {
         CreatePlanResponse response = planService.createPlan(planRequest);
+        return new BaseResponse<>(response);
+    }
+
+    /**
+     * @apiNote 약속 상세 정보 조회 api
+     */
+    @GetMapping("/{planId}")
+    public BaseResponse<PlanDetailResponseDTO> getPlan(@PathVariable @Valid Long planId) {
+        PlanDetailResponseDTO response = planService.getPlanDetail(planId);
         return new BaseResponse<>(response);
     }
 
@@ -103,15 +113,6 @@ public class PlanController {
     @PostMapping("/fix")
     public BaseResponse<String> fixPlan(@RequestBody @Valid FixPlanRequest fixPlanRequest) {
         String response = planService.fixPlan(fixPlanRequest);
-        return new BaseResponse<>(response);
-    }
-
-    *//**
-     * 약속 상세 정보 조회
-     * *//*
-    @GetMapping("/detail")
-    public BaseResponse<PlanDetail> getPlanDetail(@ModelAttribute @Valid PlanIdRequest planRequest) {
-        PlanDetail response = planService.getPlanDetail(planRequest);
         return new BaseResponse<>(response);
     }
 

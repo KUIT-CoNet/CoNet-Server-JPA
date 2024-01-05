@@ -24,6 +24,13 @@ public class PlanRepository {
         return plan.getId();
     }
 
+    public Plan findWithMembersById(Long planId) {
+        return em.createQuery("select p from Plan p left join fetch p.planMembers pm join fetch pm.member " +
+                        "where p.id=:planId", Plan.class)
+                .setParameter("planId", planId)
+                .getSingleResult();
+    }
+
     public List<FixedPlanOnDay> getFixedPlansOnDay(Long teamId, String searchDate) {
         return em.createQuery("select new com.kuit.conet.dto.plan.FixedPlanOnDay(p.id, p.name, p.fixedTime) " +
                 "from Plan p join p.team t on t.id=:teamId " +

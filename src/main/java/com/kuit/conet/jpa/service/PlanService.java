@@ -1,18 +1,16 @@
 package com.kuit.conet.jpa.service;
 
 
+import com.kuit.conet.dto.plan.PlanMemberDTO;
 import com.kuit.conet.dto.plan.SideMenuFixedPlan;
 import com.kuit.conet.dto.plan.WaitingPlan;
 import com.kuit.conet.dto.plan.FixedPlanOnDay;
-import com.kuit.conet.dto.web.request.plan.CreatePlanRequest;
-import com.kuit.conet.dto.web.request.plan.TeamFixedPlanOnDateRequest;
-import com.kuit.conet.dto.web.request.plan.TeamWaitingPlanRequest;
+import com.kuit.conet.dto.web.request.plan.*;
 import com.kuit.conet.dto.web.response.plan.*;
 import com.kuit.conet.jpa.domain.plan.Plan;
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.repository.PlanRepository;
 import com.kuit.conet.jpa.repository.TeamRepository;
-import com.kuit.conet.utils.DateFormatter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +44,20 @@ public class PlanService {
     private static Date setEndDate(Date startDate) {
         LocalDate endDate = startDate.toLocalDate().plusDays(6);
         return Date.valueOf(endDate);
+    }
+
+    public PlanDetailResponseDTO getPlanDetail(Long planId) {
+        Plan plan = planRepository.findWithMembersById(planId);
+
+        List<PlanMemberDTO> planMemberList = plan.getPlanMembers().stream()
+                .map(planMember ->
+                        new PlanMemberDTO(
+                                planMember.getId(),
+                                planMember.getMember().getName(),
+                                planMember.getMember().getImgUrl()))
+                .toList();
+
+        return new PlanDetailResponseDTO(plan, planMemberList);
     }
 
     public TeamPlanOnDayResponse getFixedPlanOnDay(TeamFixedPlanOnDateRequest planRequest) {
