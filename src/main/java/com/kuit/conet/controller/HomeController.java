@@ -1,10 +1,10 @@
 package com.kuit.conet.controller;
 
 import com.kuit.conet.common.response.BaseResponse;
-import com.kuit.conet.dto.web.request.plan.HomePlanRequest;
-import com.kuit.conet.dto.web.response.plan.HomePlanOnDayResponse;
-import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponse;
-import com.kuit.conet.dto.web.response.plan.WaitingPlanResponse;
+import com.kuit.conet.dto.web.request.plan.HomePlanRequestDTO;
+import com.kuit.conet.dto.web.response.plan.HomePlanOnDayResponseDTO;
+import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponseDTO;
+import com.kuit.conet.dto.web.response.plan.WaitingPlanResponseDTO;
 import com.kuit.conet.jpa.service.HomeService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -24,8 +24,8 @@ public class HomeController {
      * / 날짜 (dd)
      * */
     @GetMapping("/month")
-    public BaseResponse<PlanDateOnMonthResponse> getHomeFixedPlanInMonth(HttpServletRequest httpRequest, @ModelAttribute @Valid HomePlanRequest homeRequest) {
-        PlanDateOnMonthResponse response = homeService.getHomeFixedPlanInMonth(httpRequest, homeRequest);
+    public BaseResponse<PlanDateOnMonthResponseDTO> getHomeFixedPlanInMonth(HttpServletRequest httpRequest, @ModelAttribute @Valid HomePlanRequestDTO homeRequest) {
+        PlanDateOnMonthResponseDTO response = homeService.getHomeFixedPlanInMonth(httpRequest, homeRequest);
         return new BaseResponse<>(response);
     }
 
@@ -36,8 +36,8 @@ public class HomeController {
      * */
     //TODO: 내가 참여하는 약속만 조회
     @GetMapping("/day")
-    public BaseResponse<HomePlanOnDayResponse> getHomeFixedPlanOnDay(HttpServletRequest httpRequest, @ModelAttribute @Valid HomePlanRequest homeRequest) {
-        HomePlanOnDayResponse response = homeService.getHomeFixedPlanOnDay(httpRequest, homeRequest);
+    public BaseResponse<HomePlanOnDayResponseDTO> getHomeFixedPlanOnDay(HttpServletRequest httpRequest, @ModelAttribute @Valid HomePlanRequestDTO homeRequest) {
+        HomePlanOnDayResponseDTO response = homeService.getHomeFixedPlanOnDay(httpRequest, homeRequest);
         return new BaseResponse<>(response);
     }
 
@@ -47,8 +47,8 @@ public class HomeController {
      * / '나'의 직접적인 참여 여부와 무관
      * */
     @GetMapping("/waiting")
-    public BaseResponse<WaitingPlanResponse> getHomeWaitingPlan(HttpServletRequest httpRequest) {
-        WaitingPlanResponse response = homeService.getHomeWaitingPlan(httpRequest);
+    public BaseResponse<WaitingPlanResponseDTO> getHomeWaitingPlan(HttpServletRequest httpRequest) {
+        WaitingPlanResponseDTO response = homeService.getHomeWaitingPlan(httpRequest);
         return new BaseResponse<>(response);
     }
 }

@@ -1,10 +1,10 @@
 package com.kuit.conet.dao;
 
-import com.kuit.conet.domain.auth.Platform;
+import com.kuit.conet.jpa.domain.auth.Platform;
 import com.kuit.conet.domain.user.User;
-import com.kuit.conet.dto.web.request.auth.OptionTermRequest;
-import com.kuit.conet.dto.web.response.StorageImgResponse;
-import com.kuit.conet.dto.web.response.user.UserResponse;
+import com.kuit.conet.dto.web.request.auth.OptionTermRequestDTO;
+import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
+import com.kuit.conet.dto.web.response.user.UserResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -129,12 +129,12 @@ public class UserDao {
         jdbcTemplate.update(sql, param);
     }
 
-    public UserResponse getUser(Long userId) {
+    public UserResponseDTO getUser(Long userId) {
         String sql = "select name, email, img_url, platform from user where user_id=:user_id and status=1";
         Map<String, Object> param = Map.of("user_id", userId);
 
-        RowMapper<UserResponse> mapper = (rs, rowNum) -> {
-            UserResponse user = new UserResponse();
+        RowMapper<UserResponseDTO> mapper = (rs, rowNum) -> {
+            UserResponseDTO user = new UserResponseDTO();
             user.setName(rs.getString("name"));
             user.setEmail(rs.getString("email"));
             user.setUserImgUrl(rs.getString("img_url"));
@@ -153,7 +153,7 @@ public class UserDao {
         return jdbcTemplate.queryForObject(sql, param, Boolean.class);
     }
 
-    public StorageImgResponse updateImg(Long userId, String imgUrl) {
+    public StorageImgResponseDTO updateImg(Long userId, String imgUrl) {
         String sql = "update user set img_url=:img_url where user_id=:user_id and status=1";
         Map<String, Object> param = Map.of("user_id", userId,
                 "img_url", imgUrl);
@@ -162,8 +162,8 @@ public class UserDao {
         String returnSql = "select name, img_url from user where user_id=:user_id";
         Map<String, Object> returnParam = Map.of("user_id", userId);
 
-        RowMapper<StorageImgResponse> returnMapper = (rs, rowNum) -> {
-            StorageImgResponse storageImgResponse = new StorageImgResponse();
+        RowMapper<StorageImgResponseDTO> returnMapper = (rs, rowNum) -> {
+            StorageImgResponseDTO storageImgResponse = new StorageImgResponseDTO();
             storageImgResponse.setName(rs.getString("name"));
             storageImgResponse.setImgUrl(rs.getString("img_url"));
             return storageImgResponse;
@@ -213,7 +213,7 @@ public class UserDao {
         return jdbcTemplate.queryForObject(sql, param, Boolean.class);
     }
 
-    public void updateOptionTerm(OptionTermRequest optionTermRequest, Long userId) {
+    public void updateOptionTerm(OptionTermRequestDTO optionTermRequest, Long userId) {
         String sql = "update user set option_term=:option_term where user_id=:user_id and status=1";
         Map<String, Object> param = Map.of("option_term", optionTermRequest.getOption(),
                 "user_id", userId);

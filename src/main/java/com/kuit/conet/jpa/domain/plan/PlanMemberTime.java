@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.sql.Date;
 
 @Entity
 @Getter
@@ -24,7 +24,7 @@ public class PlanMemberTime {
     private Member member;
 
     @Temporal(TemporalType.DATE)
-    private Date possibleDate;
+    private Date date;
 
     @Column(length = 500)
     private String possibleTime;

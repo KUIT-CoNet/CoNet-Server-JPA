@@ -1,6 +1,6 @@
 package com.kuit.conet.service;
 
-import com.kuit.conet.dto.web.request.auth.OptionTermRequest;
+import com.kuit.conet.dto.web.request.auth.OptionTermRequestDTO;
 import com.kuit.conet.utils.JwtParser;
 import com.kuit.conet.utils.auth.JwtTokenProvider;
 import com.kuit.conet.auth.apple.AppleUserProvider;
@@ -8,14 +8,14 @@ import com.kuit.conet.auth.kakao.KakaoUserProvider;
 import com.kuit.conet.common.exception.InvalidTokenException;
 import com.kuit.conet.common.exception.UserException;
 import com.kuit.conet.dao.UserDao;
-import com.kuit.conet.domain.auth.Platform;
+import com.kuit.conet.jpa.domain.auth.Platform;
 import com.kuit.conet.domain.user.User;
-import com.kuit.conet.dto.web.request.auth.LoginRequest;
-import com.kuit.conet.dto.web.request.auth.PutOptionTermAndNameRequest;
-import com.kuit.conet.dto.web.response.auth.AgreeTermAndPutNameResponse;
-import com.kuit.conet.dto.web.response.auth.ApplePlatformUserResponse;
-import com.kuit.conet.dto.web.response.auth.KakaoPlatformUserResponse;
-import com.kuit.conet.dto.web.response.auth.LoginResponse;
+import com.kuit.conet.dto.web.request.auth.LoginRequestDTO;
+import com.kuit.conet.dto.web.request.auth.PutOptionTermAndNameRequestDTO;
+import com.kuit.conet.dto.web.response.auth.AgreeTermAndPutNameResponseDTO;
+import com.kuit.conet.dto.web.response.auth.ApplePlatformUserResponseDTO;
+import com.kuit.conet.dto.web.response.auth.KakaoPlatformUserResponseDTO;
+import com.kuit.conet.dto.web.response.auth.LoginResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,17 +37,17 @@ public class AuthService {
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtParser jwtParser;
 
-    public LoginResponse appleLogin(LoginRequest loginRequest, String clientIp) {
-        ApplePlatformUserResponse applePlatformUser = appleUserProvider.getApplePlatformUser(loginRequest.getIdToken());
+    public LoginResponseDTO appleLogin(LoginRequestDTO loginRequest, String clientIp) {
+        ApplePlatformUserResponseDTO applePlatformUser = appleUserProvider.getApplePlatformUser(loginRequest.getIdToken());
         return generateLoginResponse(Platform.APPLE, applePlatformUser.getEmail(), applePlatformUser.getPlatformId(), clientIp);
     }
 
-    public LoginResponse kakaoLogin(LoginRequest loginRequest, String clientIp) {
-        KakaoPlatformUserResponse kakaoPlatformUser = kakaoUserProvider.getPayloadFromIdToken(loginRequest.getIdToken());
+    public LoginResponseDTO kakaoLogin(LoginRequestDTO loginRequest, String clientIp) {
+        KakaoPlatformUserResponseDTO kakaoPlatformUser = kakaoUserProvider.getPayloadFromIdToken(loginRequest.getIdToken());
         return generateLoginResponse(Platform.KAKAO, kakaoPlatformUser.getEmail(), kakaoPlatformUser.getPlatformId(), clientIp);
     }
 
-    private LoginResponse generateLoginResponse(Platform platform, String email, String platformId, String clientIp) {
+    private LoginResponseDTO generateLoginResponse(Platform platform, String email, String platformId, String clientIp) {
         List<Long> findUserId = userDao.findByPlatformAndPlatformId(platform, platformId);
         if (!findUserId.isEmpty()) {
             User findUser = userDao.findById(findUserId.get(0));
@@ -73,16 +73,16 @@ public class AuthService {
         }
     }
 
-    private LoginResponse getLoginResponse(User targetUser, String clientIp, Boolean isRegistered) {
+    private LoginResponseDTO getLoginResponse(User targetUser, String clientIp, Boolean isRegistered) {
         String accessToken = jwtTokenProvider.createAccessToken(targetUser.getUserId());
         String refreshToken = jwtTokenProvider.createRefreshToken(targetUser.getUserId());
         // Redis 에 refresh token 저장
         redisTemplate.opsForValue().set(refreshToken, clientIp);
 
-        return new LoginResponse(targetUser.getEmail(), accessToken, refreshToken, isRegistered);
+        return new LoginResponseDTO(targetUser.getEmail(), accessToken, refreshToken, isRegistered);
     }
 
-    public LoginResponse regenerateToken(String refreshToken,  String clientIp) {
+    public LoginResponseDTO regenerateToken(String refreshToken, String clientIp) {
         // Redis 에서 해당 refresh token 찾기
         String existingIp = redisTemplate.opsForValue().get(refreshToken);
 
@@ -98,16 +98,16 @@ public class AuthService {
         return getLoginResponse(existingUser, clientIp, true);
     }
 
-    public AgreeTermAndPutNameResponse agreeTermAndPutName(PutOptionTermAndNameRequest nameRequest, HttpServletRequest httpRequest, String clientIp) {
+    public AgreeTermAndPutNameResponseDTO agreeTermAndPutName(PutOptionTermAndNameRequestDTO nameRequest, HttpServletRequest httpRequest, String clientIp) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
 
         // 이용 약관 및 이름 입력 DB update
         User user = userDao.agreeTermAndPutName(nameRequest.getName(), nameRequest.getOptionTerm(), userId);
 
-        return new AgreeTermAndPutNameResponse(user.getName(), user.getEmail(), user.getServiceTerm(), user.getOptionTerm());
+        return new AgreeTermAndPutNameResponseDTO(user.getName(), user.getEmail(), user.getServiceTerm(), user.getOptionTerm());
     }
 
-    public void updateOptionTerm(OptionTermRequest optionTermRequest, HttpServletRequest httpRequest) {
+    public void updateOptionTerm(OptionTermRequestDTO optionTermRequest, HttpServletRequest httpRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
 
         // 선택 약관에 대한 데이터베이스 값과 입력 값 비교

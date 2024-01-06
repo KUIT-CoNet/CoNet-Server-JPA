@@ -1,7 +1,9 @@
 package com.kuit.conet.controller;
 
+import com.kuit.conet.common.exception.PlanException;
 import com.kuit.conet.common.response.BaseResponse;
-import com.kuit.conet.dto.web.request.plan.TeamFixedPlanInPeriodRequest;
+import com.kuit.conet.dto.web.response.plan.PlanDetailResponseDTO;
+import com.kuit.conet.dto.web.request.plan.TeamFixedPlanInPeriodRequestDTO;
 import com.kuit.conet.dto.web.request.plan.*;
 import com.kuit.conet.dto.web.response.plan.*;
 import com.kuit.conet.jpa.domain.plan.PlanPeriod;
@@ -11,6 +13,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.BAD_REQUEST;
 
 @Slf4j
 @RestController
@@ -23,8 +27,17 @@ public class PlanController {
      * @apiNote 약속 생성 api
      * */
     @PostMapping
-    public BaseResponse<CreatePlanResponse> createPlan(@RequestBody @Valid CreatePlanRequest planRequest) {
-        CreatePlanResponse response = planService.createPlan(planRequest);
+    public BaseResponse<CreatePlanResponseDTO> createPlan(@RequestBody @Valid CreatePlanRequestDTO planRequest) {
+        CreatePlanResponseDTO response = planService.createPlan(planRequest);
+        return new BaseResponse<>(response);
+    }
+
+    /**
+     * @apiNote 약속 상세 정보 조회 api
+     */
+    @GetMapping("/{planId}")
+    public BaseResponse<PlanDetailResponseDTO> getPlan(@PathVariable @Valid Long planId) {
+        PlanDetailResponseDTO response = planService.getPlanDetail(planId);
         return new BaseResponse<>(response);
     }
 
@@ -33,17 +46,17 @@ public class PlanController {
      * / '나'의 직접적인 참여 여부와 무관
      * */
     @GetMapping("/day")
-    public BaseResponse<TeamPlanOnDayResponse> getFixedPlanOnDay(@ModelAttribute @Valid TeamFixedPlanOnDateRequest planRequest) {
-        TeamPlanOnDayResponse response = planService.getFixedPlanOnDay(planRequest);
+    public BaseResponse<TeamPlanOnDayResponseDTO> getFixedPlanOnDay(@ModelAttribute @Valid TeamFixedPlanOnDateRequestDTO planRequest) {
+        TeamPlanOnDayResponseDTO response = planService.getFixedPlanOnDay(planRequest);
         return new BaseResponse<>(response);
     }
 
     /**
-     * @apiNote  모임 내 특정 달의 약속이 존재하는 날짜 조회 api
+     * @apiNote 모임 내 특정 달의 약속이 존재하는 날짜 조회 api
      */
     @GetMapping("/month")
-    public BaseResponse<PlanDateOnMonthResponse> getFixedPlanInMonth(@ModelAttribute @Valid TeamFixedPlanOnDateRequest planRequest) {
-        PlanDateOnMonthResponse response = planService.getFixedPlanInMonth(planRequest);
+    public BaseResponse<PlanDateOnMonthResponseDTO> getFixedPlanInMonth(@ModelAttribute @Valid TeamFixedPlanOnDateRequestDTO planRequest) {
+        PlanDateOnMonthResponseDTO response = planService.getFixedPlanInMonth(planRequest);
         return new BaseResponse<>(response);
     }
 
@@ -52,8 +65,8 @@ public class PlanController {
      * / '나'의 직접적인 참여 여부와 무관
      */
     @GetMapping("/waiting")
-    public BaseResponse<WaitingPlanResponse> getWaitingPlan(@ModelAttribute @Valid TeamWaitingPlanRequest planRequest) {
-        WaitingPlanResponse response = planService.getTeamWaitingPlan(planRequest);
+    public BaseResponse<WaitingPlanResponseDTO> getWaitingPlan(@ModelAttribute @Valid TeamWaitingPlanRequestDTO planRequest) {
+        WaitingPlanResponseDTO response = planService.getTeamWaitingPlan(planRequest);
         return new BaseResponse<>(response);
     }
 
@@ -62,17 +75,28 @@ public class PlanController {
      * / 조회한 유저의 참여 여부 포함
      */
     @GetMapping("/fixed")
-    public BaseResponse<SideMenuFixedPlanResponse> getFixedPlan(HttpServletRequest httpRequest, @ModelAttribute TeamFixedPlanInPeriodRequest planRequest) {
-        SideMenuFixedPlanResponse response;
-
+    public BaseResponse<SideMenuFixedPlanResponseDTO> getFixedPlan(HttpServletRequest httpRequest, @ModelAttribute TeamFixedPlanInPeriodRequestDTO planRequest) {
         // 지난 약속
         if (planRequest.getPeriod() == PlanPeriod.PAST) {
-            response = planService.getFixedPastPlan(httpRequest, planRequest.getTeamId());
+            SideMenuFixedPlanResponseDTO response = planService.getFixedPastPlan(httpRequest, planRequest.getTeamId());
             return new BaseResponse<>(response);
         }
 
         // 다가오는 약속
-        response = planService.getFixedFuturePlan(httpRequest, planRequest.getTeamId());
+        if (planRequest.getPeriod() == PlanPeriod.ONCOMING) {
+            SideMenuFixedPlanResponseDTO response = planService.getFixedFuturePlan(httpRequest, planRequest.getTeamId());
+            return new BaseResponse<>(response);
+        }
+
+        throw new PlanException(BAD_REQUEST);
+    }
+
+    /**
+     * @apiNote 약속 확정 api
+     */
+    @PostMapping("/fix")
+    public BaseResponse<FixPlanResponseDTO> fixPlan(@RequestBody @Valid FixPlanRequestDTO planRequest) {
+        FixPlanResponseDTO response = planService.fixPlan(planRequest);
         return new BaseResponse<>(response);
     }
 
@@ -92,21 +116,6 @@ public class PlanController {
     @GetMapping("/member-time")
     public BaseResponse<MemberPossibleTimeResponse> getMemberTime(@ModelAttribute @Valid PlanIdRequest request) {
         MemberPossibleTimeResponse response = planService.getMemberTime(request);
-        return new BaseResponse<>(response);
-    }
-
-    @PostMapping("/fix")
-    public BaseResponse<String> fixPlan(@RequestBody @Valid FixPlanRequest fixPlanRequest) {
-        String response = planService.fixPlan(fixPlanRequest);
-        return new BaseResponse<>(response);
-    }
-
-    *//**
-     * 약속 상세 정보 조회
-     * *//*
-    @GetMapping("/detail")
-    public BaseResponse<PlanDetail> getPlanDetail(@ModelAttribute @Valid PlanIdRequest planRequest) {
-        PlanDetail response = planService.getPlanDetail(planRequest);
         return new BaseResponse<>(response);
     }
 
