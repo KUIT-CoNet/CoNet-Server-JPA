@@ -19,6 +19,10 @@ public class TeamRepository {
         return team.getId();
     }
 
+    public void remove(Team team) {
+        em.remove(team);
+    }
+
     public Team findById(Long id) {
         return em.find(Team.class, id);
     }
@@ -56,4 +60,15 @@ public class TeamRepository {
                 .getSingleResult();
     }
 
+    public boolean isTeamMember(Team team, Long userId) {
+        return em.createQuery("select count(tm)>0 from TeamMember  tm join tm.member on tm.member.id=:userId", Boolean.class)
+                .setParameter("userId",userId)
+                .getSingleResult();
+    }
+
+    public String getTeamImgUrl(Long teamId) {
+        return em.createQuery("select t.imgUrl from Team t where t.id=:teamId",String.class)
+                .setParameter("teamId",teamId)
+                .getSingleResult();
+    }
 }

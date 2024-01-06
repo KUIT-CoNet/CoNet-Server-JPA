@@ -26,5 +26,5 @@ public class Member {
     private Integer serviceTerm; // 필수 약관
     private Integer optionTerm;
     private Integer status;
-
+  
 }

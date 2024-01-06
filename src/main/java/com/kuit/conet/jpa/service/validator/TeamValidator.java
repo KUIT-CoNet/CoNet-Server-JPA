@@ -26,12 +26,6 @@ public class TeamValidator {
         }
     }
 
-    public static void validateFileExisting(MultipartFile file){
-        if(file.isEmpty()) {
-            throw new TeamException(FILE_IS_EMPTY);
-        }
-    }
-
     public static void validateNewMemberInTeam(TeamRepository teamRepository, Long userId, Team team) {
         if (teamRepository.isExistUser(team.getId(), userId)) {
             throw new TeamException(EXIST_USER_IN_TEAM);
@@ -65,6 +59,12 @@ public class TeamValidator {
     public static void validateTeamExisting(Team team){
         if (team==null) {
             throw new TeamException(NOT_FOUND_TEAM);
+        }
+    }
+
+    public static void isTeamMember(TeamRepository teamRepository, Team team, Long userId){
+        if(!teamRepository.isTeamMember(team,userId)){
+            throw new TeamException(NOT_TEAM_MEMBER);
         }
     }
 }
