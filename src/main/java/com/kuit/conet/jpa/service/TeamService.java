@@ -50,9 +50,6 @@ public class TeamService {
 
 
     public CreateTeamResponse createTeam(CreateTeamRequest teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
-        // 이미지 파일 확인
-        validateFileExisting(file);
-
         // 초대 코드 생성 및 코드 중복 확인
         String inviteCode = getRandomInviteCode();
 
@@ -107,6 +104,9 @@ public class TeamService {
 
         // 모임 존재 여부 확인
         validateTeamExisting(team);
+
+        // 팀에 존재하는 멤버인지 확인
+        isTeamMember(teamRepository,team,userId);
 
         //변경 감지 이용
         TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(team.getId(), userId);
