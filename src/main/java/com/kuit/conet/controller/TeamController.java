@@ -64,8 +64,8 @@ public class TeamController {
      * @apiNote 모임 삭제 api
      * */
     @DeleteMapping("/{teamId}")
-    public BaseResponse<String> deleteTeam(@PathVariable Long teamId, HttpServletRequest httpServletRequest) {
-        String response = teamService.deleteTeam(teamId,httpServletRequest);
+    public BaseResponse<String> deleteTeam(@PathVariable Long teamId, HttpServletRequest httpRequest) {
+        String response = teamService.deleteTeam(teamId,httpRequest);
         return new BaseResponse<String>(response);
     }
 

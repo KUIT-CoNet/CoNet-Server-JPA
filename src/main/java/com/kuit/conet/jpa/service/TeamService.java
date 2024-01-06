@@ -67,7 +67,7 @@ public class TeamService {
         String imgUrl = updateTeamImg(file);
 
         // team 생성
-        Team newTeam = Team.createTeam(teamRequest.getTeamName(), inviteCode,codeGeneratedTime,teamCreator,imgUrl);
+        Team newTeam = Team.createTeam(teamRequest.getTeamName(), inviteCode, codeGeneratedTime, teamCreator, imgUrl);
         teamRepository.save(newTeam);
 
         return new CreateTeamResponse(newTeam.getId(), newTeam.getInviteCode());
@@ -128,7 +128,10 @@ public class TeamService {
         //image 삭제
         deleteImage(teamId);
 
-        teamRepository.deleteTeam(teamId);
+//        teamMemberRepository.deleteTeamMemberByTeamId(teamId);
+//        Long deletedTeamId = teamRepository.deleteTeam(teamId);
+        teamRepository.remove(team);
+//        log.info(deletedTeamId.toString());
 
         return SUCCESS_DELETE_TEAM;
     }
@@ -166,7 +169,7 @@ public class TeamService {
     public String generateInviteCode() {
         Random random = new Random();
 
-        String generatedString = random.ints(LEFT_LIMIT, RIGHT_LIMIT+1)
+        String generatedString = random.ints(LEFT_LIMIT, RIGHT_LIMIT + 1)
                 .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
                 .limit(TARGET_STRING_LENGTH)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)

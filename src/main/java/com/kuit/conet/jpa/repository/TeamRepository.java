@@ -21,6 +21,10 @@ public class TeamRepository {
         return team.getId();
     }
 
+    public void remove(Team team) {
+        em.remove(team);
+    }
+
     public Team findById(Long id) {
         return em.find(Team.class, id);
     }
@@ -62,11 +66,6 @@ public class TeamRepository {
         return em.createQuery("select count(tm)>0 from TeamMember  tm join tm.member on tm.member.id=:userId", Boolean.class)
                 .setParameter("userId",userId)
                 .getSingleResult();
-    }
-
-    public void deleteTeam(Long teamId) {
-        em.createQuery("delete from Team t where t.id=:teamId")
-                .setParameter("teamId",teamId);
     }
 
     public String getTeamImgUrl(Long teamId) {
