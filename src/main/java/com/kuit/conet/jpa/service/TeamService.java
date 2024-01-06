@@ -1,17 +1,16 @@
 package com.kuit.conet.jpa.service;
 
-import com.kuit.conet.common.exception.TeamException;
-import com.kuit.conet.dto.web.request.team.ParticipateTeamRequest;
-import com.kuit.conet.dto.web.request.team.TeamIdRequest;
-import com.kuit.conet.dto.web.response.team.CreateTeamResponse;
-import com.kuit.conet.dto.web.response.team.GetTeamResponse;
-import com.kuit.conet.dto.web.response.team.ParticipateTeamResponse;
+import com.kuit.conet.dto.web.request.team.ParticipateTeamRequestDTO;
+import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
+import com.kuit.conet.dto.web.response.team.CreateTeamResponseDTO;
+import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
+import com.kuit.conet.dto.web.response.team.ParticipateTeamResponseDTO;
 import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.team.TeamMember;
 import com.kuit.conet.jpa.domain.team.*;
 
-import com.kuit.conet.domain.storage.StorageDomain;
-import com.kuit.conet.dto.web.request.team.CreateTeamRequest;
+import com.kuit.conet.jpa.domain.storage.StorageDomain;
+import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
 import com.kuit.conet.jpa.repository.TeamMemberRepository;
 import com.kuit.conet.jpa.repository.TeamRepository;
 import com.kuit.conet.jpa.repository.UserRepository;
@@ -28,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.*;;
+;
 import static com.kuit.conet.jpa.service.validator.TeamValidator.*;
 
 @Slf4j
@@ -48,7 +47,7 @@ public class TeamService {
     final String SUCCESS_LEAVE_TEAM = "모임 탈퇴에 성공하였습니다.";
 
 
-    public CreateTeamResponse createTeam(CreateTeamRequest teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
+    public CreateTeamResponseDTO createTeam(CreateTeamRequestDTO teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
         // 이미지 파일 확인
         validateFileExisting(file);
 
@@ -69,10 +68,10 @@ public class TeamService {
         Team newTeam = Team.createTeam(teamRequest.getTeamName(), inviteCode,codeGeneratedTime,teamCreator,imgUrl);
         teamRepository.save(newTeam);
 
-        return new CreateTeamResponse(newTeam.getId(), newTeam.getInviteCode());
+        return new CreateTeamResponseDTO(newTeam.getId(), newTeam.getInviteCode());
     }
 
-    public ParticipateTeamResponse participateTeam(ParticipateTeamRequest teamRequest, HttpServletRequest httpRequest) {
+    public ParticipateTeamResponseDTO participateTeam(ParticipateTeamRequestDTO teamRequest, HttpServletRequest httpRequest) {
         // 필요한 정보 조회
         String inviteCode = getInviteCodeFromRequest(teamRequest);
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
@@ -87,20 +86,20 @@ public class TeamService {
 
         // team에 teamMember 추가 (변경 감지)
         TeamMember teamMember = TeamMember.createTeamMember(team, user);
-        team.addTeamMember(teamMember);
 
-        return new ParticipateTeamResponse(user.getName(), team.getName(), user.getStatus());
+        return new ParticipateTeamResponseDTO(user.getName(), team.getName(), user.getStatus());
     }
 
-    public List<GetTeamResponse> getTeam(HttpServletRequest httpRequest) {
+    public List<GetTeamResponseDTO> getTeam(HttpServletRequest httpRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+
 
         List<Team> teams = teamRepository.findByUserId(userId);
 
         return generateTeamReturnResponse(teams, userId);
     }
 
-    public String leaveTeam(TeamIdRequest teamRequest, HttpServletRequest httpRequest) {
+    public String leaveTeam(TeamIdRequestDTO teamRequest, HttpServletRequest httpRequest) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         Team team = teamRepository.findById(teamRequest.getTeamId());
 
@@ -144,18 +143,18 @@ public class TeamService {
         return generatedString;
     }
 
-    private String getInviteCodeFromRequest(ParticipateTeamRequest teamRequest) {
+    private String getInviteCodeFromRequest(ParticipateTeamRequestDTO teamRequest) {
         String inviteCode = teamRequest.getInviteCode();
         validateInviteCodeExisting(teamRepository,inviteCode);
         return inviteCode;
     }
 
-    private List<GetTeamResponse> generateTeamReturnResponse(List<Team> teams, Long userId) {
+    private List<GetTeamResponseDTO> generateTeamReturnResponse(List<Team> teams, Long userId) {
         // 모임의 created_at 시간 비교해서 3일 안지났으면 isNew 값 true, 지났으면 false로 반환
-        List<GetTeamResponse> teamReturnResponses = new ArrayList<>();
+        List<GetTeamResponseDTO> teamReturnResponses = new ArrayList<>();
 
         for(Team team : teams) {
-            GetTeamResponse teamResponse;
+            GetTeamResponseDTO teamResponse;
             if(!isNewTeam(team)) {
                 teamResponse = generateTeamResponse(team,userId, false);
             }else {
@@ -166,8 +165,8 @@ public class TeamService {
         return teamReturnResponses;
     }
 
-    private GetTeamResponse generateTeamResponse(Team team, Long userId, boolean b) {
-        return new GetTeamResponse(team.getId(), team.getName(), team.getImgUrl(), teamRepository.getMemberCount(team.getId()),
+    private GetTeamResponseDTO generateTeamResponse(Team team, Long userId, boolean b) {
+        return new GetTeamResponseDTO(team.getId(), team.getName(), team.getImgUrl(), teamRepository.getMemberCount(team.getId()),
                 false, teamMemberRepository.isBookmark(userId, team.getId()));
     }
 

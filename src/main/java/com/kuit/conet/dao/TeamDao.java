@@ -2,9 +2,9 @@ package com.kuit.conet.dao;
 
 import com.kuit.conet.domain.team.Team;
 import com.kuit.conet.domain.team.TeamMember;
-import com.kuit.conet.dto.web.response.StorageImgResponse;
-import com.kuit.conet.dto.web.response.team.GetTeamMemberResponse;
-import com.kuit.conet.dto.web.response.team.GetTeamResponse;
+import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
+import com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO;
+import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -194,7 +194,7 @@ public class TeamDao {
         return jdbcTemplate.queryForObject(sql, param, Boolean.class);
     }
 
-    public StorageImgResponse updateImg(Long teamId, String imgUrl) {
+    public StorageImgResponseDTO updateImg(Long teamId, String imgUrl) {
         String sql = "update team set team_image_url=:team_image_url where team_id=:team_id";
         Map<String, Object> param = Map.of("team_image_url", imgUrl,
                 "team_id", teamId);
@@ -204,8 +204,8 @@ public class TeamDao {
         String returnSql = "select team_name, team_image_url from team where team_id=:team_id";
         Map<String, Object> returnParam = Map.of("team_id", teamId);
 
-        RowMapper<StorageImgResponse> returnMapper = (rs, rowNum) -> {
-            StorageImgResponse storageImgResponse = new StorageImgResponse();
+        RowMapper<StorageImgResponseDTO> returnMapper = (rs, rowNum) -> {
+            StorageImgResponseDTO storageImgResponse = new StorageImgResponseDTO();
             storageImgResponse.setName(rs.getString("team_name"));
             storageImgResponse.setImgUrl(rs.getString("team_image_url"));
             return storageImgResponse;
@@ -251,15 +251,15 @@ public class TeamDao {
         return jdbcTemplate.queryForObject(sql, param, Boolean.class);
     }
 
-    public List<GetTeamMemberResponse> getTeamMembers(Long teamId) {
+    public List<GetTeamMemberResponseDTO> getTeamMembers(Long teamId) {
         String sql = "select u.name, u.user_id, u.img_url from team_member tm, user u " +
                 "where tm.user_id=u.user_id " +
                 "and u.status=1 and tm.team_id=:team_id order by tm.user_id";
         log.info("{}", teamId);
         Map<String, Object> param = Map.of("team_id", teamId);
 
-        RowMapper<GetTeamMemberResponse> mapper = (rs, rowNum) -> {
-            GetTeamMemberResponse response = new GetTeamMemberResponse();
+        RowMapper<GetTeamMemberResponseDTO> mapper = (rs, rowNum) -> {
+            GetTeamMemberResponseDTO response = new GetTeamMemberResponseDTO();
             response.setUserId(rs.getLong("user_id"));
             response.setName(rs.getString("name"));
             response.setUserImgUrl(rs.getString("img_url"));
@@ -285,14 +285,14 @@ public class TeamDao {
         jdbcTemplate.update(sql, param);
     }
 
-    public GetTeamResponse getTeamDetail(Long teamId) {
+    public GetTeamResponseDTO getTeamDetail(Long teamId) {
         String sql = "select t.team_id, t.team_name, t.team_image_url, count(tm.user_id)" +
                 "from team_member as tm join team as t on tm.team_id=t.team_id " +
                 "where tm.team_id=:team_id";
         Map<String, Object> param = Map.of("team_id", teamId);
 
-        RowMapper<GetTeamResponse> mapper = (rs, rowNum) -> {
-            GetTeamResponse getTeamResponse = new GetTeamResponse();
+        RowMapper<GetTeamResponseDTO> mapper = (rs, rowNum) -> {
+            GetTeamResponseDTO getTeamResponse = new GetTeamResponseDTO();
             getTeamResponse.setTeamId(rs.getLong("team_id"));
             getTeamResponse.setTeamName(rs.getString("team_name"));
             getTeamResponse.setTeamImgUrl(rs.getString("team_image_url"));

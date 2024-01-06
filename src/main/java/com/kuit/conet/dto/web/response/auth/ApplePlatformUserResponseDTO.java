@@ -1,0 +1,14 @@
+package com.kuit.conet.dto.web.response.auth;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+public class ApplePlatformUserResponseDTO {
+    private String platformId;
+    private String email;
+}

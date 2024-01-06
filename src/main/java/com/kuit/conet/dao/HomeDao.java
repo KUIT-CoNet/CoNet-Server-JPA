@@ -1,7 +1,7 @@
 /*
 package com.kuit.conet.dao;
 
-import com.kuit.conet.domain.plan.HomeFixedPlanOnDay;
+import com.kuit.conet.dto.home.HomeFixedPlanOnDay;
 import com.kuit.conet.dto.plan.WaitingPlan;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;

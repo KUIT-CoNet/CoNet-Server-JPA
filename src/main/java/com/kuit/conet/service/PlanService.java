@@ -6,7 +6,7 @@ import com.kuit.conet.dao.PlanDao;
 import com.kuit.conet.dao.TeamDao;
 import com.kuit.conet.dao.UserDao;
 import com.kuit.conet.domain.plan.*;
-import com.kuit.conet.domain.storage.StorageDomain;
+import com.kuit.conet.jpa.domain.storage.StorageDomain;
 import com.kuit.conet.dto.request.plan.*;
 import com.kuit.conet.dto.request.team.TeamIdRequest;
 import com.kuit.conet.dto.response.plan.*;
@@ -227,22 +227,6 @@ public class PlanService {
                         plan.getPlanStartPeriod(), plan.getPlanEndPeriod(), sectionMemberCounts, memberDateTimeResponses);
 
         return memberPossibleTimeResponse;
-    }
-
-    public String fixPlan(FixPlanRequest fixPlanRequest) {
-        Long longTime = fixPlanRequest.getFixed_time();
-
-        String strTime = longTime.toString() + ":00:00";
-
-        Time time = Time.valueOf(strTime);
-
-        if(planDao.isFixedPlan(fixPlanRequest.getPlanId())){
-            throw new PlanException(ALREADY_FIXED_PLAN);
-        }
-        planDao.fixPlan(fixPlanRequest.getPlanId(), fixPlanRequest.getFixed_date(), time, fixPlanRequest.getUserId());
-        planDao.deletePlanMemberTime(fixPlanRequest.getPlanId());
-
-        return "약속 확정에 성공하였습니다.";
     }
 
     public String deletePlan(PlanIdRequest planRequest) {

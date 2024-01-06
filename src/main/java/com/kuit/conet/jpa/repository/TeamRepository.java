@@ -1,6 +1,5 @@
 package com.kuit.conet.jpa.repository;
 
-import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.team.Team;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
@@ -8,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor

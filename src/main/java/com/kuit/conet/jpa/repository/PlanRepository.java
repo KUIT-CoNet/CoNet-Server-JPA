@@ -1,8 +1,8 @@
 package com.kuit.conet.jpa.repository;
 
-import com.kuit.conet.dto.plan.SideMenuFixedPlan;
-import com.kuit.conet.dto.plan.WaitingPlan;
-import com.kuit.conet.dto.plan.FixedPlanOnDay;
+import com.kuit.conet.dto.plan.SideMenuFixedPlanDTO;
+import com.kuit.conet.dto.plan.WaitingPlanDTO;
+import com.kuit.conet.dto.plan.FixedPlanOnDayDTO;
 import com.kuit.conet.jpa.domain.plan.Plan;
 import com.kuit.conet.jpa.domain.plan.PlanStatus;
 import jakarta.persistence.EntityManager;
@@ -24,6 +24,10 @@ public class PlanRepository {
         return plan.getId();
     }
 
+    public Plan findById(Long planId) {
+        return em.find(Plan.class, planId);
+    }
+
     public Plan findWithMembersById(Long planId) {
         return em.createQuery("select p from Plan p left join fetch p.planMembers pm left join fetch pm.member " +
                         "where p.id=:planId", Plan.class)
@@ -31,12 +35,12 @@ public class PlanRepository {
                 .getSingleResult();
     }
 
-    public List<FixedPlanOnDay> getFixedPlansOnDay(Long teamId, String searchDate) {
-        return em.createQuery("select new com.kuit.conet.dto.plan.FixedPlanOnDay(p.id, p.name, p.fixedTime) " +
+    public List<FixedPlanOnDayDTO> getFixedPlansOnDay(Long teamId, String searchDate) {
+        return em.createQuery("select new com.kuit.conet.dto.plan.FixedPlanOnDayDTO(p.id, p.name, p.fixedTime) " +
                 "from Plan p join p.team t on t.id=:teamId " +
                 "where p.status=:status " +
                 "and FUNCTION('DATE_FORMAT', p.fixedDate, '%Y-%m-%d')=:searchDate " +
-                "order by p.fixedTime", FixedPlanOnDay.class)
+                "order by p.fixedTime", FixedPlanOnDayDTO.class)
                 .setParameter("teamId", teamId)
                 .setParameter("status", PlanStatus.FIXED)
                 .setParameter("searchDate", searchDate)
@@ -55,19 +59,19 @@ public class PlanRepository {
                 .getResultList();
     }
 
-    public List<WaitingPlan> getTeamWaitingPlan(Long teamId) {
-        return em.createQuery("select new com.kuit.conet.dto.plan.WaitingPlan(p.id, p.startPeriod, p.endPeriod, p.team.name, p.name) " +
+    public List<WaitingPlanDTO> getTeamWaitingPlan(Long teamId) {
+        return em.createQuery("select new com.kuit.conet.dto.plan.WaitingPlanDTO(p.id, p.startPeriod, p.endPeriod, p.team.name, p.name) " +
                         "from Plan p join p.team t on t.id=:teamId " +
                         "where p.status=:status " +
                         "and p.startPeriod>=current_date() " +
-                        "order by p.startPeriod", WaitingPlan.class)
+                        "order by p.startPeriod", WaitingPlanDTO.class)
                 .setParameter("teamId", teamId)
                 .setParameter("status", PlanStatus.WAITING)
                 .getResultList();
     }
 
-    public List<SideMenuFixedPlan> getFixedPastPlans(Long teamId, Long userId) {
-        return em.createQuery("select new com.kuit.conet.dto.plan.SideMenuFixedPlan(p.id, p.name, p.fixedDate, p.fixedTime, " +
+    public List<SideMenuFixedPlanDTO> getFixedPastPlans(Long teamId, Long userId) {
+        return em.createQuery("select new com.kuit.conet.dto.plan.SideMenuFixedPlanDTO(p.id, p.name, p.fixedDate, p.fixedTime, " +
                         "                                                                       function('DATEDIFF', CURRENT_DATE, p.fixedDate), " + // 약속이 지난 지 며칠 ?
                         "                                                                       (select count(pm)>0 " +
                         "                                                                        from PlanMember pm " +
@@ -76,15 +80,15 @@ public class PlanRepository {
                         "where p.team.id=:teamId " +
                         "and p.status=:status " +
                         "and p.fixedDate < CURRENT_DATE or (p.fixedDate = CURRENT_DATE and p.fixedTime < CURRENT_TIME) " +
-                        "order by p.fixedDate desc, p.fixedTime desc ", SideMenuFixedPlan.class)
+                        "order by p.fixedDate desc, p.fixedTime desc ", SideMenuFixedPlanDTO.class)
                 .setParameter("teamId", teamId)
                 .setParameter("status", PlanStatus.FIXED)
                 .setParameter("userId", userId)
                 .getResultList();
     }
 
-    public List<SideMenuFixedPlan> getFixedFuturePlans(Long teamId, Long userId) {
-        return em.createQuery("select new com.kuit.conet.dto.plan.SideMenuFixedPlan(p.id, p.name, p.fixedDate, p.fixedTime, " +
+    public List<SideMenuFixedPlanDTO> getFixedFuturePlans(Long teamId, Long userId) {
+        return em.createQuery("select new com.kuit.conet.dto.plan.SideMenuFixedPlanDTO(p.id, p.name, p.fixedDate, p.fixedTime, " +
                         "                                                                       function('DATEDIFF', p.fixedDate, CURRENT_DATE), " + // 며칠 남은 약속 ?
                         "                                                                       (select count(pm)>0 " +
                         "                                                                        from PlanMember pm " +
@@ -93,10 +97,35 @@ public class PlanRepository {
                         "where p.team.id=:teamId " +
                         "and p.status=:status " +
                         "and p.fixedDate > CURRENT_DATE or (p.fixedDate = CURRENT_DATE and p.fixedTime >= CURRENT_TIME) " +
-                        "order by p.fixedDate, p.fixedTime ", SideMenuFixedPlan.class)
+                        "order by p.fixedDate, p.fixedTime ", SideMenuFixedPlanDTO.class)
                 .setParameter("teamId", teamId)
                 .setParameter("status", PlanStatus.FIXED)
                 .setParameter("userId", userId)
                 .getResultList();
     }
+
+//    public void fixPlan(Long planId, Date fixed_date, Time fixed_time, List<Long> userId) {
+//        String planSql = "update plan set fixed_date=:fixed_date, fixed_time=:fixed_time, status=2 where plan_id=:plan_id and status=1";
+//        Map<String, Object> planParam = Map.of("plan_id", planId,
+//                "fixed_date", fixed_date,
+//                "fixed_time", fixed_time);
+//
+//        jdbcTemplate.update(planSql, planParam);
+//
+//        for(Long userid : userId) {
+//            String planMemberSql = "insert into plan_member (plan_id, user_id) " +
+//                    "values (:plan_id, :user_id)";
+//            Map<String, Object> planMemberParam = Map.of("plan_id", planId,
+//                    "user_id", userid);
+//
+//            jdbcTemplate.update(planMemberSql, planMemberParam);
+//        }
+//    }
+
+//    public Boolean isFixedPlan(Long planId) {
+//        String sql = "select exists(select * from plan where plan_id=:plan_id and status=2)";
+//        Map<String, Object> param = Map.of("plan_id", planId);
+//
+//        return jdbcTemplate.queryForObject(sql, param, Boolean.class);
+//    }
 }
