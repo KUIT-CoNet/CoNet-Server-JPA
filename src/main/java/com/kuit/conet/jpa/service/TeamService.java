@@ -40,17 +40,18 @@ public class TeamService {
     private final UserRepository userRepository;
     private final TeamMemberRepository teamMemberRepository;
 
-    final int LEFT_LIMIT = 48;
-    final int RIGHT_LIMIT = 122;
-    final int TARGET_STRING_LENGTH = 8;
+    static final int LEFT_LIMIT = 48;
+    static final int RIGHT_LIMIT = 122;
+    static final int TARGET_STRING_LENGTH = 8;
+    static final int ASCII_NUMBER_NINE = 57;
+    static final int ASCII_UPPERCASE_A = 65;
+    static final int ASCII_UPPERCASE_Z = 90;
+    static final int ASCII_LOWERCASE_A = 97;
 
     final String SUCCESS_LEAVE_TEAM = "모임 탈퇴에 성공하였습니다.";
     final String SUCCESS_DELETE_TEAM = "모임 삭제에 성공하였습니다.";
 
     public CreateTeamResponseDTO createTeam(CreateTeamRequestDTO teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
-        // 이미지 파일 확인
-        validateFileExisting(file);
-  
         // 초대 코드 생성 및 코드 중복 확인
         String inviteCode = getRandomInviteCode();
 
@@ -170,7 +171,7 @@ public class TeamService {
         Random random = new Random();
 
         String generatedString = random.ints(LEFT_LIMIT, RIGHT_LIMIT + 1)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .filter(i -> (i <= ASCII_NUMBER_NINE || i >= ASCII_UPPERCASE_A) && (i <= ASCII_UPPERCASE_Z || i >= ASCII_LOWERCASE_A))
                 .limit(TARGET_STRING_LENGTH)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
@@ -204,8 +205,4 @@ public class TeamService {
         return new GetTeamResponseDTO(team.getId(), team.getName(), team.getImgUrl(), teamRepository.getMemberCount(team.getId()),
                 false, teamMemberRepository.isBookmark(userId, team.getId()));
     }
-
-    //TODO: com.kuit.conet.service.TeamService 에 주석 처리된 코드 참고
-    //      -> 해당 메서드에 대하여 JPA 변환 완료하면 com.kuit.conet.service.TeamService에서 (주석)코드 삭제하기
-
 }
