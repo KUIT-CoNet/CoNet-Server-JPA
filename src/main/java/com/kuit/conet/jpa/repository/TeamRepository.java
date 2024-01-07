@@ -56,19 +56,19 @@ public class TeamRepository {
 
     public Long getMemberCount(Long id) {
         return em.createQuery("select count(tm) from Team t join t.teamMembers tm on tm.team.id=:teamId", Long.class)
-                .setParameter("teamId",id)
+                .setParameter("teamId", id)
                 .getSingleResult();
     }
 
     public boolean isTeamMember(Team team, Long userId) {
         return em.createQuery("select count(tm)>0 from TeamMember  tm join tm.member on tm.member.id=:userId", Boolean.class)
-                .setParameter("userId",userId)
+                .setParameter("userId", userId)
                 .getSingleResult();
     }
 
     public String getTeamImgUrl(Long teamId) {
-        return em.createQuery("select t.imgUrl from Team t where t.id=:teamId",String.class)
-                .setParameter("teamId",teamId)
+        return em.createQuery("select t.imgUrl from Team t where t.id=:teamId", String.class)
+                .setParameter("teamId", teamId)
                 .getSingleResult();
     }
 }

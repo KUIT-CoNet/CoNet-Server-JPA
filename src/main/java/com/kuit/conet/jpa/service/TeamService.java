@@ -80,7 +80,7 @@ public class TeamService {
         Team team = teamRepository.findByInviteCode(inviteCode);
 
         // 모임에 이미 존재하는 회원인지 확인
-        validateNewMemberInTeam(teamRepository,userId, team);
+        validateNewMemberInTeam(teamRepository, userId, team);
 
         // 초대 코드 생성 시간과 모임 참가 요청 시간 비교
         compareInviteCodeAndRequestTime(team);
@@ -98,16 +98,17 @@ public class TeamService {
 
         return generateTeamReturnResponse(teams, userId);
     }
+
     public String leaveTeam(TeamIdRequestDTO teamRequest, HttpServletRequest httpRequest) {
         Long userId = getUserIdFromHttpRequest(httpRequest);
- 
+
         Team team = teamRepository.findById(teamRequest.getTeamId());
 
         // 모임 존재 여부 확인
         validateTeamExisting(team);
 
         // 팀에 존재하는 멤버인지 확인
-        isTeamMember(teamRepository,team,userId);
+        isTeamMember(teamRepository, team, userId);
 
         //변경 감지 이용
         TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(team.getId(), userId);
@@ -124,7 +125,7 @@ public class TeamService {
         validateTeamExisting(team);
 
         // 모임 삭제 권한이 있는지 확인
-        isTeamMember(teamRepository,team,userId);
+        isTeamMember(teamRepository, team, userId);
 
         //image 삭제
         deleteImage(teamId);
@@ -140,7 +141,7 @@ public class TeamService {
     private void deleteImage(Long teamId) {
         String imgUrl = teamRepository.getTeamImgUrl(teamId);
 
-        if(!imgUrl.equals("")) {
+        if (!imgUrl.equals("")) {
             String deleteFileName = storageService.getFileNameFromUrl(imgUrl);
             storageService.deleteImage(deleteFileName);
         }
@@ -152,8 +153,8 @@ public class TeamService {
 
     private String getRandomInviteCode() {
         String inviteCode = generateInviteCode();
-        while(true){
-            if(validateDuplicateInviteCode(teamRepository, inviteCode))
+        while (true) {
+            if (validateDuplicateInviteCode(teamRepository, inviteCode))
                 break;
             inviteCode = generateInviteCode();
         }
@@ -181,7 +182,7 @@ public class TeamService {
 
     private String getInviteCodeFromRequest(ParticipateTeamRequestDTO teamRequest) {
         String inviteCode = teamRequest.getInviteCode();
-        validateInviteCodeExisting(teamRepository,inviteCode);
+        validateInviteCodeExisting(teamRepository, inviteCode);
         return inviteCode;
     }
 
@@ -189,12 +190,12 @@ public class TeamService {
         // 모임의 created_at 시간 비교해서 3일 안지났으면 isNew 값 true, 지났으면 false로 반환
         List<GetTeamResponseDTO> teamReturnResponses = new ArrayList<>();
 
-        for(Team team : teams) {
+        for (Team team : teams) {
             GetTeamResponseDTO teamResponse;
-            if(!isNewTeam(team)) {
-                teamResponse = generateTeamResponse(team,userId, false);
-            }else {
-                teamResponse = generateTeamResponse(team,userId, true);
+            if (!isNewTeam(team)) {
+                teamResponse = generateTeamResponse(team, userId, false);
+            } else {
+                teamResponse = generateTeamResponse(team, userId, true);
             }
             teamReturnResponses.add(teamResponse);
         }

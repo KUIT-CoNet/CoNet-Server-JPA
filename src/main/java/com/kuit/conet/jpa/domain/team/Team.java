@@ -18,7 +18,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Team {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "team_id")
     private Long id;
 
@@ -36,16 +37,20 @@ public class Team {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true) // 다대다(다대일, 일대다) 양방향 연관 관계 / 연관 관계 주인의 반대편
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    // 다대다(다대일, 일대다) 양방향 연관 관계 / 연관 관계 주인의 반대편
     private List<Plan> plans = new ArrayList<>();
 
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true) // 다대다(다대일, 일대다) 단방향 연관 관계 / 연관 관계 주인의 반대편
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    // 다대다(다대일, 일대다) 단방향 연관 관계 / 연관 관계 주인의 반대편
     private List<TeamMember> teamMembers = new ArrayList<>();
 
-    public void addPlan(Plan plan) { plans.add(plan); }
+    public void addPlan(Plan plan) {
+        plans.add(plan);
+    }
 
     //==생성 메서드==//
-    public static Team createTeam(String teamName, String inviteCode, LocalDateTime codeGeneratedTime, Member teamCreator, String imgUrl){
+    public static Team createTeam(String teamName, String inviteCode, LocalDateTime codeGeneratedTime, Member teamCreator, String imgUrl) {
         Team team = new Team();
         team.name = teamName;
         team.inviteCode = inviteCode;
