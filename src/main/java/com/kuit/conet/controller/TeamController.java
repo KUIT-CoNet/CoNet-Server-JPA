@@ -55,7 +55,7 @@ public class TeamController {
      * @apiNote 모임 탈퇴 api
      * */
     @PostMapping("/leave")
-    public BaseResponse<String> leaveTeam(@RequestBody @Valid TeamIdRequest teamRequest, HttpServletRequest httpRequest) {
+    public BaseResponse<String> leaveTeam(@RequestBody @Valid TeamIdRequestDTO teamRequest, HttpServletRequest httpRequest) {
         String response = teamService.leaveTeam(teamRequest, httpRequest);
         return new BaseResponse<String>(response);
     }
