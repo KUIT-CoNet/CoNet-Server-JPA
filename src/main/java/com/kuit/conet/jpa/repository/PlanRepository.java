@@ -104,6 +104,12 @@ public class PlanRepository {
                 .getResultList();
     }
 
+    public void deletePlanByTeamId(Long teamId) {
+        em.createQuery("delete from Plan p where p.team.id=:teamId")
+                .setParameter("teamId",teamId)
+                .executeUpdate();
+    }
+
 //    public void fixPlan(Long planId, Date fixed_date, Time fixed_time, List<Long> userId) {
 //        String planSql = "update plan set fixed_date=:fixed_date, fixed_time=:fixed_time, status=2 where plan_id=:plan_id and status=1";
 //        Map<String, Object> planParam = Map.of("plan_id", planId,

@@ -32,7 +32,7 @@ public class TeamValidator {
         }
     }
 
-    public static void compareInviteCodeAndRequestTime(Team team){
+    public static void compareInviteCodeAndRequestTime(Team team) {
         LocalDateTime participateRequestTime = LocalDateTime.now();
         LocalDateTime generatedTime = team.getCodeGeneratedTime();
         LocalDateTime expirationDateTime = generatedTime.plusDays(1);
@@ -48,22 +48,22 @@ public class TeamValidator {
         }
     }
 
-    public static boolean isNewTeam(Team team){
-        log.info("{}",  team.getName());
+    public static boolean isNewTeam(Team team) {
+        log.info("{}", team.getName());
         LocalDateTime createdAt = team.getCreatedAt();
         LocalDateTime now = LocalDateTime.now();
 
         return !(now.minusDays(3).isAfter(createdAt));
     }
 
-    public static void validateTeamExisting(Team team){
-        if (team==null) {
+    public static void validateTeamExisting(Team team) {
+        if (team == null) {
             throw new TeamException(NOT_FOUND_TEAM);
         }
     }
 
-    public static void isTeamMember(TeamRepository teamRepository, Team team, Long userId){
-        if(!teamRepository.isTeamMember(team,userId)){
+    public static void isTeamMember(TeamRepository teamRepository, Team team, Long userId) {
+        if (!teamRepository.isTeamMember(team, userId)) {
             throw new TeamException(NOT_TEAM_MEMBER);
         }
     }
