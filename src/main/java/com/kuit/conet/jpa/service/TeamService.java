@@ -11,9 +11,7 @@ import com.kuit.conet.jpa.domain.team.*;
 
 import com.kuit.conet.jpa.domain.storage.StorageDomain;
 import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
-import com.kuit.conet.jpa.repository.TeamMemberRepository;
-import com.kuit.conet.jpa.repository.TeamRepository;
-import com.kuit.conet.jpa.repository.UserRepository;
+import com.kuit.conet.jpa.repository.*;
 import com.kuit.conet.service.StorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +36,9 @@ public class TeamService {
     private final StorageService storageService;
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
+    private final PlanRepository planRepository;
+    private final PlanMemberRepository planMemberRepository;
+    private final PlanMemberTimeRepository planMemberTimeRepository;
     private final TeamMemberRepository teamMemberRepository;
 
     static final int LEFT_LIMIT = 48;
@@ -130,7 +131,11 @@ public class TeamService {
         //image 삭제
         deleteImage(teamId);
 
+
         teamMemberRepository.deleteTeamMemberByTeamId(teamId);
+        planMemberTimeRepository.deleteByTeamId(teamId);
+        planMemberRepository.deleteByTeamId(teamId);
+        planRepository.deletePlanByTeamId(teamId);
         teamRepository.deleteTeam(teamId);
         //teamRepository.remove(team);
 
