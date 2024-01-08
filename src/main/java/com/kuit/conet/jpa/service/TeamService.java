@@ -130,10 +130,9 @@ public class TeamService {
         //image 삭제
         deleteImage(teamId);
 
-//        teamMemberRepository.deleteTeamMemberByTeamId(teamId);
-//        Long deletedTeamId = teamRepository.deleteTeam(teamId);
-        teamRepository.remove(team);
-//        log.info(deletedTeamId.toString());
+        teamMemberRepository.deleteTeamMemberByTeamId(teamId);
+        teamRepository.deleteTeam(teamId);
+        //teamRepository.remove(team);
 
         return SUCCESS_DELETE_TEAM;
     }
