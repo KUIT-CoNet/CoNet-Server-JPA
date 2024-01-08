@@ -7,7 +7,6 @@ import com.kuit.conet.dto.plan.WaitingPlanDTO;
 import com.kuit.conet.dto.plan.FixedPlanOnDayDTO;
 import com.kuit.conet.dto.web.request.plan.*;
 import com.kuit.conet.dto.web.response.plan.*;
-import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.plan.*;
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.repository.*;
@@ -31,7 +30,7 @@ import static com.kuit.conet.utils.DateAndTimeFormatter.*;
 @Transactional
 @RequiredArgsConstructor
 public class PlanService {
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final PlanRepository planRepository;
     private final PlanMemberTimeRepository planMemberTimeRepository;
@@ -115,7 +114,7 @@ public class PlanService {
     private void setPlanMember(FixPlanRequestDTO planRequest, Plan plan) {
         //cascade로 영속화
         planRequest.getUserIds()
-                .forEach(userId -> PlanMember.createPlanMember(plan, userRepository.findById(userId)));
+                .forEach(userId -> PlanMember.createPlanMember(plan, memberRepository.findById(userId)));
     }
 
     private void deletePlanMemberTime(Plan plan) {

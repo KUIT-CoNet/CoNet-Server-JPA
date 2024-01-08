@@ -52,6 +52,8 @@ spring:
       port: ${DATA_REDIS_PORT}
   accesstoken:
     expired-date: ${ACCESSTOKEN_EXPIREDDATE}
+  user:
+    default-image: ${USER_DAFAULTIMAGE}
   jpa:
     hibernate:
       ddl-auto: update
@@ -93,6 +95,8 @@ spring:
       port: ${DATA_REDIS_PORT}
   accesstoken:
     expired-date: ${ACCESSTOKEN_EXPIREDDATE}
+  user:
+    default-image: ${USER_DAFAULTIMAGE}
   jpa:
     hibernate:
       ddl-auto: update #create
@@ -135,6 +139,8 @@ spring:
       port: ${DATA_REDIS_PORT}
   accesstoken:
     expired-date: ${ACCESSTOKEN_EXPIREDDATE}
+  user:
+    default-image: ${USER_DAFAULTIMAGE}
   jpa:
     hibernate:
       ddl-auto: create

@@ -13,7 +13,7 @@ import com.kuit.conet.jpa.domain.storage.StorageDomain;
 import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
 import com.kuit.conet.jpa.repository.TeamMemberRepository;
 import com.kuit.conet.jpa.repository.TeamRepository;
-import com.kuit.conet.jpa.repository.UserRepository;
+import com.kuit.conet.jpa.repository.MemberRepository;
 import com.kuit.conet.service.StorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ import static com.kuit.conet.jpa.service.validator.TeamValidator.*;
 public class TeamService {
     private final StorageService storageService;
     private final TeamRepository teamRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final TeamMemberRepository teamMemberRepository;
 
     final int LEFT_LIMIT = 48;
@@ -48,9 +48,6 @@ public class TeamService {
     final String SUCCESS_DELETE_TEAM = "모임 삭제에 성공하였습니다.";
 
     public CreateTeamResponseDTO createTeam(CreateTeamRequestDTO teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
-        // 이미지 파일 확인
-        validateFileExisting(file);
-  
         // 초대 코드 생성 및 코드 중복 확인
         String inviteCode = getRandomInviteCode();
 
@@ -59,7 +56,7 @@ public class TeamService {
 
         // 팀 만든 멤버 정보 추출
         Long userId = getUserIdFromHttpRequest(httpRequest);
-        Member teamCreator = userRepository.findById(userId);
+        Member teamCreator = memberRepository.findById(userId);
 
         //이미지 s3 업로드
         String imgUrl = updateTeamImg(file);
@@ -75,7 +72,7 @@ public class TeamService {
         // 필요한 정보 조회
         String inviteCode = getInviteCodeFromRequest(teamRequest);
         Long userId = getUserIdFromHttpRequest(httpRequest);
-        Member user = userRepository.findById(userId);
+        Member user = memberRepository.findById(userId);
         Team team = teamRepository.findByInviteCode(inviteCode);
 
         // 모임에 이미 존재하는 회원인지 확인

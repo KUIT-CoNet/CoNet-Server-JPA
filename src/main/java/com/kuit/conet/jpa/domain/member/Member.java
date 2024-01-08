@@ -3,10 +3,12 @@ package com.kuit.conet.jpa.domain.member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@DynamicInsert
 //TODO: 생성 메서드 사용하게 되면 @NoArgsConstructor(access = AccessLevel.PROTECTED) 설정 -> 생성메서드 외 생성자 사용 방지
 public class Member {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,5 +28,8 @@ public class Member {
     private Integer serviceTerm; // 필수 약관
     private Integer optionTerm;
     private Integer status;
-  
+
+    public void updateImgUrl(String imgUrl){
+        this.imgUrl = imgUrl;
+    }
 }
