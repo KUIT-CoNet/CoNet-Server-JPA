@@ -6,8 +6,12 @@ import lombok.*;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 public class TeamPlanOnDayResponseDTO {
     int count;
     List<FixedPlanOnDayDTO> plans;
+
+    public TeamPlanOnDayResponseDTO(List<FixedPlanOnDayDTO> plans) {
+        this.count = plans.size();
+        this.plans = plans;
+    }
 }

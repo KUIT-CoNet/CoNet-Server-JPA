@@ -31,7 +31,7 @@ public class HomeService {
         List<Date> fixedPlansInMonth = homeRepository.getHomeFixedPlansInMonth(userId, homeRequest.getSearchDate());
         List<Integer> planDates = datesToIntegerList(fixedPlansInMonth);
 
-        return new PlanDateOnMonthResponseDTO(planDates.size(), planDates);
+        return new PlanDateOnMonthResponseDTO(planDates);
     }
 
     public HomePlanOnDayResponseDTO getHomeFixedPlanOnDay(HttpServletRequest httpRequest, HomePlanRequestDTO homeRequest) {
@@ -46,7 +46,7 @@ public class HomeService {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         List<WaitingPlanDTO> plans = homeRepository.getHomeWaitingPlans(userId);
 
-        return new WaitingPlanResponseDTO(plans.size(), plans);
+        return new WaitingPlanResponseDTO(plans);
     }
 
 }
