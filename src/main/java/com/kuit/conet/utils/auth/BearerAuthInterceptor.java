@@ -1,4 +1,4 @@
-package com.kuit.conet.utils;
+package com.kuit.conet.utils.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
