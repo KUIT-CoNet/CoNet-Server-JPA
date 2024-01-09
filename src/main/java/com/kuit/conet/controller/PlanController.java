@@ -84,7 +84,7 @@ public class PlanController {
 
         // 다가오는 약속
         if (planRequest.getPeriod() == PlanPeriod.ONCOMING) {
-            SideMenuFixedPlanResponseDTO response = planService.getFixedFuturePlan(httpRequest, planRequest.getTeamId());
+            SideMenuFixedPlanResponseDTO response = planService.getFixedOncomingPlan(httpRequest, planRequest.getTeamId());
             return new BaseResponse<>(response);
         }
 

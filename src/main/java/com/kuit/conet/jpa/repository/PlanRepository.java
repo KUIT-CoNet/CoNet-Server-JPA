@@ -63,7 +63,7 @@ public class PlanRepository {
         return em.createQuery("select new com.kuit.conet.dto.plan.WaitingPlanDTO(p.id, p.startPeriod, p.endPeriod, p.team.name, p.name) " +
                         "from Plan p join p.team t on t.id=:teamId " +
                         "where p.status=:status " +
-                        "and p.startPeriod>=current_date() " +
+                        "and p.startPeriod >= CURRENT_DATE " +
                         "order by p.startPeriod", WaitingPlanDTO.class)
                 .setParameter("teamId", teamId)
                 .setParameter("status", PlanStatus.WAITING)
@@ -87,7 +87,7 @@ public class PlanRepository {
                 .getResultList();
     }
 
-    public List<SideMenuFixedPlanDTO> getFixedFuturePlans(Long teamId, Long userId) {
+    public List<SideMenuFixedPlanDTO> getFixedOncomingPlans(Long teamId, Long userId) {
         return em.createQuery("select new com.kuit.conet.dto.plan.SideMenuFixedPlanDTO(p.id, p.name, p.fixedDate, p.fixedTime, " +
                         "                                                                       function('DATEDIFF', p.fixedDate, CURRENT_DATE), " + // 며칠 남은 약속 ?
                         "                                                                       (select count(pm)>0 " +
