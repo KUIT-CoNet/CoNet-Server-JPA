@@ -13,6 +13,8 @@ public class DateAndTimeFormatter {
     private static final String REGEX = "-";
     private static final int DATE_INDEX = 2;
     private static final String MINUTE_AND_SECOND = ":00:00";
+    private static final String CONET_DATE_FORMAT = "yyyy. MM. dd";
+    private static final String CONET_TIME_FORMAT = "HH:mm";
 
     public static List<Integer> datesToIntegerList(List<Date> dates) {
         return dates.stream()
@@ -23,13 +25,13 @@ public class DateAndTimeFormatter {
 
     public static String dateToStringWithDot(Date date) {
         // yyyy-MM-dd -> yyyy. MM. dd
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy. MM. dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(CONET_DATE_FORMAT);
         return dateFormat.format(date);
     }
 
     public static String timeDeleteSeconds(Time time) {
         // HH:mm:ss -> HH:mm
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(CONET_TIME_FORMAT);
         return dateFormat.format(time);
     }
 
