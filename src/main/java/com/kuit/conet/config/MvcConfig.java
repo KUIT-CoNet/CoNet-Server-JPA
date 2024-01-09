@@ -1,6 +1,6 @@
 package com.kuit.conet.config;
 
-import com.kuit.conet.utils.BearerAuthInterceptor;
+import com.kuit.conet.utils.auth.BearerAuthInterceptor;
 import com.kuit.conet.utils.StringToEnumConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +16,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
+    private final UserIdResolver userIdResolver;
     private final ClientIpResolver clientIpResolver;
     private final BearerAuthInterceptor bearerAuthInterceptor;
 
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(userIdResolver);
         resolvers.add(clientIpResolver);
     }
 
