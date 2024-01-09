@@ -6,7 +6,6 @@ import com.kuit.conet.dto.web.request.user.NameRequestDTO;
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.user.UserResponseDTO;
 import com.kuit.conet.dao.UserDao;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,9 +20,7 @@ public class UserService {
     private final UserDao userDao;
     private final StorageService storageService;
 
-    public void userDelete(HttpServletRequest httpRequest) {
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-
+    public void userDelete(Long userId) {
         // S3 에서 프로필 이미지 객체 삭제
         String imgUrl = userDao.getUserImgUrl(userId);
         String deleteFileName = storageService.getFileNameFromUrl(imgUrl);
@@ -34,8 +31,7 @@ public class UserService {
         userDao.deleteUser(userId);
     }
 
-    public UserResponseDTO getUser(HttpServletRequest httpRequest) {
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+    public UserResponseDTO getUser(Long userId) {
         isExistUser(userId);
 
         // S3에 없는 객체에 대한 유효성 검사
@@ -49,8 +45,7 @@ public class UserService {
         return userDao.getUser(userId);
     }
 
-    public StorageImgResponseDTO updateImg(HttpServletRequest httpRequest, MultipartFile file) {
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+    public StorageImgResponseDTO updateImg(Long userId, MultipartFile file) {
         isExistUser(userId);
 
         // 저장할 파일명 만들기
@@ -72,8 +67,7 @@ public class UserService {
         return userDao.updateImg(userId, imgUrl);
     }
 
-    public void updateName(HttpServletRequest httpRequest, NameRequestDTO nameRequest) {
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+    public void updateName(Long userId, NameRequestDTO nameRequest) {
         isExistUser(userId);
 
         userDao.updateName(userId, nameRequest.getName());

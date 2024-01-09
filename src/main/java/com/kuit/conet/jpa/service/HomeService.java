@@ -1,5 +1,6 @@
 package com.kuit.conet.jpa.service;
 
+import com.kuit.conet.annotation.UserId;
 import com.kuit.conet.dto.home.HomeFixedPlanOnDayDTO;
 import com.kuit.conet.dto.plan.WaitingPlanDTO;
 import com.kuit.conet.dto.web.request.plan.HomePlanRequestDTO;
@@ -25,25 +26,22 @@ import static com.kuit.conet.utils.DateAndTimeFormatter.*;
 public class HomeService {
     private final HomeRepository homeRepository;
 
-    public PlanDateOnMonthResponseDTO getHomeFixedPlanInMonth(HttpServletRequest httpRequest, HomePlanRequestDTO homeRequest) {
+    public PlanDateOnMonthResponseDTO getHomeFixedPlanInMonth(Long userId, HomePlanRequestDTO homeRequest) {
         //TODO: utils/DateFormatValidator 생성 후, request에 날짜가 형식에 맞추어 잘 왔는지 검사하기 (정규표현식으로)
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         List<Date> fixedPlansInMonth = homeRepository.getHomeFixedPlansInMonth(userId, homeRequest.getSearchDate());
         List<Integer> planDates = datesToIntegerList(fixedPlansInMonth);
 
         return new PlanDateOnMonthResponseDTO(planDates);
     }
 
-    public HomePlanOnDayResponseDTO getHomeFixedPlanOnDay(HttpServletRequest httpRequest, HomePlanRequestDTO homeRequest) {
+    public HomePlanOnDayResponseDTO getHomeFixedPlanOnDay(Long userId, HomePlanRequestDTO homeRequest) {
         //TODO: utils/DateFormatValidator 생성 후, request에 날짜가 형식에 맞추어 잘 왔는지 검사하기 (정규표현식으로)
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         List<HomeFixedPlanOnDayDTO> plans = homeRepository.getHomeFixedPlansOnDay(userId, homeRequest.getSearchDate());
 
         return new HomePlanOnDayResponseDTO(plans.size(), plans);
     }
 
-    public WaitingPlanResponseDTO getHomeWaitingPlan(HttpServletRequest httpRequest) {
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+    public WaitingPlanResponseDTO getHomeWaitingPlan(Long userId) {
         List<WaitingPlanDTO> plans = homeRepository.getHomeWaitingPlans(userId);
 
         return new WaitingPlanResponseDTO(plans);

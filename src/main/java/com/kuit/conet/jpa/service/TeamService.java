@@ -13,7 +13,6 @@ import com.kuit.conet.jpa.domain.storage.StorageDomain;
 import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
 import com.kuit.conet.jpa.repository.*;
 import com.kuit.conet.service.StorageService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -52,7 +51,7 @@ public class TeamService {
     final String SUCCESS_LEAVE_TEAM = "모임 탈퇴에 성공하였습니다.";
     final String SUCCESS_DELETE_TEAM = "모임 삭제에 성공하였습니다.";
 
-    public CreateTeamResponseDTO createTeam(CreateTeamRequestDTO teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
+    public CreateTeamResponseDTO createTeam(CreateTeamRequestDTO teamRequest, Long userId, MultipartFile file) {
         // 초대 코드 생성 및 코드 중복 확인
         String inviteCode = getRandomInviteCode();
 
@@ -60,7 +59,6 @@ public class TeamService {
         LocalDateTime codeGeneratedTime = LocalDateTime.now();
 
         // 팀 만든 멤버 정보 추출
-        Long userId = getUserIdFromHttpRequest(httpRequest);
         Member teamCreator = userRepository.findById(userId);
 
         //이미지 s3 업로드
@@ -73,10 +71,9 @@ public class TeamService {
         return new CreateTeamResponseDTO(newTeam.getId(), newTeam.getInviteCode());
     }
 
-    public ParticipateTeamResponseDTO participateTeam(ParticipateTeamRequestDTO teamRequest, HttpServletRequest httpRequest) {
+    public ParticipateTeamResponseDTO participateTeam(ParticipateTeamRequestDTO teamRequest, Long userId) {
         // 필요한 정보 조회
         String inviteCode = getInviteCodeFromRequest(teamRequest);
-        Long userId = getUserIdFromHttpRequest(httpRequest);
         Member user = userRepository.findById(userId);
         Team team = teamRepository.findByInviteCode(inviteCode);
 
@@ -92,17 +89,13 @@ public class TeamService {
         return new ParticipateTeamResponseDTO(user.getName(), team.getName(), user.getStatus());
     }
 
-    public List<GetTeamResponseDTO> getTeam(HttpServletRequest httpRequest) {
-        Long userId = getUserIdFromHttpRequest(httpRequest);
-
+    public List<GetTeamResponseDTO> getTeam(Long userId) {
         List<Team> teams = teamRepository.findByUserId(userId);
 
         return generateTeamReturnResponse(teams, userId);
     }
 
-    public String leaveTeam(TeamIdRequestDTO teamRequest, HttpServletRequest httpRequest) {
-        Long userId = getUserIdFromHttpRequest(httpRequest);
-
+    public String leaveTeam(TeamIdRequestDTO teamRequest, Long userId) {
         Team team = teamRepository.findById(teamRequest.getTeamId());
 
         // 모임 존재 여부 확인
@@ -118,8 +111,7 @@ public class TeamService {
         return SUCCESS_LEAVE_TEAM;
     }
 
-    public String deleteTeam(Long teamId, HttpServletRequest httpRequest) {
-        Long userId = getUserIdFromHttpRequest(httpRequest);
+    public String deleteTeam(Long teamId, Long userId) {
         Team team = teamRepository.findById(teamId);
 
         // 모임 존재 여부 확인
@@ -149,10 +141,6 @@ public class TeamService {
             String deleteFileName = storageService.getFileNameFromUrl(imgUrl);
             storageService.deleteImage(deleteFileName);
         }
-    }
-
-    private Long getUserIdFromHttpRequest(HttpServletRequest httpRequest) {
-        return Long.parseLong((String) httpRequest.getAttribute("userId"));
     }
 
     private String getRandomInviteCode() {
