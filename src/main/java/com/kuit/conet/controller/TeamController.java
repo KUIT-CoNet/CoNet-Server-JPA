@@ -1,5 +1,6 @@
 package com.kuit.conet.controller;
 
+import com.kuit.conet.annotation.UserId;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.ParticipateTeamRequestDTO;
@@ -8,7 +9,6 @@ import com.kuit.conet.dto.web.response.team.CreateTeamResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
 import com.kuit.conet.dto.web.response.team.ParticipateTeamResponseDTO;
 import com.kuit.conet.jpa.service.TeamService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +28,8 @@ public class TeamController {
      * @apiNote 모임 생성 api
      * */
     @PostMapping
-    public BaseResponse<CreateTeamResponseDTO> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequestDTO teamRequest, HttpServletRequest httpRequest, @RequestParam(value = "file") MultipartFile file) {
-        CreateTeamResponseDTO response = teamService.createTeam(teamRequest, httpRequest, file);
+    public BaseResponse<CreateTeamResponseDTO> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequestDTO teamRequest, @UserId Long userId, @RequestParam(value = "file") MultipartFile file) {
+        CreateTeamResponseDTO response = teamService.createTeam(teamRequest, userId, file);
         return new BaseResponse<CreateTeamResponseDTO>(response);
     }
 
@@ -37,8 +37,8 @@ public class TeamController {
      * @apiNote 모임 참가 api
      * */
     @PostMapping("/participate")
-    public BaseResponse<ParticipateTeamResponseDTO> participateTeam(@RequestBody @Valid ParticipateTeamRequestDTO teamRequest, HttpServletRequest httpRequest) {
-        ParticipateTeamResponseDTO response = teamService.participateTeam(teamRequest, httpRequest);
+    public BaseResponse<ParticipateTeamResponseDTO> participateTeam(@RequestBody @Valid ParticipateTeamRequestDTO teamRequest, @UserId Long userId) {
+        ParticipateTeamResponseDTO response = teamService.participateTeam(teamRequest, userId);
         return new BaseResponse<ParticipateTeamResponseDTO>(response);
     }
 
@@ -46,8 +46,8 @@ public class TeamController {
      * @apiNote 모임 리스트 조회 api
      * */
     @GetMapping
-    public BaseResponse<List<GetTeamResponseDTO>> getTeam(HttpServletRequest httpRequest) {
-        List<GetTeamResponseDTO> responses = teamService.getTeam(httpRequest);
+    public BaseResponse<List<GetTeamResponseDTO>> getTeam(@UserId Long userId) {
+        List<GetTeamResponseDTO> responses = teamService.getTeam(userId);
         return new BaseResponse<List<GetTeamResponseDTO>>(responses);
     }
 
@@ -55,8 +55,8 @@ public class TeamController {
      * @apiNote 모임 탈퇴 api
      * */
     @PostMapping("/leave")
-    public BaseResponse<String> leaveTeam(@RequestBody @Valid TeamIdRequestDTO teamRequest, HttpServletRequest httpRequest) {
-        String response = teamService.leaveTeam(teamRequest, httpRequest);
+    public BaseResponse<String> leaveTeam(@RequestBody @Valid TeamIdRequestDTO teamRequest, @UserId Long userId) {
+        String response = teamService.leaveTeam(teamRequest, userId);
         return new BaseResponse<String>(response);
     }
 
@@ -64,8 +64,8 @@ public class TeamController {
      * @apiNote 모임 삭제 api
      * */
     @DeleteMapping("/{teamId}")
-    public BaseResponse<String> deleteTeam(@PathVariable Long teamId, HttpServletRequest httpRequest) {
-        String response = teamService.deleteTeam(teamId,httpRequest);
+    public BaseResponse<String> deleteTeam(@PathVariable Long teamId, @UserId Long userId) {
+        String response = teamService.deleteTeam(teamId, userId);
         return new BaseResponse<String>(response);
     }
 

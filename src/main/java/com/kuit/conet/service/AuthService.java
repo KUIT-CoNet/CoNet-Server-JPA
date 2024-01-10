@@ -1,7 +1,7 @@
 package com.kuit.conet.service;
 
 import com.kuit.conet.dto.web.request.auth.OptionTermRequestDTO;
-import com.kuit.conet.utils.JwtParser;
+import com.kuit.conet.utils.auth.JwtParser;
 import com.kuit.conet.utils.auth.JwtTokenProvider;
 import com.kuit.conet.auth.apple.AppleUserProvider;
 import com.kuit.conet.auth.kakao.KakaoUserProvider;
@@ -98,18 +98,14 @@ public class AuthService {
         return getLoginResponse(existingUser, clientIp, true);
     }
 
-    public AgreeTermAndPutNameResponseDTO agreeTermAndPutName(PutOptionTermAndNameRequestDTO nameRequest, HttpServletRequest httpRequest, String clientIp) {
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-
+    public AgreeTermAndPutNameResponseDTO agreeTermAndPutName(PutOptionTermAndNameRequestDTO nameRequest, Long userId, String clientIp) {
         // 이용 약관 및 이름 입력 DB update
         User user = userDao.agreeTermAndPutName(nameRequest.getName(), nameRequest.getOptionTerm(), userId);
 
         return new AgreeTermAndPutNameResponseDTO(user.getName(), user.getEmail(), user.getServiceTerm(), user.getOptionTerm());
     }
 
-    public void updateOptionTerm(OptionTermRequestDTO optionTermRequest, HttpServletRequest httpRequest) {
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-
+    public void updateOptionTerm(OptionTermRequestDTO optionTermRequest, Long userId) {
         // 선택 약관에 대한 데이터베이스 값과 입력 값 비교
         // -> 동일하면 exception
         if (optionTermRequest.getOption() == userDao.getOptionTerm(userId)) {

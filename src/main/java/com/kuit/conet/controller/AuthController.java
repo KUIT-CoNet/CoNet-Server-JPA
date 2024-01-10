@@ -1,6 +1,7 @@
 package com.kuit.conet.controller;
 
 import com.kuit.conet.annotation.ClientIp;
+import com.kuit.conet.annotation.UserId;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.auth.LoginRequestDTO;
 import com.kuit.conet.dto.web.request.auth.OptionTermRequestDTO;
@@ -43,14 +44,14 @@ public class AuthController {
 
     // 이용 약관 동의 및 이름 입력 DB 업데이트
     @PostMapping("/term-and-name")
-    public BaseResponse<AgreeTermAndPutNameResponseDTO> agreeTermAndPutName(@RequestBody @Valid PutOptionTermAndNameRequestDTO nameRequest, HttpServletRequest httpRequest, @ClientIp String clientIp) {
-        AgreeTermAndPutNameResponseDTO response = authService.agreeTermAndPutName(nameRequest, httpRequest, clientIp);
+    public BaseResponse<AgreeTermAndPutNameResponseDTO> agreeTermAndPutName(@RequestBody @Valid PutOptionTermAndNameRequestDTO nameRequest, @UserId Long userId, @ClientIp String clientIp) {
+        AgreeTermAndPutNameResponseDTO response = authService.agreeTermAndPutName(nameRequest, userId, clientIp);
         return new BaseResponse<>(response);
     }
 
     @PostMapping("/option-term")
-    public BaseResponse<String> updateOptionTerm(@RequestBody @Valid OptionTermRequestDTO optionTermRequest, HttpServletRequest httpRequest) {
-        authService.updateOptionTerm(optionTermRequest, httpRequest);
+    public BaseResponse<String> updateOptionTerm(@RequestBody @Valid OptionTermRequestDTO optionTermRequest, @UserId Long userId) {
+        authService.updateOptionTerm(optionTermRequest, userId);
         return new BaseResponse<>("선택 약관의 선택 여부 변경을 성공하였습니다.");
     }
 }

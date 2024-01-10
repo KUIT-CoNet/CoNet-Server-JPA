@@ -5,8 +5,12 @@ import lombok.*;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 public class PlanDateOnMonthResponseDTO {
     int count;
     List<Integer> dates;
+
+    public PlanDateOnMonthResponseDTO(List<Integer> dates) {
+        this.count = dates.size();
+        this.dates = dates;
+    }
 }
