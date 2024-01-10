@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
-public enum BaseExceptionResponseStatus implements ResponseStatus{
+public enum BaseExceptionResponseStatus implements ResponseStatus {
     /**
      * 1000: 요청 성공 (OK)
      */
@@ -43,23 +43,24 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
 
     /**
      * 5000: 회원 정보 오류
-     * */
-    INVALID_PLATFORM(5001, HttpStatus.BAD_REQUEST.value(),"플랫폼 정보가 올바르지 않습니다."),
-    NOT_FOUND_USER(5002, HttpStatus.BAD_REQUEST.value(),"존재하지 않는 사용자입니다."),
+     */
+    INVALID_PLATFORM(5001, HttpStatus.BAD_REQUEST.value(), "플랫폼 정보가 올바르지 않습니다."),
+    NOT_FOUND_USER(5002, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 사용자입니다."),
+    INACTIVE_USER(5003, HttpStatus.BAD_REQUEST.value(), "활성화 상태가 아닌 사용자입니다."),
 
     /**
      * 5500: 모임(Team) 정보 오류
-     * */
+     */
 
-    NOT_FOUND_INVITE_CODE(5501, HttpStatus.NOT_FOUND.value(),"존재하지 않는 초대 코드입니다."),
-    EXPIRED_INVITE_CODE(5502, HttpStatus.BAD_REQUEST.value(),"초대 코드 유효 기간이 만료되었습니다."),
-    EXIST_USER_IN_TEAM(5503, HttpStatus.BAD_REQUEST.value(),"모임에 이미 참여 중입니다."),
-    USER_NOT_EXIST_IN_TEAM(5504, HttpStatus.BAD_REQUEST.value(),"모임에 참여하고 있지 않습니다."),
-    NOT_FOUND_TEAM(5505, HttpStatus.NOT_FOUND.value(),"존재하지 않는 모임입니다."),
-    NOT_TEAM_MEMBER(5507, HttpStatus.BAD_REQUEST.value(),"팀의 멤버가 아닙니다."),
+    NOT_FOUND_INVITE_CODE(5501, HttpStatus.NOT_FOUND.value(), "존재하지 않는 초대 코드입니다."),
+    EXPIRED_INVITE_CODE(5502, HttpStatus.BAD_REQUEST.value(), "초대 코드 유효 기간이 만료되었습니다."),
+    EXIST_USER_IN_TEAM(5503, HttpStatus.BAD_REQUEST.value(), "모임에 이미 참여 중입니다."),
+    USER_NOT_EXIST_IN_TEAM(5504, HttpStatus.BAD_REQUEST.value(), "모임에 참여하고 있지 않습니다."),
+    NOT_FOUND_TEAM(5505, HttpStatus.NOT_FOUND.value(), "존재하지 않는 모임입니다."),
+    NOT_TEAM_MEMBER(5507, HttpStatus.BAD_REQUEST.value(), "팀의 멤버가 아닙니다."),
     /**
      * 6000: 약속(Plan) 정보 오류
-     * */
+     */
     NOT_WAITING_PLAN(6000, HttpStatus.BAD_REQUEST.value(), "대기 중인 약속 아닙니다."),
     NOT_FIXED_PLAN(6001, HttpStatus.BAD_REQUEST.value(), "확정된 약속이 아닙니다."),
     NOT_PAST_PLAN(6002, HttpStatus.BAD_REQUEST.value(), "지난 약속이 아닙니다."),
