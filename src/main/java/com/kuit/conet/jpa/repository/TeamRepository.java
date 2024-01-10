@@ -34,13 +34,13 @@ public class TeamRepository {
     }
 
     public boolean isExistInviteCode(String inviteCode) {
-        return em.createQuery("select count(t.id) > 0 from Team t where t.inviteCode=:inviteCode", Boolean.class)
+        return em.createQuery("select count(t) > 0 from Team t where t.inviteCode=:inviteCode", Boolean.class)
                 .setParameter("inviteCode", inviteCode)
                 .getSingleResult();
     }
 
     public boolean isExistUser(Long teamId, Long userId) {
-        return em.createQuery("select count(tm.id) > 0 from Team t join t.teamMembers tm on t.id =:teamId and  tm.member.id=:userId", Boolean.class)
+        return em.createQuery("select count(tm) > 0 from Team t join t.teamMembers tm on t.id =:teamId and tm.member.id=:userId", Boolean.class)
                 .setParameter("userId", userId)
                 .setParameter("teamId", teamId)
                 .getSingleResult();
