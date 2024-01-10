@@ -27,6 +27,6 @@ public class PlanMemberTime {
     private Date date;
 
     @Column(length = 500)
-    private String possibleTime;
+    private String availableTime;
 
 }

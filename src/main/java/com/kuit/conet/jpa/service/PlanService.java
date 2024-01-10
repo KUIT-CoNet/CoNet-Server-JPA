@@ -144,21 +144,21 @@ public class PlanService {
         List<UserAvailableTimeDTO> timeSlot = getAvailableTimeSlot(planMemberTimes);
 
         // 가능한 시간이 존재하는지
-        Boolean hasPossibleTime = timeSlot.stream()
+        Boolean hasAvailableTime = timeSlot.stream()
                 .anyMatch(timeSlotOnDay -> !timeSlotOnDay.getAvailableTimes().isEmpty());
 
-        return UserAvailableTimeResponseDTO.registered(planId, userId, hasPossibleTime, timeSlot);
+        return UserAvailableTimeResponseDTO.registered(planId, userId, hasAvailableTime, timeSlot);
     }
 
     private static List<UserAvailableTimeDTO> getAvailableTimeSlot(List<PlanMemberTime> planMemberTimes) {
          return planMemberTimes.stream()
                 .map(planMemberTime -> {
                     UserAvailableTimeDTO responseDTO = new UserAvailableTimeDTO(planMemberTime.getDate());
-                    String possibleTime = planMemberTime.getPossibleTime();
+                    String availableTime = planMemberTime.getAvailableTime();
 
                     List<Integer> timeList = new ArrayList<>();
-                    if (!possibleTime.isEmpty()) {
-                        timeList = timeStringToIntegerList(possibleTime);
+                    if (!availableTime.isEmpty()) {
+                        timeList = timeStringToIntegerList(availableTime);
                     }
                     responseDTO.setAvailableTimes(timeList);
 
