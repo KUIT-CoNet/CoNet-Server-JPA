@@ -10,7 +10,6 @@ import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.storage.StorageDomain;
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.domain.team.TeamMember;
-import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
 import com.kuit.conet.jpa.repository.*;
 import com.kuit.conet.service.StorageService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +30,10 @@ import static com.kuit.conet.jpa.service.validator.TeamValidator.*;
 @Transactional
 @RequiredArgsConstructor
 public class TeamService {
+    static final int ASCII_NUMBER_NINE = 57;
+    static final int ASCII_UPPERCASE_A = 65;
+    static final int ASCII_UPPERCASE_Z = 90;
+    static final int ASCII_LOWERCASE_A = 97;
     private final int LEFT_LIMIT = 48;
     private final int RIGHT_LIMIT = 122;
     private final int TARGET_STRING_LENGTH = 8;
@@ -43,17 +46,6 @@ public class TeamService {
     private final PlanMemberRepository planMemberRepository;
     private final PlanMemberTimeRepository planMemberTimeRepository;
     private final TeamMemberRepository teamMemberRepository;
-
-    static final int LEFT_LIMIT = 48;
-    static final int RIGHT_LIMIT = 122;
-    static final int TARGET_STRING_LENGTH = 8;
-    static final int ASCII_NUMBER_NINE = 57;
-    static final int ASCII_UPPERCASE_A = 65;
-    static final int ASCII_UPPERCASE_Z = 90;
-    static final int ASCII_LOWERCASE_A = 97;
-
-    final String SUCCESS_LEAVE_TEAM = "모임 탈퇴에 성공하였습니다.";
-    final String SUCCESS_DELETE_TEAM = "모임 삭제에 성공하였습니다.";
 
     public CreateTeamResponseDTO createTeam(CreateTeamRequestDTO teamRequest, Long userId, MultipartFile file) {
         // 초대 코드 생성 및 코드 중복 확인

@@ -5,7 +5,6 @@ import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.storage.StorageDomain;
 import com.kuit.conet.jpa.repository.MemberRepository;
 import com.kuit.conet.service.StorageService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,8 +22,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final StorageService storageService;
 
-    public StorageImgResponseDTO updateImg(HttpServletRequest httpRequest, MultipartFile file) {
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
+    public StorageImgResponseDTO updateImg(Long userId, MultipartFile file) {
         Member member = memberRepository.findById(userId);
         validateMemberExisting(member);
 
