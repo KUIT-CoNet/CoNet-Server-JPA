@@ -22,7 +22,7 @@ public class MemberRepository {
         return em.find(Member.class, id);
     }
 
-    public StorageImgResponseDTO getUserImgUrlResponse(Long userId) {
+    public StorageImgResponseDTO getImgUrlResponse(Long userId) {
         return em.createQuery("select new com.kuit.conet.dto.web.response.StorageImgResponseDTO(m.name, m.imgUrl) " +
                         "from Member m where m.id=:userId and m.status=:status", StorageImgResponseDTO.class)
                 .setParameter("userId", userId)

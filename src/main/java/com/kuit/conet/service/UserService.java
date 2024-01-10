@@ -1,11 +1,11 @@
 package com.kuit.conet.service;
 
 import com.kuit.conet.common.exception.UserException;
-import com.kuit.conet.jpa.domain.storage.StorageDomain;
-import com.kuit.conet.dto.web.request.user.NameRequestDTO;
-import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
-import com.kuit.conet.dto.web.response.user.UserResponseDTO;
 import com.kuit.conet.dao.UserDao;
+import com.kuit.conet.dto.web.request.member.NameRequestDTO;
+import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
+import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
+import com.kuit.conet.jpa.domain.storage.StorageDomain;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,13 +31,13 @@ public class UserService {
         userDao.deleteUser(userId);
     }
 
-    public UserResponseDTO getUser(Long userId) {
+    public MemberResponseDTO getUser(Long userId) {
         isExistUser(userId);
 
         // S3에 없는 객체에 대한 유효성 검사
         String imgUrl = userDao.getUserImgUrl(userId);
         String fileName = storageService.getFileNameFromUrl(imgUrl);
-        if(!storageService.isExistImage(fileName)) {
+        if (!storageService.isExistImage(fileName)) {
             log.warn("S3 버킷에 존재하지 않는 이미지입니다. 기본 이미지로 변경하겠습니다.");
             userDao.setImageUrlDefault(userId);
         }

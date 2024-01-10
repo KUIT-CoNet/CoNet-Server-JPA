@@ -1,10 +1,10 @@
 package com.kuit.conet.dao;
 
-import com.kuit.conet.jpa.domain.auth.Platform;
 import com.kuit.conet.domain.user.User;
 import com.kuit.conet.dto.web.request.auth.OptionTermRequestDTO;
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
-import com.kuit.conet.dto.web.response.user.UserResponseDTO;
+import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
+import com.kuit.conet.jpa.domain.auth.Platform;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -129,12 +129,12 @@ public class UserDao {
         jdbcTemplate.update(sql, param);
     }
 
-    public UserResponseDTO getUser(Long userId) {
+    public MemberResponseDTO getUser(Long userId) {
         String sql = "select name, email, img_url, platform from user where user_id=:user_id and status=1";
         Map<String, Object> param = Map.of("user_id", userId);
 
-        RowMapper<UserResponseDTO> mapper = (rs, rowNum) -> {
-            UserResponseDTO user = new UserResponseDTO();
+        RowMapper<MemberResponseDTO> mapper = (rs, rowNum) -> {
+            MemberResponseDTO user = new MemberResponseDTO();
             user.setName(rs.getString("name"));
             user.setEmail(rs.getString("email"));
             user.setUserImgUrl(rs.getString("img_url"));
