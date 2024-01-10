@@ -1,11 +1,10 @@
 package com.kuit.conet.dto.web.request.team;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-@ToString
-public class ParticipateTeamRequestDTO {
+public class JoinTeamRequestDTO {
     private String inviteCode;
 }

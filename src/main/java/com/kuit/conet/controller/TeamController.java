@@ -2,11 +2,11 @@ package com.kuit.conet.controller;
 
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
-import com.kuit.conet.dto.web.request.team.ParticipateTeamRequestDTO;
+import com.kuit.conet.dto.web.request.team.JoinTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
 import com.kuit.conet.dto.web.response.team.CreateTeamResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
-import com.kuit.conet.dto.web.response.team.ParticipateTeamResponseDTO;
+import com.kuit.conet.dto.web.response.team.JoinTeamResponseDTO;
 import com.kuit.conet.jpa.service.TeamService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ public class TeamController {
 
     /**
      * @apiNote 모임 생성 api
-     * */
+     */
     @PostMapping
     public BaseResponse<CreateTeamResponseDTO> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequestDTO teamRequest, HttpServletRequest httpRequest, @RequestParam(value = "file") MultipartFile file) {
         CreateTeamResponseDTO response = teamService.createTeam(teamRequest, httpRequest, file);
@@ -35,16 +35,16 @@ public class TeamController {
 
     /**
      * @apiNote 모임 참가 api
-     * */
-    @PostMapping("/participate")
-    public BaseResponse<ParticipateTeamResponseDTO> participateTeam(@RequestBody @Valid ParticipateTeamRequestDTO teamRequest, HttpServletRequest httpRequest) {
-        ParticipateTeamResponseDTO response = teamService.participateTeam(teamRequest, httpRequest);
-        return new BaseResponse<ParticipateTeamResponseDTO>(response);
+     */
+    @PostMapping("/join")
+    public BaseResponse<JoinTeamResponseDTO> joinTeam(@RequestBody @Valid JoinTeamRequestDTO teamRequest, HttpServletRequest httpRequest) {
+        JoinTeamResponseDTO response = teamService.joinTeam(teamRequest, httpRequest);
+        return new BaseResponse<JoinTeamResponseDTO>(response);
     }
 
     /**
      * @apiNote 모임 리스트 조회 api
-     * */
+     */
     @GetMapping
     public BaseResponse<List<GetTeamResponseDTO>> getTeam(HttpServletRequest httpRequest) {
         List<GetTeamResponseDTO> responses = teamService.getTeam(httpRequest);
@@ -53,7 +53,7 @@ public class TeamController {
 
     /**
      * @apiNote 모임 탈퇴 api
-     * */
+     */
     @PostMapping("/leave")
     public BaseResponse<String> leaveTeam(@RequestBody @Valid TeamIdRequestDTO teamRequest, HttpServletRequest httpRequest) {
         String response = teamService.leaveTeam(teamRequest, httpRequest);
@@ -62,10 +62,10 @@ public class TeamController {
 
     /**
      * @apiNote 모임 삭제 api
-     * */
+     */
     @DeleteMapping("/{teamId}")
     public BaseResponse<String> deleteTeam(@PathVariable Long teamId, HttpServletRequest httpRequest) {
-        String response = teamService.deleteTeam(teamId,httpRequest);
+        String response = teamService.deleteTeam(teamId, httpRequest);
         return new BaseResponse<String>(response);
     }
 

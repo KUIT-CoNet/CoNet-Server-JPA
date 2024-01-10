@@ -28,7 +28,7 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addConverter(new StringToEnumConverter());
     }
 
-    public void addInterceptors(InterceptorRegistry registry){
+    public void addInterceptors(InterceptorRegistry registry) {
         log.info("Interceptor 등록");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/auth/regenerate-token");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/auth/term-and-name");
@@ -40,7 +40,7 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/{teamId}");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/create");
-        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/participate");
+        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/join");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/leave");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/bookmark");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/bookmark/delete");
