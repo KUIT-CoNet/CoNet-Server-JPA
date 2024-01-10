@@ -1,15 +1,15 @@
 package com.kuit.conet.jpa.service;
 
-import com.kuit.conet.dto.web.request.team.ParticipateTeamRequestDTO;
+import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
+import com.kuit.conet.dto.web.request.team.JoinTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
 import com.kuit.conet.dto.web.response.team.CreateTeamResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
-import com.kuit.conet.dto.web.response.team.ParticipateTeamResponseDTO;
+import com.kuit.conet.dto.web.response.team.JoinTeamResponseDTO;
 import com.kuit.conet.jpa.domain.member.Member;
-import com.kuit.conet.jpa.domain.team.TeamMember;
-import com.kuit.conet.jpa.domain.team.*;
-
 import com.kuit.conet.jpa.domain.storage.StorageDomain;
+import com.kuit.conet.jpa.domain.team.Team;
+import com.kuit.conet.jpa.domain.team.TeamMember;
 import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
 import com.kuit.conet.jpa.repository.*;
 import com.kuit.conet.service.StorageService;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-;
 import static com.kuit.conet.jpa.service.validator.TeamValidator.*;
 
 @Slf4j
@@ -32,9 +31,14 @@ import static com.kuit.conet.jpa.service.validator.TeamValidator.*;
 @Transactional
 @RequiredArgsConstructor
 public class TeamService {
+    private final int LEFT_LIMIT = 48;
+    private final int RIGHT_LIMIT = 122;
+    private final int TARGET_STRING_LENGTH = 8;
+    private final String SUCCESS_LEAVE_TEAM = "모임 탈퇴에 성공하였습니다.";
+    private final String SUCCESS_DELETE_TEAM = "모임 삭제에 성공하였습니다.";
     private final StorageService storageService;
     private final TeamRepository teamRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final PlanRepository planRepository;
     private final PlanMemberRepository planMemberRepository;
     private final PlanMemberTimeRepository planMemberTimeRepository;
@@ -59,7 +63,7 @@ public class TeamService {
         LocalDateTime codeGeneratedTime = LocalDateTime.now();
 
         // 팀 만든 멤버 정보 추출
-        Member teamCreator = userRepository.findById(userId);
+        Member teamCreator = memberRepository.findById(userId);
 
         //이미지 s3 업로드
         String imgUrl = updateTeamImg(file);
@@ -71,10 +75,10 @@ public class TeamService {
         return new CreateTeamResponseDTO(newTeam.getId(), newTeam.getInviteCode());
     }
 
-    public ParticipateTeamResponseDTO participateTeam(ParticipateTeamRequestDTO teamRequest, Long userId) {
+    public JoinTeamResponseDTO joinTeam(JoinTeamRequestDTO teamRequest, Long userId) {
         // 필요한 정보 조회
         String inviteCode = getInviteCodeFromRequest(teamRequest);
-        Member user = userRepository.findById(userId);
+        Member user = memberRepository.findById(userId);
         Team team = teamRepository.findByInviteCode(inviteCode);
 
         // 모임에 이미 존재하는 회원인지 확인
@@ -84,9 +88,9 @@ public class TeamService {
         compareInviteCodeAndRequestTime(team);
 
         // team에 teamMember 추가 (변경 감지)
-        TeamMember teamMember = TeamMember.createTeamMember(team, user);
+        TeamMember.createTeamMember(team, user);
 
-        return new ParticipateTeamResponseDTO(user.getName(), team.getName(), user.getStatus());
+        return new JoinTeamResponseDTO(user.getName(), team.getName());
     }
 
     public List<GetTeamResponseDTO> getTeam(Long userId) {
@@ -94,6 +98,7 @@ public class TeamService {
 
         return generateTeamReturnResponse(teams, userId);
     }
+
 
     public String leaveTeam(TeamIdRequestDTO teamRequest, Long userId) {
         Team team = teamRepository.findById(teamRequest.getTeamId());
@@ -172,7 +177,7 @@ public class TeamService {
         return generatedString;
     }
 
-    private String getInviteCodeFromRequest(ParticipateTeamRequestDTO teamRequest) {
+    private String getInviteCodeFromRequest(JoinTeamRequestDTO teamRequest) {
         String inviteCode = teamRequest.getInviteCode();
         validateInviteCodeExisting(teamRepository, inviteCode);
         return inviteCode;

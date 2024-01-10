@@ -30,7 +30,7 @@ import static com.kuit.conet.utils.DateAndTimeFormatter.*;
 @Transactional
 @RequiredArgsConstructor
 public class PlanService {
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final PlanRepository planRepository;
     private final PlanMemberTimeRepository planMemberTimeRepository;
@@ -112,7 +112,7 @@ public class PlanService {
     private void setPlanMember(List<Long> userIds, Plan plan) {
         //cascade로 영속화
         userIds.forEach(userId
-                -> PlanMember.createPlanMember(plan, userRepository.findById(userId)));
+                -> PlanMember.createPlanMember(plan, memberRepository.findById(userId)));
     }
 
     private void deletePlanMemberTime(Plan plan) {

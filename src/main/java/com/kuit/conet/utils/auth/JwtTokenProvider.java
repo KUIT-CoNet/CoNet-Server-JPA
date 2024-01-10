@@ -2,24 +2,23 @@ package com.kuit.conet.utils.auth;
 
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.*;
 
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
+    private static final long REFRESH_TOKEN_EXPIRED_IN = 15L * 24 * 60 * 60 * 1000; // 15일
     private final String secretKey;
     private final long validityInMilliseconds;
     private final JwtParser jwtParser;
-
     private final long ACCESS_TOKEN_EXPIRED_IN;
-    private static final long REFRESH_TOKEN_EXPIRED_IN = 15L * 24 * 60 * 60 * 1000; // 15일
 
     public JwtTokenProvider(@Value("${secret.jwt-secret-key}") String secretKey,
                             @Value("${secret.jwt-expired-in}") long validityInMilliseconds,
-                            @Value("${accesstoken.expired-date}") Long accesstokenExpiredDate) {
+                            @Value("${spring.accesstoken.expired-date}") Long accesstokenExpiredDate) {
         this.secretKey = secretKey;
         this.validityInMilliseconds = validityInMilliseconds;
         this.jwtParser = Jwts.parser().setSigningKey(secretKey);

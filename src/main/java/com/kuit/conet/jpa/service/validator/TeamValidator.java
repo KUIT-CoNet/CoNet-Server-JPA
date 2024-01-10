@@ -4,13 +4,10 @@ import com.kuit.conet.common.exception.TeamException;
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.repository.TeamRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.time.LocalDateTime;
 
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.*;
-import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.EXPIRED_INVITE_CODE;
 
 @Slf4j
 public class TeamValidator {
@@ -33,15 +30,15 @@ public class TeamValidator {
     }
 
     public static void compareInviteCodeAndRequestTime(Team team) {
-        LocalDateTime participateRequestTime = LocalDateTime.now();
+        LocalDateTime joinRequestTime = LocalDateTime.now();
         LocalDateTime generatedTime = team.getCodeGeneratedTime();
         LocalDateTime expirationDateTime = generatedTime.plusDays(1);
 
         //log.info("Team invite code generated time: {}", generatedTime);
         log.info("Team invite code expiration date time: {}", expirationDateTime);
-        log.info("Team participation requested time: {}", participateRequestTime);
+        log.info("Team participation requested time: {}", joinRequestTime);
 
-        if (participateRequestTime.isAfter(expirationDateTime)) {
+        if (joinRequestTime.isAfter(expirationDateTime)) {
             // 초대 코드 생성 시간으로부터 1일이 지났으면 exception
             log.error("유효 기간 만료: {}", EXPIRED_INVITE_CODE.getMessage());
             throw new TeamException(EXPIRED_INVITE_CODE);
