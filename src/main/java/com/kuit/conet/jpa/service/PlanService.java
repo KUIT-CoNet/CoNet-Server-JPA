@@ -141,13 +141,13 @@ public class PlanService {
 
         // 가능한 시간 정보 조회
         List<PlanMemberTime> planMemberTimes = planMemberTimeRepository.findByTeamAndMemberId(plan, userId);
-        List<UserAvailableTimeDTO> availableTimes = getAvailableTimeSlot(planMemberTimes);
+        List<UserAvailableTimeDTO> timeSlot = getAvailableTimeSlot(planMemberTimes);
 
         // 가능한 시간이 존재하는지
-        Boolean hasPossibleTime = availableTimes.stream()
-                .anyMatch(availableTime -> !availableTime.getTimes().isEmpty());
+        Boolean hasPossibleTime = timeSlot.stream()
+                .anyMatch(timeSlotOnDay -> !timeSlotOnDay.getAvailableTimes().isEmpty());
 
-        return UserAvailableTimeResponseDTO.registered(planId, userId, hasPossibleTime, availableTimes);
+        return UserAvailableTimeResponseDTO.registered(planId, userId, hasPossibleTime, timeSlot);
     }
 
     private static List<UserAvailableTimeDTO> getAvailableTimeSlot(List<PlanMemberTime> planMemberTimes) {
@@ -160,7 +160,7 @@ public class PlanService {
                     if (!possibleTime.isEmpty()) {
                         timeList = timeStringToIntegerList(possibleTime);
                     }
-                    responseDTO.setTimes(timeList);
+                    responseDTO.setAvailableTimes(timeList);
 
                     return responseDTO;
                 }).toList();

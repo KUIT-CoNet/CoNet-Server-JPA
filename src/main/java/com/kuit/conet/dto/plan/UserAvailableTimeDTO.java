@@ -9,13 +9,13 @@ import java.util.List;
 @AllArgsConstructor
 public class UserAvailableTimeDTO {
     private Date date;
-    private List<Integer> times;
+    private List<Integer> availableTimes;
 
     public UserAvailableTimeDTO(Date date) {
         this.date = date;
     }
 
-    public void setTimes(List<Integer> times) {
-        this.times = times;
+    public void setAvailableTimes(List<Integer> availableTimes) {
+        this.availableTimes = availableTimes;
     }
 }
