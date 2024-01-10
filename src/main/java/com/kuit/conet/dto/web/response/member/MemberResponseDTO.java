@@ -1,4 +1,4 @@
-package com.kuit.conet.dto.web.response.user;
+package com.kuit.conet.dto.web.response.member;
 
 import com.kuit.conet.jpa.domain.auth.Platform;
 import lombok.*;
@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UserResponseDTO {
+public class MemberResponseDTO {
     private String name;
     private String email;
     private String userImgUrl;

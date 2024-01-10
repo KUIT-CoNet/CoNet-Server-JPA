@@ -33,12 +33,12 @@ public class MemberService {
         String imgUrl = storageService.uploadToS3(file, getFileName(file, StorageDomain.USER));
 
         member.updateImgUrl(imgUrl);
-        return memberRepository.getUserImgUrlResponse(userId);
+        return memberRepository.getImgUrlResponse(userId);
     }
 
     //TODO storageservice로 뻬
     private void deletePreviousImage(Long userId) {
-        String imgUrl = memberRepository.getUserImgUrlResponse(userId).getImgUrl();
+        String imgUrl = memberRepository.getImgUrlResponse(userId).getImgUrl();
         String deleteFileName = storageService.getFileNameFromUrl(imgUrl);
 
         // 유저의 프로필 이미지가 기본 프로필 이미지인지 확인 -> 기본 이미지가 아니면 기존 이미지를 S3에서 이미지 삭제

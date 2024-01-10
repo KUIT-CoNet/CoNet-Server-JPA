@@ -4,10 +4,6 @@ import com.kuit.conet.annotation.UserId;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
 import com.kuit.conet.jpa.service.MemberService;
-import jakarta.servlet.http.HttpServletRequest;
-import com.kuit.conet.dto.web.response.user.UserResponseDTO;
-import com.kuit.conet.service.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-public class UserController {
+public class MemberController {
     private final MemberService memberService;
 
 /*    @PostMapping("/delete")
