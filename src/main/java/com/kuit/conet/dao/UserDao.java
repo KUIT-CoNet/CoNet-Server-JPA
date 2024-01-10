@@ -2,8 +2,6 @@ package com.kuit.conet.dao;
 
 import com.kuit.conet.domain.user.User;
 import com.kuit.conet.dto.web.request.auth.OptionTermRequestDTO;
-import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
-import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
 import com.kuit.conet.jpa.domain.auth.Platform;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.RowMapper;
@@ -129,7 +127,7 @@ public class UserDao {
         jdbcTemplate.update(sql, param);
     }
 
-    public MemberResponseDTO getUser(Long userId) {
+    /*public MemberResponseDTO getUser(Long userId) {
         String sql = "select name, email, img_url, platform from user where user_id=:user_id and status=1";
         Map<String, Object> param = Map.of("user_id", userId);
 
@@ -204,7 +202,7 @@ public class UserDao {
         Map<String, Object> param = Map.of("user_id", userId);
 
         return jdbcTemplate.queryForObject(sql, param, String.class);
-    }
+    }*/
 
     public Boolean getOptionTerm(Long userId) {
         String sql = "select option_term from user where user_id=:user_id and status=1";

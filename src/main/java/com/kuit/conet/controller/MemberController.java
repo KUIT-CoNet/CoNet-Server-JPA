@@ -4,6 +4,7 @@ import com.kuit.conet.annotation.UserId;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.member.NameRequestDTO;
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
+import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
 import com.kuit.conet.jpa.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +23,13 @@ public class MemberController {
     public BaseResponse<String> userDelete(@UserId Long userId) {
         memberService.userDelete(userId);
         return new BaseResponse<>("유저 탈퇴에 성공하였습니다.");
-    }
+    }*/
 
     @GetMapping
-    public BaseResponse<UserResponseDTO> getUser(@UserId Long userId) {
-        UserResponseDTO response = memberService.getUser(userId);
+    public BaseResponse<MemberResponseDTO> getUser(@UserId Long userId) {
+        MemberResponseDTO response = memberService.getUser(userId);
         return new BaseResponse<>(response);
-    }*/
+    }
 
     @PostMapping("/image")
     public BaseResponse<StorageImgResponseDTO> updateImg(@UserId Long userId, @RequestParam(value = "file") MultipartFile file) {
