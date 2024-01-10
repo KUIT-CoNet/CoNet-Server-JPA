@@ -1,5 +1,6 @@
 package com.kuit.conet.jpa.service;
 
+import com.kuit.conet.dto.web.request.member.NameRequestDTO;
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
 import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.storage.StorageDomain;
@@ -32,6 +33,7 @@ public class MemberService {
         // 새로운 이미지 S3에 업로드
         String imgUrl = storageService.uploadToS3(file, getFileName(file, StorageDomain.USER));
 
+        // 변경감지로 update
         member.updateImgUrl(imgUrl);
         return memberRepository.getImgUrlResponse(userId);
     }
@@ -48,5 +50,12 @@ public class MemberService {
         }
     }
 
+    public void updateName(Long userId, NameRequestDTO nameRequest) {
+        System.out.println("service " + userId);
+        Member member = memberRepository.findById(userId);
+        validateMemberExisting(member);
+
+        member.updateName(nameRequest.getName());
+    }
 
 }

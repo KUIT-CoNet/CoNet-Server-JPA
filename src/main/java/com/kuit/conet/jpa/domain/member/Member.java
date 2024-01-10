@@ -38,4 +38,8 @@ public class Member {
     public void updateImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }

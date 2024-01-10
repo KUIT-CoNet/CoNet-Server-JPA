@@ -2,14 +2,13 @@ package com.kuit.conet.controller;
 
 import com.kuit.conet.annotation.UserId;
 import com.kuit.conet.common.response.BaseResponse;
+import com.kuit.conet.dto.web.request.member.NameRequestDTO;
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
 import com.kuit.conet.jpa.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -37,9 +36,9 @@ public class MemberController {
         return new BaseResponse<>(response);
     }
 
-/*    @PostMapping("/name")
+    @PostMapping("/name")
     public BaseResponse<String> updateName(@UserId Long userId, @RequestBody @Valid NameRequestDTO nameRequest) {
         memberService.updateName(userId, nameRequest);
         return new BaseResponse<>("이름 변경에 성공하였습니다.");
-    }*/
+    }
 }
