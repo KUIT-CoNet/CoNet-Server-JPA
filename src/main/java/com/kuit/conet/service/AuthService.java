@@ -93,7 +93,7 @@ public class AuthService {
             throw new InvalidTokenException(IP_MISMATCH);
         }
 
-        Long userId = Long.parseLong(jwtParser.getUserIdFromToken(refreshToken));
+        Long userId = jwtParser.getUserIdFromToken(refreshToken);
         User existingUser = userDao.findById(userId);
         return getLoginResponse(existingUser, clientIp, true);
     }

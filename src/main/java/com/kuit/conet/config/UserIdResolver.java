@@ -11,10 +11,11 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
 public class UserIdResolver implements HandlerMethodArgumentResolver {
+    //Interceptor 이후 동작
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().equals(String.class) && parameter.hasParameterAnnotation(UserId.class);
+        return parameter.hasParameterAnnotation(UserId.class);
     }
 
     @Override

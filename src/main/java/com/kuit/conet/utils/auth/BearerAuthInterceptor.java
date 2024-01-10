@@ -10,7 +10,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class BearerAuthInterceptor implements HandlerInterceptor {
     private AuthorizationExtractor authExtractor;
-    //private JwtTokenProvider jwtTokenProvider;
     private JwtParser jwtParser;
 
     public BearerAuthInterceptor(AuthorizationExtractor authExtractor, JwtParser jwtParser) {
@@ -30,9 +29,10 @@ public class BearerAuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        String userId = jwtParser.getUserIdFromToken(token);
+        Long userId = jwtParser.getUserIdFromToken(token);
         log.info("userId: {}", userId);
         httpRequest.setAttribute("userId", userId);
+
         return true;
     }
 }

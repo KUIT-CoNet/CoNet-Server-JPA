@@ -23,12 +23,12 @@ public class JwtParser {
     private static final int HEADER_INDEX = 0;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public String getUserIdFromToken(String accessToken) {
+    public Long getUserIdFromToken(String accessToken) {
         try {
-            return Jwts.parser()
+            return Long.parseLong(Jwts.parser()
                     .setSigningKey(secretKey)
                     .parseClaimsJws(accessToken)
-                    .getBody().getSubject();
+                    .getBody().getSubject());
         } catch (ExpiredJwtException e) {
             throw new InvalidTokenException(EXPIRED_TOKEN);
         } catch (UnsupportedJwtException | SignatureException | MalformedJwtException  e){
