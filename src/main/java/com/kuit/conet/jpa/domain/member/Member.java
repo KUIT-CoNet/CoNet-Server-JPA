@@ -31,7 +31,7 @@ public class Member {
 
     private Boolean serviceTerm; // 필수 약관
     private Boolean optionTerm;
-    @ColumnDefault("'JOIN'")
+    @ColumnDefault("'ACTIVE'")
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
 
