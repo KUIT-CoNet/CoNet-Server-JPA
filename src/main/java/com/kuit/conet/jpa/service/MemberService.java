@@ -38,6 +38,7 @@ public class MemberService {
         return memberRepository.getUserImgUrlResponse(userId);
     }
 
+    //TODO storageservice로 뻬
     private void deletePreviousImage(Long userId) {
         String imgUrl = memberRepository.getUserImgUrlResponse(userId).getImgUrl();
         String deleteFileName = storageService.getFileNameFromUrl(imgUrl);

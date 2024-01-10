@@ -2,6 +2,7 @@ package com.kuit.conet.jpa.repository;
 
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
 import com.kuit.conet.jpa.domain.member.Member;
+import com.kuit.conet.jpa.domain.member.MemberStatus;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class MemberRepository {
         return em.createQuery("select new com.kuit.conet.dto.web.response.StorageImgResponseDTO(m.name, m.imgUrl) " +
                         "from Member m where m.id=:userId and m.status=:status", StorageImgResponseDTO.class)
                 .setParameter("userId", userId)
-                .setParameter("status", 1)
+                .setParameter("status", MemberStatus.ACTIVE)
                 .getSingleResult();
     }
 
@@ -35,7 +36,7 @@ public class MemberRepository {
                         "= :defaultImg " +
                         "then TRUE else FALSE end from Member m", Boolean.class)
                 .setParameter("userId", userId)
-                .setParameter("status", 1)
+                .setParameter("status", MemberStatus.ACTIVE)
                 .setParameter("defaultImg", defaultImg)
                 .getSingleResult();
     }

@@ -1,19 +1,18 @@
 package com.kuit.conet.jpa.service;
 
-import com.kuit.conet.dto.web.request.team.ParticipateTeamRequestDTO;
+import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
+import com.kuit.conet.dto.web.request.team.JoinTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
 import com.kuit.conet.dto.web.response.team.CreateTeamResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
-import com.kuit.conet.dto.web.response.team.ParticipateTeamResponseDTO;
+import com.kuit.conet.dto.web.response.team.JoinTeamResponseDTO;
 import com.kuit.conet.jpa.domain.member.Member;
-import com.kuit.conet.jpa.domain.team.TeamMember;
-import com.kuit.conet.jpa.domain.team.*;
-
 import com.kuit.conet.jpa.domain.storage.StorageDomain;
-import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
+import com.kuit.conet.jpa.domain.team.Team;
+import com.kuit.conet.jpa.domain.team.TeamMember;
+import com.kuit.conet.jpa.repository.MemberRepository;
 import com.kuit.conet.jpa.repository.TeamMemberRepository;
 import com.kuit.conet.jpa.repository.TeamRepository;
-import com.kuit.conet.jpa.repository.MemberRepository;
 import com.kuit.conet.service.StorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-;
 import static com.kuit.conet.jpa.service.validator.TeamValidator.*;
 
 @Slf4j
@@ -35,17 +33,15 @@ import static com.kuit.conet.jpa.service.validator.TeamValidator.*;
 @Transactional
 @RequiredArgsConstructor
 public class TeamService {
+    private final int LEFT_LIMIT = 48;
+    private final int RIGHT_LIMIT = 122;
+    private final int TARGET_STRING_LENGTH = 8;
+    private final String SUCCESS_LEAVE_TEAM = "모임 탈퇴에 성공하였습니다.";
+    private final String SUCCESS_DELETE_TEAM = "모임 삭제에 성공하였습니다.";
     private final StorageService storageService;
     private final TeamRepository teamRepository;
     private final MemberRepository memberRepository;
     private final TeamMemberRepository teamMemberRepository;
-
-    final int LEFT_LIMIT = 48;
-    final int RIGHT_LIMIT = 122;
-    final int TARGET_STRING_LENGTH = 8;
-
-    final String SUCCESS_LEAVE_TEAM = "모임 탈퇴에 성공하였습니다.";
-    final String SUCCESS_DELETE_TEAM = "모임 삭제에 성공하였습니다.";
 
     public CreateTeamResponseDTO createTeam(CreateTeamRequestDTO teamRequest, HttpServletRequest httpRequest, MultipartFile file) {
         // 초대 코드 생성 및 코드 중복 확인
@@ -68,7 +64,7 @@ public class TeamService {
         return new CreateTeamResponseDTO(newTeam.getId(), newTeam.getInviteCode());
     }
 
-    public ParticipateTeamResponseDTO participateTeam(ParticipateTeamRequestDTO teamRequest, HttpServletRequest httpRequest) {
+    public JoinTeamResponseDTO joinTeam(JoinTeamRequestDTO teamRequest, HttpServletRequest httpRequest) {
         // 필요한 정보 조회
         String inviteCode = getInviteCodeFromRequest(teamRequest);
         Long userId = getUserIdFromHttpRequest(httpRequest);
@@ -76,15 +72,15 @@ public class TeamService {
         Team team = teamRepository.findByInviteCode(inviteCode);
 
         // 모임에 이미 존재하는 회원인지 확인
-        validateNewMemberInTeam(teamRepository,userId, team);
+        validateNewMemberInTeam(teamRepository, userId, team);
 
         // 초대 코드 생성 시간과 모임 참가 요청 시간 비교
         compareInviteCodeAndRequestTime(team);
 
         // team에 teamMember 추가 (변경 감지)
-        TeamMember teamMember = TeamMember.createTeamMember(team, user);
+        TeamMember.createTeamMember(team, user);
 
-        return new ParticipateTeamResponseDTO(user.getName(), team.getName(), user.getStatus());
+        return new JoinTeamResponseDTO(user.getName(), team.getName());
     }
 
     public List<GetTeamResponseDTO> getTeam(HttpServletRequest httpRequest) {
@@ -94,16 +90,17 @@ public class TeamService {
 
         return generateTeamReturnResponse(teams, userId);
     }
+
     public String leaveTeam(TeamIdRequestDTO teamRequest, HttpServletRequest httpRequest) {
         Long userId = getUserIdFromHttpRequest(httpRequest);
- 
+
         Team team = teamRepository.findById(teamRequest.getTeamId());
 
         // 모임 존재 여부 확인
         validateTeamExisting(team);
 
         // 팀에 존재하는 멤버인지 확인
-        isTeamMember(teamRepository,team,userId);
+        isTeamMember(teamRepository, team, userId);
 
         //변경 감지 이용
         TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(team.getId(), userId);
@@ -120,7 +117,7 @@ public class TeamService {
         validateTeamExisting(team);
 
         // 모임 삭제 권한이 있는지 확인
-        isTeamMember(teamRepository,team,userId);
+        isTeamMember(teamRepository, team, userId);
 
         //image 삭제
         deleteImage(teamId);
@@ -136,7 +133,7 @@ public class TeamService {
     private void deleteImage(Long teamId) {
         String imgUrl = teamRepository.getTeamImgUrl(teamId);
 
-        if(!imgUrl.equals("")) {
+        if (!imgUrl.equals("")) {
             String deleteFileName = storageService.getFileNameFromUrl(imgUrl);
             storageService.deleteImage(deleteFileName);
         }
@@ -148,8 +145,8 @@ public class TeamService {
 
     private String getRandomInviteCode() {
         String inviteCode = generateInviteCode();
-        while(true){
-            if(validateDuplicateInviteCode(teamRepository, inviteCode))
+        while (true) {
+            if (validateDuplicateInviteCode(teamRepository, inviteCode))
                 break;
             inviteCode = generateInviteCode();
         }
@@ -175,9 +172,9 @@ public class TeamService {
         return generatedString;
     }
 
-    private String getInviteCodeFromRequest(ParticipateTeamRequestDTO teamRequest) {
+    private String getInviteCodeFromRequest(JoinTeamRequestDTO teamRequest) {
         String inviteCode = teamRequest.getInviteCode();
-        validateInviteCodeExisting(teamRepository,inviteCode);
+        validateInviteCodeExisting(teamRepository, inviteCode);
         return inviteCode;
     }
 
@@ -185,12 +182,12 @@ public class TeamService {
         // 모임의 created_at 시간 비교해서 3일 안지났으면 isNew 값 true, 지났으면 false로 반환
         List<GetTeamResponseDTO> teamReturnResponses = new ArrayList<>();
 
-        for(Team team : teams) {
+        for (Team team : teams) {
             GetTeamResponseDTO teamResponse;
-            if(!isNewTeam(team)) {
-                teamResponse = generateTeamResponse(team,userId, false);
-            }else {
-                teamResponse = generateTeamResponse(team,userId, true);
+            if (!isNewTeam(team)) {
+                teamResponse = generateTeamResponse(team, userId, false);
+            } else {
+                teamResponse = generateTeamResponse(team, userId, true);
             }
             teamReturnResponses.add(teamResponse);
         }
