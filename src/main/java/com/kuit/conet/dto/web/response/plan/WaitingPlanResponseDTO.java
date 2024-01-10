@@ -6,8 +6,12 @@ import lombok.*;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 public class WaitingPlanResponseDTO {
     private int count;
     private List<WaitingPlanDTO> plans;
+
+    public WaitingPlanResponseDTO(List<WaitingPlanDTO> plans) {
+        this.count = plans.size();
+        this.plans = plans;
+    }
 }

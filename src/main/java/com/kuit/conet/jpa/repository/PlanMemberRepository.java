@@ -7,11 +7,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class PlanMemberTimeRepository {
+public class PlanMemberRepository {
     private final EntityManager em;
-
     public int deleteOnPlan(Plan plan) {
-        int deletedPlanCount = em.createQuery("delete from PlanMemberTime pmt where pmt.plan=:plan")
+        int deletedPlanCount = em.createQuery("delete from PlanMember pm where pm.plan=:plan")
                 .setParameter("plan", plan)
                 .executeUpdate();
         em.flush();
@@ -19,8 +18,8 @@ public class PlanMemberTimeRepository {
     }
 
     public void deleteByTeamId(Long teamId) {
-        em.createQuery("delete from PlanMemberTime pmt where pmt.plan.id in " +
-                "(select p.id from Plan p where p.team.id=:teamId)")
+        em.createQuery("delete from PlanMember pm where pm.plan.id in " +
+                        "(select p.id from Plan p where p.team.id=:teamId)")
                 .setParameter("teamId",teamId)
                 .executeUpdate();
     }

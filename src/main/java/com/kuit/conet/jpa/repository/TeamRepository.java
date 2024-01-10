@@ -34,14 +34,12 @@ public class TeamRepository {
     }
 
     public boolean isExistInviteCode(String inviteCode) {
-        //todo count 함수 대신 exists 함수로
         return em.createQuery("select count(t.id) > 0 from Team t where t.inviteCode=:inviteCode", Boolean.class)
                 .setParameter("inviteCode", inviteCode)
                 .getSingleResult();
     }
 
     public boolean isExistUser(Long teamId, Long userId) {
-        //todo count 함수 대신 exists 함수로
         return em.createQuery("select count(tm.id) > 0 from Team t join t.teamMembers tm on t.id =:teamId and  tm.member.id=:userId", Boolean.class)
                 .setParameter("userId", userId)
                 .setParameter("teamId", teamId)
@@ -55,20 +53,28 @@ public class TeamRepository {
     }
 
     public Long getMemberCount(Long id) {
+        //todo 컬렉션 연관 필드 조인 관련 수정
         return em.createQuery("select count(tm) from Team t join t.teamMembers tm on tm.team.id=:teamId", Long.class)
-                .setParameter("teamId",id)
+                .setParameter("teamId", id)
                 .getSingleResult();
     }
 
     public boolean isTeamMember(Team team, Long userId) {
-        return em.createQuery("select count(tm)>0 from TeamMember  tm join tm.member on tm.member.id=:userId", Boolean.class)
-                .setParameter("userId",userId)
+        return em.createQuery("select count(tm)>0 from Team t join t.teamMembers tm on tm.team=:team and tm.member.id=:userId", Boolean.class)
+                .setParameter("userId", userId)
+                .setParameter("team",team)
                 .getSingleResult();
     }
 
     public String getTeamImgUrl(Long teamId) {
-        return em.createQuery("select t.imgUrl from Team t where t.id=:teamId",String.class)
-                .setParameter("teamId",teamId)
+        return em.createQuery("select t.imgUrl from Team t where t.id=:teamId", String.class)
+                .setParameter("teamId", teamId)
                 .getSingleResult();
+    }
+
+    public void deleteTeam(Long teamId) {
+        em.createQuery("delete from Team t where t.id=:teamId")
+                .setParameter("teamId", teamId)
+                .executeUpdate();
     }
 }

@@ -6,8 +6,12 @@ import lombok.*;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 public class SideMenuFixedPlanResponseDTO {
     int count;
     List<SideMenuFixedPlanDTO> plans;
+
+    public SideMenuFixedPlanResponseDTO(List<SideMenuFixedPlanDTO> plans) {
+        this.count = plans.size();
+        this.plans = plans;
+    }
 }
