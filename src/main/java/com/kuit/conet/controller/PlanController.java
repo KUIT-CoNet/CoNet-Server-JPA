@@ -75,7 +75,7 @@ public class PlanController {
      * / 조회한 유저의 참여 여부 포함
      */
     @GetMapping("/fixed")
-    public BaseResponse<SideMenuFixedPlanResponseDTO> getFixedPlan(@UserId Long userId, @ModelAttribute TeamFixedPlanInPeriodRequestDTO planRequest) {
+    public BaseResponse<SideMenuFixedPlanResponseDTO> getFixedPlan(@UserId @Valid Long userId, @ModelAttribute TeamFixedPlanInPeriodRequestDTO planRequest) {
         // 지난 약속
         if (planRequest.getPeriod() == PlanPeriod.PAST) {
             SideMenuFixedPlanResponseDTO response = planService.getFixedPastPlan(userId, planRequest.getTeamId());
@@ -100,17 +100,20 @@ public class PlanController {
         return new BaseResponse<>(response);
     }
 
+    /**
+     * @apiNote 특정 약속의 나의 가능한 시간 조회 api
+     */
+    @GetMapping("/{planId}/available-time-slot/my")
+    public BaseResponse<UserAvailableTimeResponseDTO> getUserTimeSlot(@PathVariable @Valid Long planId, @UserId @Valid Long userId) {
+        UserAvailableTimeResponseDTO response = planService.getUserAvailableTimeSlot(planId, userId);
+        return new BaseResponse<>(response);
+    }
+
 /*
     @PostMapping("/time")
     public BaseResponse<String> registerTime(HttpServletRequest httpRequest, @RequestBody @Valid PossibleTimeRequest request) {
         planService.saveTime(request, httpRequest);
         return new BaseResponse<>("사용자의 가능한 시간 등록에 성공하였습니다.");
-    }
-
-    @GetMapping("/user-time")
-    public BaseResponse<UserTimeResponse> getUserTime(HttpServletRequest httpRequest, @ModelAttribute @Valid PlanIdRequest request) {
-        UserTimeResponse response = planService.getUserTime(request, httpRequest);
-        return new BaseResponse<>(response);
     }
 
     @GetMapping("/member-time")
