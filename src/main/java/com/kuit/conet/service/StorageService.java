@@ -8,12 +8,13 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.kuit.conet.common.exception.BaseException;
 import com.kuit.conet.common.exception.StorageException;
 import com.kuit.conet.jpa.domain.storage.StorageDomain;
+import com.kuit.conet.jpa.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -25,12 +26,13 @@ import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.
 @Service
 @RequiredArgsConstructor
 public class StorageService {
+    private static final String SPLITER = "/";
+    private static int sequenceNum = 1;
+    private final MemberRepository memberRepository;
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
     @Autowired
     private AmazonS3Client amazonS3Client;
-    private static final String SPLITER = "/";
-    private static int sequenceNum = 1;
 
     public static String getFileName(MultipartFile file, StorageDomain storage) {
         String fileName = sequenceNum + "-" + storage.getStorage() + "Image-" + LocalDateTime.now();
@@ -106,5 +108,16 @@ public class StorageService {
 
     public Boolean isExistImage(String fileName) {
         return amazonS3Client.doesObjectExist(bucketName, fileName);
+    }
+
+    public void deletePreviousImage(Long userId) {
+        String imgUrl = memberRepository.getImgUrlResponse(userId).getImgUrl();
+        String deleteFileName = getFileNameFromUrl(imgUrl);
+
+        // 유저의 프로필 이미지가 기본 프로필 이미지인지 확인 -> 기본 이미지가 아니면 기존 이미지를 S3에서 이미지 삭제
+        if (!memberRepository.isDefaultImage(userId)) {
+            // S3 버킷에 존재하지 않는 객체인 경우 삭제를 생략
+            deleteImage(deleteFileName);
+        }
     }
 }

@@ -27,7 +27,7 @@ public class MemberService {
         Member member = memberRepository.findById(userId);
         validateMemberExisting(member);
 
-        deletePreviousImage(userId);
+        storageService.deletePreviousImage(userId);
 
         // 저장할 파일명 만들기
         // 새로운 이미지 S3에 업로드
@@ -36,18 +36,6 @@ public class MemberService {
         // 변경감지로 update
         member.updateImgUrl(imgUrl);
         return memberRepository.getImgUrlResponse(userId);
-    }
-
-    //TODO storageservice로 뻬
-    private void deletePreviousImage(Long userId) {
-        String imgUrl = memberRepository.getImgUrlResponse(userId).getImgUrl();
-        String deleteFileName = storageService.getFileNameFromUrl(imgUrl);
-
-        // 유저의 프로필 이미지가 기본 프로필 이미지인지 확인 -> 기본 이미지가 아니면 기존 이미지를 S3에서 이미지 삭제
-        if (!memberRepository.isDefaultImage(userId)) {
-            // S3 버킷에 존재하지 않는 객체인 경우 삭제를 생략
-            storageService.deleteImage(deleteFileName);
-        }
     }
 
     public void updateName(Long userId, NameRequestDTO nameRequest) {
