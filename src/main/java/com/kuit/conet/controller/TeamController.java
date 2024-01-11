@@ -6,6 +6,7 @@ import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.JoinTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
 import com.kuit.conet.dto.web.response.team.CreateTeamResponseDTO;
+import com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
 import com.kuit.conet.dto.web.response.team.JoinTeamResponseDTO;
 import com.kuit.conet.jpa.service.TeamService;
@@ -69,6 +70,15 @@ public class TeamController {
         return new BaseResponse<String>(response);
     }
 
+    /**
+     * @apiNote 모임 멤버 조회 api
+     */
+    @GetMapping("/members")
+    public BaseResponse<List<GetTeamMemberResponseDTO>> getTeamMembers(@ModelAttribute @Valid TeamIdRequestDTO teamRequest) {
+        List<GetTeamMemberResponseDTO> response = teamService.getTeamMembers(teamRequest);
+        return new BaseResponse<>(response);
+    }
+
     /*
 
     @PostMapping("/code")
@@ -82,12 +92,6 @@ public class TeamController {
     public BaseResponse<StorageImgResponse> updateTeam(@RequestPart(value = "request") @Valid UpdateTeamRequest updateTeamRequest, @RequestParam(value = "file") MultipartFile file) {
         StorageImgResponse response = teamService.updateTeam(updateTeamRequest, file);
         return new BaseResponse<StorageImgResponse>(response);
-    }
-
-    @GetMapping("/members")
-    public BaseResponse<List<GetTeamMemberResponse>> getTeamMembers(@ModelAttribute @Valid TeamIdRequest request) {
-        List<GetTeamMemberResponse> response = teamService.getTeamMembers(request);
-        return new BaseResponse<>(response);
     }
 
     @PostMapping("/bookmark")

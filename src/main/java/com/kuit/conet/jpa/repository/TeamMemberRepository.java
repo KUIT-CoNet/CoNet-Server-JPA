@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 @RequiredArgsConstructor
 @Getter
@@ -33,15 +31,9 @@ public class TeamMemberRepository {
                 .getSingleResult();
     }
 
-    public List<TeamMember> findByTeamId(Long teamId) {
-        return em.createQuery("select tm from TeamMember tm where tm.team.id=:teamId",TeamMember.class)
-                .setParameter("teamId",teamId)
-                .getResultList();
-    }
-
     public void deleteTeamMemberByTeamId(Long teamId) {
         em.createQuery("delete from TeamMember tm where tm.team.id=:teamId")
-                .setParameter("teamId",teamId)
+                .setParameter("teamId", teamId)
                 .executeUpdate();
     }
 }

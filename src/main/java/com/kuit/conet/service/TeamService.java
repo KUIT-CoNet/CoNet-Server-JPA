@@ -116,10 +116,6 @@ public class TeamService {
         return response;
     }
 
-    public List<GetTeamMemberResponse> getTeamMembers(TeamIdRequest teamIdRequest) {
-        return teamDao.getTeamMembers(teamIdRequest.getTeamId());
-    }
-
     public void bookmarkTeam(HttpServletRequest httpRequest, TeamIdRequest request) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         Long teamId = request.getTeamId();
