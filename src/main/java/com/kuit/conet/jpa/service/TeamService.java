@@ -4,6 +4,7 @@ import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.JoinTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
 import com.kuit.conet.dto.web.response.team.CreateTeamResponseDTO;
+import com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
 import com.kuit.conet.dto.web.response.team.JoinTeamResponseDTO;
 import com.kuit.conet.jpa.domain.member.Member;
@@ -127,6 +128,14 @@ public class TeamService {
         teamRepository.deleteTeam(teamId);
 
         return SUCCESS_DELETE_TEAM;
+    }
+
+    public List<GetTeamMemberResponseDTO> getTeamMembers(Long teamId, Long userId) {
+        //팀 구성원인지 확인
+        Team team = teamRepository.findById(teamId);
+        //isTeamMember(teamRepository, team, userId);
+
+        return memberRepository.getMembersByTeamId(teamId);
     }
 
     private void deleteImage(Long teamId) {

@@ -1,7 +1,7 @@
 package com.kuit.conet.config;
 
-import com.kuit.conet.utils.auth.BearerAuthInterceptor;
 import com.kuit.conet.utils.StringToEnumConverter;
+import com.kuit.conet.utils.auth.BearerAuthInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +41,7 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/user/delete");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/{teamId}");
+        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/{teamId}/members");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/create");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/join");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/leave");

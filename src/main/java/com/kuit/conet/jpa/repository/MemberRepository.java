@@ -1,6 +1,7 @@
 package com.kuit.conet.jpa.repository;
 
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
+import com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO;
 import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.member.MemberStatus;
 import jakarta.persistence.EntityManager;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -41,5 +44,10 @@ public class MemberRepository {
                 .getSingleResult();
     }
 
-
+    public List<GetTeamMemberResponseDTO> getMembersByTeamId(Long teamId) {
+        return em.createQuery("select new com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO(m.id,m.name,m.imgUrl) " +
+                        "from TeamMember tm join tm.member m where tm.team.id=:teamId")
+                .setParameter("teamId", teamId)
+                .getResultList();
+    }
 }
