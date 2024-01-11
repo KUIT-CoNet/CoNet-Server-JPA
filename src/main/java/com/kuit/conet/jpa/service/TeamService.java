@@ -99,7 +99,7 @@ public class TeamService {
         validateTeamExisting(team);
 
         // 팀에 존재하는 멤버인지 확인
-        isTeamMember(teamRepository, team, userId);
+        isTeamMember(teamMemberRepository, team, userId);
 
         //변경 감지 이용
         TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(team.getId(), userId);
@@ -115,7 +115,7 @@ public class TeamService {
         validateTeamExisting(team);
 
         // 모임 삭제 권한이 있는지 확인
-        isTeamMember(teamRepository, team, userId);
+        isTeamMember(teamMemberRepository, team, userId);
 
         //image 삭제
         deleteImage(teamId);
@@ -192,7 +192,7 @@ public class TeamService {
     }
 
     private GetTeamResponseDTO generateTeamResponse(Team team, Long userId, boolean b) {
-        return new GetTeamResponseDTO(team.getId(), team.getName(), team.getImgUrl(), teamRepository.getMemberCount(team.getId()),
+        return new GetTeamResponseDTO(team.getId(), team.getName(), team.getImgUrl(), teamMemberRepository.getCount(team.getId()),
                 false, teamMemberRepository.isBookmark(userId, team.getId()));
     }
 }
