@@ -130,7 +130,11 @@ public class TeamService {
         return SUCCESS_DELETE_TEAM;
     }
 
-    public List<GetTeamMemberResponseDTO> getTeamMembers(Long teamId) {
+    public List<GetTeamMemberResponseDTO> getTeamMembers(Long teamId, Long userId) {
+        //팀 구성원인지 확인
+        Team team = teamRepository.findById(teamId);
+        //isTeamMember(teamRepository, team, userId);
+
         return memberRepository.getMembersByTeamId(teamId);
     }
 
