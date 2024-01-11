@@ -2,6 +2,7 @@ package com.kuit.conet.jpa.service.validator;
 
 import com.kuit.conet.common.exception.TeamException;
 import com.kuit.conet.jpa.domain.team.Team;
+import com.kuit.conet.jpa.repository.TeamMemberRepository;
 import com.kuit.conet.jpa.repository.TeamRepository;
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,8 +60,8 @@ public class TeamValidator {
         }
     }
 
-    public static void isTeamMember(TeamRepository teamRepository, Team team, Long userId) {
-        if (!teamRepository.isTeamMember(team, userId)) {
+    public static void isTeamMember(TeamMemberRepository teamMemberRepository, Team team, Long userId) {
+        if (!teamMemberRepository.isTeamMember(team, userId)) {
             throw new TeamException(NOT_TEAM_MEMBER);
         }
     }

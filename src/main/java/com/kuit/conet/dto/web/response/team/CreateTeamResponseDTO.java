@@ -1,6 +1,10 @@
 package com.kuit.conet.dto.web.response.team;
 
-import lombok.*;
+import com.kuit.conet.jpa.domain.team.Team;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @NoArgsConstructor
@@ -9,4 +13,9 @@ import lombok.*;
 public class CreateTeamResponseDTO {
     private Long teamId;
     private String inviteCode;
+
+    public CreateTeamResponseDTO(Team team) {
+        this.teamId = team.getId();
+        this.inviteCode = team.getInviteCode();
+    }
 }
