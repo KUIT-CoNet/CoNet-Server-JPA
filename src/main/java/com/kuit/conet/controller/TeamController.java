@@ -71,11 +71,11 @@ public class TeamController {
     }
 
     /**
-     * @apiNote 모임 멤버 조회 api
+     * @apiNote 모임 구성원 조회 api
      */
-    @GetMapping("/members")
-    public BaseResponse<List<GetTeamMemberResponseDTO>> getTeamMembers(@ModelAttribute @Valid TeamIdRequestDTO teamRequest) {
-        List<GetTeamMemberResponseDTO> response = teamService.getTeamMembers(teamRequest);
+    @GetMapping("/team/{teamId}/members")
+    public BaseResponse<List<GetTeamMemberResponseDTO>> getTeamMembers(@PathVariable @Valid Long teamId) {
+        List<GetTeamMemberResponseDTO> response = teamService.getTeamMembers(teamId);
         return new BaseResponse<>(response);
     }
 

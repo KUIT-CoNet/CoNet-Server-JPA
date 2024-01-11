@@ -130,8 +130,8 @@ public class TeamService {
         return SUCCESS_DELETE_TEAM;
     }
 
-    public List<GetTeamMemberResponseDTO> getTeamMembers(TeamIdRequestDTO teamRequest) {
-        return memberRepository.getMembersByTeamId(teamRequest.getTeamId());
+    public List<GetTeamMemberResponseDTO> getTeamMembers(Long teamId) {
+        return memberRepository.getMembersByTeamId(teamId);
     }
 
     private void deleteImage(Long teamId) {
