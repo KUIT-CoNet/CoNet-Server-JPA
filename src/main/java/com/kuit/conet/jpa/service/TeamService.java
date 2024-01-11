@@ -64,7 +64,7 @@ public class TeamService {
         Team newTeam = Team.createTeam(teamRequest.getTeamName(), inviteCode, codeGeneratedTime, teamCreator, imgUrl);
         teamRepository.save(newTeam);
 
-        return new CreateTeamResponseDTO(newTeam.getId(), newTeam.getInviteCode());
+        return new CreateTeamResponseDTO(newTeam);
     }
 
     public JoinTeamResponseDTO joinTeam(JoinTeamRequestDTO teamRequest, Long userId) {
@@ -82,7 +82,7 @@ public class TeamService {
         // team에 teamMember 추가 (변경 감지)
         TeamMember.createTeamMember(team, user);
 
-        return new JoinTeamResponseDTO(user.getName(), team.getName());
+        return new JoinTeamResponseDTO(team, user);
     }
 
     public List<GetTeamResponseDTO> getTeam(Long userId) {
@@ -120,13 +120,11 @@ public class TeamService {
         //image 삭제
         deleteImage(teamId);
 
-
         teamMemberRepository.deleteTeamMemberByTeamId(teamId);
         planMemberTimeRepository.deleteByTeamId(teamId);
         planMemberRepository.deleteByTeamId(teamId);
         planRepository.deletePlanByTeamId(teamId);
         teamRepository.deleteTeam(teamId);
-        //teamRepository.remove(team);
 
         return SUCCESS_DELETE_TEAM;
     }
