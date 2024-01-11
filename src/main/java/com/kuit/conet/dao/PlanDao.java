@@ -61,51 +61,6 @@ public class PlanDao {
         jdbcTemplate.update(sql, param);
     }
 
-    public Boolean isExistingUserTime(Long planId, Long userId) {
-        String isExistingSql = "select exists(select * from plan_member_time where plan_id=:plan_id and user_id=:user_id)";
-        Map<String, Object> isExistingParam = Map.of("plan_id", planId,
-                "user_id", userId);
-
-        return jdbcTemplate.queryForObject(isExistingSql, isExistingParam, Boolean.class);
-    }
-
-    public UserTimeResponse getUserTime(Long planId, Long userId) {
-        String sql = "select * from plan_member_time where plan_id=:plan_id and user_id=:user_id order by possible_date";
-        Map<String, Object> param = Map.of("plan_id", planId,
-                "user_id", userId);
-
-        RowMapper<UserPossibleTimeResponse> mapper = ((rs, rowNum) -> {
-            UserPossibleTimeResponse possibleTime = new UserPossibleTimeResponse();
-            possibleTime.setDate(rs.getDate("possible_date"));
-
-            String time = rs.getString("possible_time");
-
-            List<Integer> timeIntList = new ArrayList<>();
-
-            if (time.isEmpty()) {
-                possibleTime.setTime(timeIntList);
-                return possibleTime;
-            }
-
-            String[] timeStrList = time.split(",");
-            for(String str : timeStrList) {
-                timeIntList.add(Integer.parseInt(str.trim()));
-            }
-
-            possibleTime.setTime(timeIntList);
-            return possibleTime;
-        });
-
-        List<UserPossibleTimeResponse> response = jdbcTemplate.query(sql, param, mapper);
-
-        Boolean hasPossibleTime = false;
-        for (UserPossibleTimeResponse possibleTime : response) {
-            if (!possibleTime.getTime().isEmpty()) {
-                hasPossibleTime = true;
-            }
-        }
-        return new UserTimeResponse(planId, userId, true, hasPossibleTime, response);
-    }
 
     public List<MemberPossibleTime> getMemberTime(Long planId, Date planStartPeriod) {
         String sql = "select user_id, possible_time from plan_member_time where plan_id=:plan_id and possible_date=:possible_date order by user_id";

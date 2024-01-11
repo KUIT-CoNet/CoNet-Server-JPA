@@ -49,10 +49,10 @@ public class Plan {
     private PlanStatus status;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)// 다대다(다대일, 일대다) 단방향 연관 관계 / 연관 관계 주인의 반대편
-    private List<PlanMember> planMembers;
+    private List<PlanMember> planMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)// 다대다(다대일, 일대다) 단방향 연관 관계 / 연관 관계 주인의 반대편
-    private List<PlanMemberTime> planMemberTimes;
+    private List<PlanMemberTime> planMemberTimes = new ArrayList<>();
 
     public static Plan createPlan(Team team, String name, Date startPeriod, Date endPeriod) {
         Plan plan = new Plan();
@@ -61,8 +61,6 @@ public class Plan {
         plan.name = name;
         plan.startPeriod = startPeriod;
         plan.endPeriod = endPeriod;
-        plan.planMembers = new ArrayList<>();
-        plan.planMemberTimes = new ArrayList<>();
 
         team.addPlan(plan);
 

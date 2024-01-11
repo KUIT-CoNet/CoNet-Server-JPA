@@ -68,21 +68,6 @@ public class PlanService {
         return strTime;
     }
 
-    public UserTimeResponse getUserTime(PlanIdRequest planIdRequest, HttpServletRequest httpRequest) {
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-
-        // 대기 중인 약속일 때만 나의 가능한 시간 조회
-        if (!planDao.isWaitingPlan(planIdRequest.getPlanId())) {
-            throw new PlanException(NOT_WAITING_PLAN);
-        }
-
-        if(!planDao.isExistingUserTime(planIdRequest.getPlanId(), userId)) {
-            return new UserTimeResponse(planIdRequest.getPlanId(), userId, false, false, null);
-        }
-
-        return planDao.getUserTime(planIdRequest.getPlanId(), userId);
-    }
-
     public MemberPossibleTimeResponse getMemberTime(PlanIdRequest planIdRequest) {
         // 대기 중인 약속일 때만 구성원의 가능한 시간 조회
         if (!planDao.isWaitingPlan(planIdRequest.getPlanId())) {

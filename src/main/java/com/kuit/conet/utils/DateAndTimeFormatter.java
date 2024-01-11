@@ -6,11 +6,14 @@ import org.springframework.stereotype.Component;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
 public class DateAndTimeFormatter {
-    private static final String REGEX = "-";
+    private static final String DATE_REGEX = "-";
+    private static final String POSSIBLE_TIME_REGEX = ",";
     private static final int DATE_INDEX = 2;
     private static final String MINUTE_AND_SECOND = ":00:00";
     private static final String CONET_DATE_FORMAT = "yyyy. MM. dd";
@@ -19,7 +22,7 @@ public class DateAndTimeFormatter {
     public static List<Integer> datesToIntegerList(List<Date> dates) {
         return dates.stream()
                 .map(Date::toString)
-                .map(date -> Integer.parseInt(date.split(REGEX)[DATE_INDEX]))
+                .map(date -> Integer.parseInt(date.split(DATE_REGEX)[DATE_INDEX]))
                 .toList();
     }
 
@@ -39,6 +42,13 @@ public class DateAndTimeFormatter {
         Long longTime = planRequest.getFixedTime();
         String strTime = longTime.toString() + MINUTE_AND_SECOND;
         return Time.valueOf(strTime);
+    }
+
+    public static List<Integer> timeStringToIntegerList(String time) {
+        return Arrays.stream(time.split(POSSIBLE_TIME_REGEX))
+                .map(Integer::parseInt)
+                .sorted()
+                .toList();
     }
 
 }
