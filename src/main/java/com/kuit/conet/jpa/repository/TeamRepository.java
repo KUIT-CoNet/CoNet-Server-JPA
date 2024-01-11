@@ -19,10 +19,6 @@ public class TeamRepository {
         return team.getId();
     }
 
-    public void remove(Team team) {
-        em.remove(team);
-    }
-
     public Team findById(Long id) {
         return em.find(Team.class, id);
     }
@@ -50,20 +46,6 @@ public class TeamRepository {
         return em.createQuery("select t from Team t join t.teamMembers tm on tm.member.id=:userId", Team.class)
                 .setParameter("userId", userId)
                 .getResultList();
-    }
-
-    public Long getMemberCount(Long id) {
-        //todo 컬렉션 연관 필드 조인 관련 수정
-        return em.createQuery("select count(tm) from Team t join t.teamMembers tm on tm.team.id=:teamId", Long.class)
-                .setParameter("teamId", id)
-                .getSingleResult();
-    }
-
-    public boolean isTeamMember(Team team, Long userId) {
-        return em.createQuery("select count(tm)>0 from Team t join t.teamMembers tm on tm.team=:team and tm.member.id=:userId", Boolean.class)
-                .setParameter("userId", userId)
-                .setParameter("team",team)
-                .getSingleResult();
     }
 
     public String getTeamImgUrl(Long teamId) {

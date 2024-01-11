@@ -1,12 +1,11 @@
 package com.kuit.conet.jpa.repository;
 
+import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.domain.team.TeamMember;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,15 +32,22 @@ public class TeamMemberRepository {
                 .getSingleResult();
     }
 
-    public List<TeamMember> findByTeamId(Long teamId) {
-        return em.createQuery("select tm from TeamMember tm where tm.team.id=:teamId",TeamMember.class)
-                .setParameter("teamId",teamId)
-                .getResultList();
+    public Long getCount(Long id) {
+        return em.createQuery("select count(tm) from TeamMember tm where tm.team.id=:id", Long.class)
+                .setParameter("teamId", id)
+                .getSingleResult();
+    }
+
+    public boolean isTeamMember(Team team, Long userId) {
+        return em.createQuery("select count(tm)>0 from TeamMember tm where tm.team=:team and tm.member.id=:userId", Boolean.class)
+                .setParameter("userId", userId)
+                .setParameter("team", team)
+                .getSingleResult();
     }
 
     public void deleteTeamMemberByTeamId(Long teamId) {
         em.createQuery("delete from TeamMember tm where tm.team.id=:teamId")
-                .setParameter("teamId",teamId)
+                .setParameter("teamId", teamId)
                 .executeUpdate();
     }
 }
