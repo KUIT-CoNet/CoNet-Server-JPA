@@ -74,7 +74,7 @@ public class TeamController {
      * @apiNote 모임 구성원 조회 api
      */
     @GetMapping("/{teamId}/members")
-    public BaseResponse<List<GetTeamMemberResponseDTO>> getTeamMembers(@PathVariable @Valid Long teamId, @UserId Long userId) {
+    public BaseResponse<List<GetTeamMemberResponseDTO>> getTeamMembers(@PathVariable @Valid Long teamId, @UserId @Valid Long userId) {
         List<GetTeamMemberResponseDTO> response = teamService.getTeamMembers(teamId, userId);
         return new BaseResponse<>(response);
     }
