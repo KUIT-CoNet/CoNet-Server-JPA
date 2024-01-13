@@ -60,8 +60,8 @@ public class TeamValidator {
         }
     }
 
-    public static void isTeamMember(TeamMemberRepository teamMemberRepository, Team team, Long userId) {
-        if (!teamMemberRepository.isTeamMember(team, userId)) {
+    public static void isTeamMember(TeamMemberRepository teamMemberRepository, Long teamId, Long userId) {
+        if (!teamMemberRepository.isTeamMember(teamId, userId)) {
             throw new TeamException(NOT_TEAM_MEMBER);
         }
     }
