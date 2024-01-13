@@ -79,6 +79,15 @@ public class TeamController {
         return new BaseResponse<>(response);
     }
 
+    /**
+     * @apiNote 모임 상세 조회 api
+     */
+    @GetMapping("/{teamId}")
+    public BaseResponse<GetTeamResponseDTO> getTeamDetail(@PathVariable Long teamId, @UserId Long userId) {
+        GetTeamResponseDTO response = teamService.getTeamDetail(teamId, userId);
+        return new BaseResponse<>(response);
+    }
+
     /*
 
     @PostMapping("/code")
@@ -104,12 +113,6 @@ public class TeamController {
     public BaseResponse<String> unBookmarkTeam(HttpServletRequest httpRequest, @RequestBody @Valid TeamIdRequest request) {
         teamService.unBookmarkTeam(httpRequest, request);
         return new BaseResponse<>("모임을 즐겨찾기에서 삭제하였습니다.");
-    }
-
-    @GetMapping("/detail")
-    public BaseResponse<GetTeamResponse> getTeamDetail(HttpServletRequest httpRequest, @ModelAttribute @Valid TeamIdRequest request) {
-        GetTeamResponse response = teamService.getTeamDetail(httpRequest, request);
-        return new BaseResponse<>(response);
     }
 
     @GetMapping("/bookmark")

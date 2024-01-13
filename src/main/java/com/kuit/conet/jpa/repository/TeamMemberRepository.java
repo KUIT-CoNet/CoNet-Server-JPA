@@ -1,6 +1,5 @@
 package com.kuit.conet.jpa.repository;
 
-import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.domain.team.TeamMember;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
@@ -33,16 +32,16 @@ public class TeamMemberRepository {
     }
 
 
-    public Long getCount(Long id) {
-        return em.createQuery("select count(tm) from TeamMember tm where tm.team.id=:id", Long.class)
+    public Integer getCount(Long id) {
+        return em.createQuery("select count(tm) from TeamMember tm where tm.team.id=:id", Integer.class)
                 .setParameter("teamId", id)
                 .getSingleResult();
     }
 
-    public boolean isTeamMember(Team team, Long userId) {
-        return em.createQuery("select count(tm)>0 from TeamMember tm where tm.team=:team and tm.member.id=:userId", Boolean.class)
+    public boolean isTeamMember(Long teamId, Long userId) {
+        return em.createQuery("select count(tm)>0 from TeamMember tm where tm.team.id=:teamId and tm.member.id=:userId", Boolean.class)
                 .setParameter("userId", userId)
-                .setParameter("team", team)
+                .setParameter("teamId", teamId)
                 .getSingleResult();
     }
 

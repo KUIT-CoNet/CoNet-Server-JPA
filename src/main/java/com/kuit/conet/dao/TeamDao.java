@@ -180,11 +180,11 @@ public class TeamDao {
     }
 
     public Boolean isExistingUser(Long teamId, Long userId) {
-            String sql = "select exists(select * from team_member where user_id=:user_id and team_id=:team_id);";
-            Map<String, Object> param = Map.of("user_id", userId,
-                    "team_id", teamId);
+        String sql = "select exists(select * from team_member where user_id=:user_id and team_id=:team_id);";
+        Map<String, Object> param = Map.of("user_id", userId,
+                "team_id", teamId);
 
-            return jdbcTemplate.queryForObject(sql, param, Boolean.class);
+        return jdbcTemplate.queryForObject(sql, param, Boolean.class);
     }
 
     public Boolean isExistTeam(Long teamId) {
@@ -296,7 +296,7 @@ public class TeamDao {
             getTeamResponse.setTeamId(rs.getLong("team_id"));
             getTeamResponse.setTeamName(rs.getString("team_name"));
             getTeamResponse.setTeamImgUrl(rs.getString("team_image_url"));
-            getTeamResponse.setTeamMemberCount(rs.getLong("count(tm.user_id)"));
+            getTeamResponse.setTeamMemberCount(rs.getInt("count(tm.user_id)"));
             return getTeamResponse;
         };
 
