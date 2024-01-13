@@ -141,8 +141,7 @@ public class TeamService {
         // 유저가 팀에 참가 중인지 검사
         isTeamMember(teamMemberRepository, teamId, userId);
 
-        GetTeamResponseDTO getTeamResponse = teamRepository.getTeamDetail(teamId);
-        getTeamResponse.setBookmark(teamRepository.getBookmark(userId, teamId));
+        GetTeamResponseDTO getTeamResponse = teamRepository.getTeamDetail(teamId, userId);
         return getTeamResponse;
     }
 
