@@ -1,5 +1,6 @@
 package com.kuit.conet.jpa.repository;
 
+import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
 import com.kuit.conet.jpa.domain.team.Team;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
@@ -58,5 +59,13 @@ public class TeamRepository {
         em.createQuery("delete from Team t where t.id=:teamId")
                 .setParameter("teamId", teamId)
                 .executeUpdate();
+    }
+
+    public GetTeamResponseDTO getTeamDetail(Long teamId, Long userId) {
+        return em.createQuery("select new com.kuit.conet.dto.web.response.team.GetTeamResponseDTO(t, size(t.teamMembers), tm.bookMark) " +
+                        "from Team t join t.teamMembers tm where t.id = :teamId and tm.member.id=:userId", GetTeamResponseDTO.class)
+                .setParameter("teamId", teamId)
+                .setParameter("userId", userId)
+                .getSingleResult();
     }
 }
