@@ -75,12 +75,6 @@ public class MemberService {
 
     public List<GetTeamResponseDTO> getBookmarks(Long userId) {
         List<GetTeamResponseDTO> teamResponses = memberRepository.getBookmarks(userId);
-        log.info("dfd " + userId);
-        log.info("dfd " + teamResponses.isEmpty());
-
-        for (GetTeamResponseDTO teamResponseDTO : teamResponses) {
-            teamResponseDTO.setTeamMemberCount(teamMemberRepository.getCount(teamResponseDTO.getTeamId()));
-        }
 
         return teamResponses;
     }

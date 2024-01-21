@@ -53,7 +53,7 @@ public class MemberRepository {
     }
 
     public List<GetTeamResponseDTO> getBookmarks(Long userId) {
-        return em.createQuery("select new com.kuit.conet.dto.web.response.team.GetTeamResponseDTO(t, tm.bookMark) " +
+        return em.createQuery("select new com.kuit.conet.dto.web.response.team.GetTeamResponseDTO(t, (select count(tm) from TeamMember tm where tm.team.id=t.id), tm.bookMark) " +
                         "from TeamMember tm join tm.team t where tm.member.id=:userId", GetTeamResponseDTO.class)
                 .setParameter("userId", userId)
                 .getResultList();

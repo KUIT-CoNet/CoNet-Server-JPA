@@ -28,14 +28,4 @@ public class GetTeamResponseDTO {
         //isNew 결정
         this.isNew = TeamValidator.isNewTeam(team);
     }
-
-    public GetTeamResponseDTO(Team team, Boolean bookmark) {
-        this.teamId = team.getId();
-        this.teamName = team.getName();
-        this.teamImgUrl = team.getImgUrl();
-        this.bookmark = bookmark;
-
-        //isNew 결정
-        this.isNew = TeamValidator.isNewTeam(team);
-    }
 }
