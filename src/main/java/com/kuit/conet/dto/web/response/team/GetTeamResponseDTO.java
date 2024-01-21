@@ -13,16 +13,26 @@ public class GetTeamResponseDTO {
     private Long teamId;
     private String teamName;
     private String teamImgUrl;
-    private int teamMemberCount;
+    private Long teamMemberCount;
     private Boolean isNew;
     private Boolean bookmark;
 
 
-    public GetTeamResponseDTO(Team team, int teamMemberCount, Boolean bookmark) {
+    public GetTeamResponseDTO(Team team, Long teamMemberCount, Boolean bookmark) {
         this.teamId = team.getId();
         this.teamName = team.getName();
         this.teamImgUrl = team.getImgUrl();
         this.teamMemberCount = teamMemberCount;
+        this.bookmark = bookmark;
+
+        //isNew 결정
+        this.isNew = TeamValidator.isNewTeam(team);
+    }
+
+    public GetTeamResponseDTO(Team team, Boolean bookmark) {
+        this.teamId = team.getId();
+        this.teamName = team.getName();
+        this.teamImgUrl = team.getImgUrl();
         this.bookmark = bookmark;
 
         //isNew 결정
