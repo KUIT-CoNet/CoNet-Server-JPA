@@ -5,12 +5,15 @@ import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.member.NameRequestDTO;
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
+import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
 import com.kuit.conet.jpa.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -42,4 +45,22 @@ public class MemberController {
         memberService.updateName(userId, nameRequest);
         return new BaseResponse<>("이름 변경에 성공하였습니다.");
     }
+
+    @GetMapping("/bookmark")
+    public BaseResponse<List<GetTeamResponseDTO>> getBookmark(@UserId Long userId) {
+        List<GetTeamResponseDTO> responses = memberService.getBookmarks(userId);
+        return new BaseResponse<>(responses);
+    }
+
+/*    @PostMapping("/bookmark")
+    public BaseResponse<String> bookmarkTeam(HttpServletRequest httpRequest, @RequestBody @Valid TeamIdRequest request) {
+        teamService.bookmarkTeam(httpRequest, request);
+        return new BaseResponse<>("모임을 즐겨찾기에 추가하였습니다.");
+    }
+
+    @PostMapping("/bookmark/delete")
+    public BaseResponse<String> unBookmarkTeam(HttpServletRequest httpRequest, @RequestBody @Valid TeamIdRequest request) {
+        teamService.unBookmarkTeam(httpRequest, request);
+        return new BaseResponse<>("모임을 즐겨찾기에서 삭제하였습니다.");
+    }*/
 }

@@ -3,9 +3,11 @@ package com.kuit.conet.jpa.service;
 import com.kuit.conet.dto.web.request.member.NameRequestDTO;
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
+import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
 import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.storage.StorageDomain;
 import com.kuit.conet.jpa.repository.MemberRepository;
+import com.kuit.conet.jpa.repository.TeamMemberRepository;
 import com.kuit.conet.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static com.kuit.conet.jpa.service.validator.MemberValidator.validateActiveMember;
 import static com.kuit.conet.jpa.service.validator.MemberValidator.validateMemberExisting;
@@ -23,6 +27,7 @@ import static com.kuit.conet.service.StorageService.getFileName;
 @Transactional
 @RequiredArgsConstructor
 public class MemberService {
+    private final TeamMemberRepository teamMemberRepository;
     private final MemberRepository memberRepository;
     private final StorageService storageService;
     @Value("${spring.user.default-image}")
@@ -68,4 +73,15 @@ public class MemberService {
         return new MemberResponseDTO(member);
     }
 
+    public List<GetTeamResponseDTO> getBookmarks(Long userId) {
+        List<GetTeamResponseDTO> teamResponses = memberRepository.getBookmarks(userId);
+        log.info("dfd " + userId);
+        log.info("dfd " + teamResponses.isEmpty());
+
+        for (GetTeamResponseDTO teamResponseDTO : teamResponses) {
+            teamResponseDTO.setTeamMemberCount(teamMemberRepository.getCount(teamResponseDTO.getTeamId()));
+        }
+
+        return teamResponses;
+    }
 }
