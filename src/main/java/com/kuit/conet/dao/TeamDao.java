@@ -1,3 +1,4 @@
+/*
 package com.kuit.conet.dao;
 
 import com.kuit.conet.domain.team.Team;
@@ -321,3 +322,4 @@ public class TeamDao {
         return jdbcTemplate.query(sql, param, mapper);
     }
 }
+*/
