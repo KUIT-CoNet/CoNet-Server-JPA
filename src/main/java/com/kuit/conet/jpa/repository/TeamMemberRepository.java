@@ -32,9 +32,9 @@ public class TeamMemberRepository {
     }
 
 
-    public Integer getCount(Long id) {
-        return em.createQuery("select count(tm) from TeamMember tm where tm.team.id=:id", Integer.class)
-                .setParameter("teamId", id)
+    public Long getCount(Long teamId) {
+        return em.createQuery("select count(tm) from TeamMember tm where tm.team.id=:teamId", Long.class)
+                .setParameter("teamId", teamId)
                 .getSingleResult();
     }
 

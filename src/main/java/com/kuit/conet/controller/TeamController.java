@@ -103,21 +103,5 @@ public class TeamController {
         return new BaseResponse<StorageImgResponse>(response);
     }
 
-    @PostMapping("/bookmark")
-    public BaseResponse<String> bookmarkTeam(HttpServletRequest httpRequest, @RequestBody @Valid TeamIdRequest request) {
-        teamService.bookmarkTeam(httpRequest, request);
-        return new BaseResponse<>("모임을 즐겨찾기에 추가하였습니다.");
-    }
-
-    @PostMapping("/bookmark/delete")
-    public BaseResponse<String> unBookmarkTeam(HttpServletRequest httpRequest, @RequestBody @Valid TeamIdRequest request) {
-        teamService.unBookmarkTeam(httpRequest, request);
-        return new BaseResponse<>("모임을 즐겨찾기에서 삭제하였습니다.");
-    }
-
-    @GetMapping("/bookmark")
-    public BaseResponse<List<GetTeamResponse>> getBookmark(HttpServletRequest httpRequest) {
-        List<GetTeamResponse> responses = teamService.getBookmarks(httpRequest);
-        return new BaseResponse<>(responses);
-    }*/
+    */
 }
