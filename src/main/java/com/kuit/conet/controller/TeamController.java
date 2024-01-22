@@ -5,6 +5,8 @@ import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.JoinTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
+import com.kuit.conet.dto.web.request.team.UpdateTeamRequestDTO;
+import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.team.CreateTeamResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
@@ -88,6 +90,16 @@ public class TeamController {
         return new BaseResponse<>(response);
     }
 
+    /**
+     * @apiNote 모임 수정 api
+     */
+
+    @PostMapping("/update")
+    public BaseResponse<StorageImgResponseDTO> updateTeam(@RequestPart(value = "request") @Valid UpdateTeamRequestDTO teamRequest, @UserId Long userId, @RequestParam(value = "file") MultipartFile file) {
+        StorageImgResponseDTO response = teamService.updateTeam(teamRequest, userId, file);
+        return new BaseResponse<StorageImgResponseDTO>(response);
+    }
+
     /*
 
     @PostMapping("/code")
@@ -97,11 +109,7 @@ public class TeamController {
     }
 
 
-    @PostMapping("/update")
-    public BaseResponse<StorageImgResponse> updateTeam(@RequestPart(value = "request") @Valid UpdateTeamRequest updateTeamRequest, @RequestParam(value = "file") MultipartFile file) {
-        StorageImgResponse response = teamService.updateTeam(updateTeamRequest, file);
-        return new BaseResponse<StorageImgResponse>(response);
-    }
+
 
     */
 }
