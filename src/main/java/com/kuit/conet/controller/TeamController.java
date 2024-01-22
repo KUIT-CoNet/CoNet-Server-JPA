@@ -7,10 +7,7 @@ import com.kuit.conet.dto.web.request.team.JoinTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
 import com.kuit.conet.dto.web.request.team.UpdateTeamRequestDTO;
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
-import com.kuit.conet.dto.web.response.team.CreateTeamResponseDTO;
-import com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO;
-import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
-import com.kuit.conet.dto.web.response.team.JoinTeamResponseDTO;
+import com.kuit.conet.dto.web.response.team.*;
 import com.kuit.conet.jpa.service.TeamService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -93,23 +90,18 @@ public class TeamController {
     /**
      * @apiNote 모임 수정 api
      */
-
     @PostMapping("/update")
     public BaseResponse<StorageImgResponseDTO> updateTeam(@RequestPart(value = "request") @Valid UpdateTeamRequestDTO teamRequest, @UserId Long userId, @RequestParam(value = "file") MultipartFile file) {
         StorageImgResponseDTO response = teamService.updateTeam(teamRequest, userId, file);
         return new BaseResponse<StorageImgResponseDTO>(response);
     }
 
-    /*
-
+    /**
+     * @apiNote 모임 코드 재발급 api
+     */
     @PostMapping("/code")
-    public BaseResponse<RegenerateCodeResponse> regenerateCode(@RequestBody @Valid TeamIdRequest request) {
-        RegenerateCodeResponse response = teamService.regenerateCode(request);
+    public BaseResponse<RegenerateCodeResponseDTO> regenerateCode(@RequestBody @Valid TeamIdRequestDTO teamRequest) {
+        RegenerateCodeResponseDTO response = teamService.regenerateCode(teamRequest);
         return new BaseResponse<>(response);
     }
-
-
-
-
-    */
 }
