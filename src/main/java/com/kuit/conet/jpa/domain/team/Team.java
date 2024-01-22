@@ -1,17 +1,17 @@
 package com.kuit.conet.jpa.domain.team;
 
+import com.kuit.conet.dto.web.request.team.UpdateTeamRequestDTO;
 import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.plan.Plan;
 import com.kuit.conet.service.StorageService;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -45,10 +45,6 @@ public class Team {
     // 다대다(다대일, 일대다) 단방향 연관 관계 / 연관 관계 주인의 반대편
     private List<TeamMember> teamMembers = new ArrayList<>();
 
-    public void addPlan(Plan plan) {
-        plans.add(plan);
-    }
-
     //==생성 메서드==//
     public static Team createTeam(String teamName, String inviteCode, LocalDateTime codeGeneratedTime, Member teamCreator, String imgUrl) {
         Team team = new Team();
@@ -60,6 +56,19 @@ public class Team {
         TeamMember teamMember = TeamMember.createTeamMember(team, teamCreator);
 
         return team;
+    }
+
+    public void updateTeam(UpdateTeamRequestDTO teamRequest, StorageService storageService, String oldImgUrl, String newImgUrl) {
+        if (oldImgUrl != null) {
+            String deleteFileName = storageService.getFileNameFromUrl(oldImgUrl);
+            storageService.deleteImage(deleteFileName);
+        }
+        this.name = teamRequest.getTeamName();
+        this.imgUrl = newImgUrl;
+    }
+
+    public void addPlan(Plan plan) {
+        plans.add(plan);
     }
 
     //== 연관관계 편의 메서드 ==//

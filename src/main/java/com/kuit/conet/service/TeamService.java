@@ -89,33 +89,6 @@ public class TeamService {
         return "모임 삭제에 성공하였습니다.";
     }
 
-    public StorageImgResponse updateTeam(UpdateTeamRequest updateTeamRequest, MultipartFile file) {
-        String fileName = storageService.getFileName(file, StorageDomain.TEAM, updateTeamRequest.getTeamId());
-
-        if(!teamDao.isExistTeam(updateTeamRequest.getTeamId())) {
-            return null;
-        }
-
-        String imgUrl = null;
-
-        imgUrl = teamDao.getTeamImgUrl(updateTeamRequest.getTeamId());
-        if(imgUrl != null) {
-            String deleteFileName = storageService.getFileNameFromUrl(imgUrl);
-            storageService.deleteImage(deleteFileName);
-        }
-
-        // 새로운 이미지 S3에 업로드
-        imgUrl = storageService.uploadToS3(file, fileName);
-
-        // image update
-        StorageImgResponse response = teamDao.updateImg(updateTeamRequest.getTeamId(), imgUrl);
-
-        // name update
-        teamDao.updateName(updateTeamRequest.getTeamId(), updateTeamRequest.getTeamName());
-
-        return response;
-    }
-
     public void bookmarkTeam(HttpServletRequest httpRequest, TeamIdRequest request) {
         Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
         Long teamId = request.getTeamId();

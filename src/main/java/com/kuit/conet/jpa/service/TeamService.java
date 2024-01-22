@@ -3,6 +3,8 @@ package com.kuit.conet.jpa.service;
 import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.JoinTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
+import com.kuit.conet.dto.web.request.team.UpdateTeamRequestDTO;
+import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.team.CreateTeamResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
@@ -128,6 +130,21 @@ public class TeamService {
         teamRepository.deleteTeam(teamId);
 
         return SUCCESS_DELETE_TEAM;
+    }
+
+    public StorageImgResponseDTO updateTeam(UpdateTeamRequestDTO teamRequest, Long userId, MultipartFile file) {
+        String fileName = storageService.getFileName(file, StorageDomain.TEAM);
+        Team team = teamRepository.findById(teamRequest.getTeamId());
+        validateTeamExisting(team);
+        isTeamMember(teamMemberRepository, teamRequest.getTeamId(), userId);
+
+        // 새로운 이미지 S3에 업로드
+        String newImgUrl = storageService.uploadToS3(file, fileName);
+        String oldImgUrl = teamRepository.getTeamImgUrl(teamRequest.getTeamId());
+
+        team.updateTeam(teamRequest, storageService, oldImgUrl, newImgUrl);
+
+        return new StorageImgResponseDTO(team);
     }
 
     public List<GetTeamMemberResponseDTO> getTeamMembers(Long teamId, Long userId) {
