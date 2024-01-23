@@ -1,6 +1,7 @@
 package com.kuit.conet.jpa.service;
 
 import com.kuit.conet.dto.web.request.member.NameRequestDTO;
+import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
@@ -8,6 +9,7 @@ import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.storage.StorageDomain;
 import com.kuit.conet.jpa.repository.MemberRepository;
 import com.kuit.conet.jpa.repository.TeamMemberRepository;
+import com.kuit.conet.jpa.service.validator.TeamValidator;
 import com.kuit.conet.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,5 +79,20 @@ public class MemberService {
         List<GetTeamResponseDTO> teamResponses = memberRepository.getBookmarks(userId);
 
         return teamResponses;
+    }
+
+    public String bookmarkTeam(Long userId, TeamIdRequestDTO request) {
+        Long teamId = request.getTeamId();
+
+        // 유저가 팀에 참가 중인지 검사
+        TeamValidator.isTeamMember(teamMemberRepository, teamId, userId);
+
+        teamMemberRepository.bookmarkTeam(userId, teamId);
+
+        if (teamMemberRepository.isBookmark(userId, teamId)) {
+            return "모임을 즐겨찾기에 추가하였습니다.";
+        } else {
+            return "모임을 즐겨찾기에서 삭제하였습니다.";
+        }
     }
 }
