@@ -3,6 +3,7 @@ package com.kuit.conet.controller;
 import com.kuit.conet.annotation.UserId;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.member.NameRequestDTO;
+import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
@@ -52,15 +53,8 @@ public class MemberController {
         return new BaseResponse<>(responses);
     }
 
-/*    @PostMapping("/bookmark")
-    public BaseResponse<String> bookmarkTeam(HttpServletRequest httpRequest, @RequestBody @Valid TeamIdRequest request) {
-        teamService.bookmarkTeam(httpRequest, request);
-        return new BaseResponse<>("모임을 즐겨찾기에 추가하였습니다.");
+    @PostMapping("/bookmark")
+    public BaseResponse<String> bookmarkTeam(@UserId Long userId, @RequestBody @Valid TeamIdRequestDTO request) {
+        return new BaseResponse<>(memberService.bookmarkTeam(userId, request));
     }
-
-    @PostMapping("/bookmark/delete")
-    public BaseResponse<String> unBookmarkTeam(HttpServletRequest httpRequest, @RequestBody @Valid TeamIdRequest request) {
-        teamService.unBookmarkTeam(httpRequest, request);
-        return new BaseResponse<>("모임을 즐겨찾기에서 삭제하였습니다.");
-    }*/
 }
