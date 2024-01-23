@@ -5,10 +5,7 @@ import com.kuit.conet.dto.web.request.team.JoinTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
 import com.kuit.conet.dto.web.request.team.UpdateTeamRequestDTO;
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
-import com.kuit.conet.dto.web.response.team.CreateTeamResponseDTO;
-import com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO;
-import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
-import com.kuit.conet.dto.web.response.team.JoinTeamResponseDTO;
+import com.kuit.conet.dto.web.response.team.*;
 import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.storage.StorageDomain;
 import com.kuit.conet.jpa.domain.team.Team;
@@ -22,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -145,6 +143,25 @@ public class TeamService {
         team.updateTeam(teamRequest, storageService, oldImgUrl, newImgUrl);
 
         return new StorageImgResponseDTO(team);
+    }
+
+    public RegenerateCodeResponseDTO regenerateCode(TeamIdRequestDTO teamRequest) {
+        // 코드 재발급 및 생성 시간 찍기
+        String newInviteCode = getRandomInviteCode();
+        LocalDateTime codeGeneratedTime = LocalDateTime.now();
+        Team team = teamRepository.findById(teamRequest.getTeamId());
+
+        // 모임 존재 여부 확인
+        validateTeamExisting(team);
+
+        // 초대 코드, 생성시간 update
+        team.updateCode(newInviteCode, codeGeneratedTime);
+
+        // 응답 생성
+        LocalDateTime codeDeadline = codeGeneratedTime.plusDays(1);
+        String codeDeadlineStr = codeDeadline.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
+
+        return new RegenerateCodeResponseDTO(teamRequest.getTeamId(), newInviteCode, codeDeadlineStr);
     }
 
     public List<GetTeamMemberResponseDTO> getTeamMembers(Long teamId, Long userId) {

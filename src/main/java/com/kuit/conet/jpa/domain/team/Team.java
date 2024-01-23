@@ -67,6 +67,11 @@ public class Team {
         this.imgUrl = newImgUrl;
     }
 
+    public void updateCode(String newInviteCode, LocalDateTime codeGeneratedTime) {
+        this.inviteCode = newInviteCode;
+        this.codeGeneratedTime = codeGeneratedTime;
+    }
+
     public void addPlan(Plan plan) {
         plans.add(plan);
     }
