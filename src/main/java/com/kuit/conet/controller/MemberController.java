@@ -23,12 +23,6 @@ import java.util.List;
 public class MemberController {
     private final MemberService memberService;
 
-/*    @PostMapping("/delete")
-    public BaseResponse<String> userDelete(@UserId Long userId) {
-        memberService.userDelete(userId);
-        return new BaseResponse<>("유저 탈퇴에 성공하였습니다.");
-    }*/
-
     @GetMapping
     public BaseResponse<MemberResponseDTO> getUser(@UserId Long userId) {
         MemberResponseDTO response = memberService.getUser(userId);
@@ -56,5 +50,11 @@ public class MemberController {
     @PostMapping("/bookmark")
     public BaseResponse<String> bookmarkTeam(@UserId Long userId, @RequestBody @Valid TeamIdRequestDTO request) {
         return new BaseResponse<>(memberService.bookmarkTeam(userId, request));
+    }
+
+    @DeleteMapping()
+    public BaseResponse<String> userDelete(@UserId Long userId) {
+        memberService.deleteMember(userId);
+        return new BaseResponse<>("유저 탈퇴에 성공하였습니다.");
     }
 }
