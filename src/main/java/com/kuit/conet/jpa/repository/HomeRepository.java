@@ -18,12 +18,12 @@ public class HomeRepository {
     private final EntityManager em;
 
     public List<Date> getHomeFixedPlansInMonth(Long userId, String searchDate) {
-        // 해당 년, 월에 유저가 포함된 모든 모임의 모든 약속 -> fixed_date 만 distinct 로 검색
+        // 해당 년, 월에 유저가 포함된 약속(유저가 꼭 포함되어 있는 약속이어야 함) -> fixed_date 만 distinct 로 검색
         // team_member(userId, status) -> plan(teamId, fixed_date, status)
 
         return em.createQuery("select distinct p.fixedDate " +
-                        "from TeamMember tm join Plan p on tm.team.id = p.team.id " +
-                        "where tm.member.id = :userId " +
+                        "from PlanMembe정r pm join Plan p on pm.plan.id = p.id " +
+                        "where pm.member.id = :userId " +
                         "and p.status = :status " +
                         "and FUNCTION('DATE_FORMAT', p.fixedDate, '%Y-%m') = :searchDate", Date.class)
                 .setParameter("userId", userId)
@@ -34,8 +34,8 @@ public class HomeRepository {
 
     public List<HomeFixedPlanOnDayDTO> getHomeFixedPlansOnDay(Long userId, String searchDate) {
         return em.createQuery("select new com.kuit.conet.dto.home.HomeFixedPlanOnDayDTO(p.id, p.fixedTime, p.team.name, p.name) " +
-                        "from TeamMember tm join Plan p on tm.team.id = p.team.id " +
-                        "where tm.member.id = :userId " +
+                        "from PlanMember pm join Plan p on pm.plan.id = p.id " +
+                        "where pm.member.id = :userId " +
                         "and p.status=:status " +
                         "and FUNCTION('DATE_FORMAT', p.fixedDate, '%Y-%m-%d')=:searchDate " +
                         "order by p.fixedTime", HomeFixedPlanOnDayDTO.class)
