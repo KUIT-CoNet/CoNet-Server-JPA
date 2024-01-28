@@ -58,4 +58,11 @@ public class MemberRepository {
                 .setParameter("userId", userId)
                 .getResultList();
     }
+
+    public void deleteUser(Long userId) {
+        em.createQuery("update Member m set m.platform='', m.platformId='', m.imgUrl='', m.optionTerm=False, m.serviceTerm=False, m.status='INACTIVE' where m.id=:userId and m.status='ACTIVE'")
+                .setParameter("userId", userId)
+                .executeUpdate();
+        em.flush();
+    }
 }

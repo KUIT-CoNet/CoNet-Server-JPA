@@ -7,9 +7,7 @@ import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
 import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.storage.StorageDomain;
-import com.kuit.conet.jpa.repository.MemberRepository;
-import com.kuit.conet.jpa.repository.TeamMemberRepository;
-import com.kuit.conet.jpa.repository.TeamRepository;
+import com.kuit.conet.jpa.repository.*;
 import com.kuit.conet.jpa.service.validator.TeamValidator;
 import com.kuit.conet.service.StorageService;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +33,9 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final StorageService storageService;
+    private final PlanMemberRepository planMemberRepository;
+    private final PlanMemberTimeRepository planMemberTimeRepository;
+
     @Value("${spring.user.default-image}")
     private String defaultImg;
 
@@ -106,5 +107,23 @@ public class MemberService {
         } else {
             return "모임을 즐겨찾기에서 삭제하였습니다.";
         }
+    }
+
+    public void deleteMember(Long userId) {
+        Member member = memberRepository.findById(userId);
+        validateMemberExisting(member);
+        validateActiveMember(member);
+
+        // S3 에서 프로필 이미지 객체 삭제
+        storageService.deletePreviousImage(userId);
+
+        int deletedTeamMemberCount = teamMemberRepository.deleteTeamMemberByUserId(userId);
+        planMemberTimeRepository.deleteOnPlanByUserId(userId);
+        int deletedPlanMemberCount = planMemberRepository.deleteOnPlanByUserId(userId);
+
+        log.info(deletedTeamMemberCount + "");
+        log.info(deletedPlanMemberCount + "");
+
+        memberRepository.deleteUser(userId);
     }
 }
