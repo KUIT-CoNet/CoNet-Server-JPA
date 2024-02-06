@@ -192,7 +192,61 @@ public class PlanService {
         //구간별 최대 인원수 구하기
         Map<Integer, Long> endNumberForEachSection = getIntervalEndBySection(teamMemberTotalCount);
 
-        return new MemberAvailableTimeResponseDTO();
+        //가능한 시간 조회해서 Response에 포함되는 List<MemberDateTimeResponseDTO> 추출
+        List<MemberDateTimeDTO> memberDateTimes = new ArrayList<>(ONE_WEEK_DAYS);
+
+        //7일 각각에 대하여, 시간을 입력한 모든 구성원의 가능한 시간 조회
+        Date date = periodStartDate;
+        for (int i = 0; i < ONE_WEEK_DAYS; i++) {
+            //하루에 대한 날짜와 가능한 구성원 & 시간 정보 추가
+            List<AvailableMemberDTO> memberResponses = getAvailableTimeOnDay(plan, date, teamMemberTotalCount, endNumberForEachSection);
+            memberDateTimes.add(new MemberDateTimeDTO(date, memberResponses));
+            //========== 하루의 가능한 구성원 및 시간 정보 추가 완료 ==========//
+
+            //날짜 갱신: 하루 더하기
+            date = Date.valueOf(date.toLocalDate().plusDays(1));
+        }
+
+        return new MemberAvailableTimeResponseDTO(teamId, plan, endNumberForEachSection, memberDateTimes);
+    }
+
+    private List<AvailableMemberDTO> getAvailableTimeOnDay(Plan plan, Date date, Long teamMemberTotalCount, Map<Integer, Long> endNumberForEachSection) {
+        //24시간 - ArrayList 초기화
+        int[] membersCount = new int[ONE_DAY_HOURS];
+        List<AvailableMemberDTO> memberResponses = new ArrayList<>(ONE_DAY_HOURS);
+        ArrayList<ArrayList<String>> memberNames = new ArrayList<>(ONE_DAY_HOURS);
+        ArrayList<ArrayList<Long>> memberIds = new ArrayList<>(ONE_DAY_HOURS);
+        for (int i = 0; i < ONE_DAY_HOURS; i++) {
+            memberNames.add(new ArrayList<>());
+            memberIds.add(new ArrayList<>());
+        }
+
+        //해당 약속의 한 날짜에 대하여, 시간을 입력한 모든 구성원 정보 및 각 구성원의 가능한 시간 조회
+        //[ { memberId, memberName, possibleTime }, ... ] / [ { 1, "이름" , "1,2,3,4" }, ... ]
+        List<MemberAvailableTimeDTO> memberAvailableTimes = planMemberTimeRepository.findMemberAndAvailableTimeOnDay(plan, date);
+        for (MemberAvailableTimeDTO memberAvailableTime : memberAvailableTimes) {
+            String possibleTime = memberAvailableTime.getPossibleTime();  // "1,2,3,4"
+
+            if (possibleTime.isBlank()) continue; //가능한 시간이 없는 경우 넘어감
+
+            List<Integer> possibleTimes = Arrays.stream(possibleTime.split(AVAILABLE_TIME_SPLIT_REGEX))
+                .map(Integer::parseInt)
+                .toList();// ["1", "2", "3", "4"]
+
+            possibleTimes.stream()
+                    .forEach(time -> {
+                        //시간이 범위를 벗어나는지 검사
+                        validateTime(time);
+
+                        //[1, 0, 0, ... 0, 0]  각 시간에 가능한 구성원의 수
+                        membersCount[time]++;
+                        //각 시간에 가능한 구성원 정보
+                        memberNames.get(time).add(memberAvailableTime.getMemberName());
+                        memberIds.get(time).add(memberAvailableTime.getMemberId());
+                    });
+        }
+
+        return memberResponses;
     }
 
     private static Map<Integer, Long> getIntervalEndBySection(Long totalMemberCount) {
