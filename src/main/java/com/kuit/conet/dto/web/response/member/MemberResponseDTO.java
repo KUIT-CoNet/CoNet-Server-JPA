@@ -4,10 +4,6 @@ import com.kuit.conet.jpa.domain.member.Member;
 import lombok.*;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class MemberResponseDTO {
     private String name;
     private String email;

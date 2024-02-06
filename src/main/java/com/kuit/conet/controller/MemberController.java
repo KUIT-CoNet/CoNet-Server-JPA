@@ -4,7 +4,7 @@ import com.kuit.conet.annotation.UserId;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.member.NameRequestDTO;
 import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
-import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
+import com.kuit.conet.dto.plan.MemberResponseDTO;
 import com.kuit.conet.jpa.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

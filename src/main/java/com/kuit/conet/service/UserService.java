@@ -4,7 +4,7 @@ package com.kuit.conet.service;
 import com.kuit.conet.common.exception.UserException;
 import com.kuit.conet.dao.UserDao;
 import com.kuit.conet.dto.web.request.member.NameRequestDTO;
-import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
+import com.kuit.conet.dto.web.response.member.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
 import com.kuit.conet.jpa.domain.storage.StorageDomain;
 import lombok.RequiredArgsConstructor;
