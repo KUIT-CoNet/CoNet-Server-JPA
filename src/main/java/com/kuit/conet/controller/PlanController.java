@@ -101,7 +101,16 @@ public class PlanController {
     }
 
     /**
-     * @apiNote 특정 약속의 나의 가능한 시간 조회 api
+     * @apiNote 대기 중인 특정 약속의 구성원, 가능한 모든 시간 조회 api
+     */
+    @GetMapping("{planId}/available-time-slot")
+    public BaseResponse<MemberAvailableTimeResponseDTO> getMemberTime(@PathVariable @Valid Long planId) {
+        MemberAvailableTimeResponseDTO response = planService.getAvailableTimeSlot(planId);
+        return new BaseResponse<>(response);
+    }
+
+    /**
+     * @apiNote 대기 중인 특정 약속의 나의 가능한 시간 조회 api
      */
     @GetMapping("/{planId}/available-time-slot/my")
     public BaseResponse<UserAvailableTimeResponseDTO> getUserTimeSlot(@PathVariable @Valid Long planId, @UserId @Valid Long userId) {
@@ -114,12 +123,6 @@ public class PlanController {
     public BaseResponse<String> registerTime(HttpServletRequest httpRequest, @RequestBody @Valid PossibleTimeRequest request) {
         planService.saveTime(request, httpRequest);
         return new BaseResponse<>("사용자의 가능한 시간 등록에 성공하였습니다.");
-    }
-
-    @GetMapping("/member-time")
-    public BaseResponse<MemberPossibleTimeResponse> getMemberTime(@ModelAttribute @Valid PlanIdRequest request) {
-        MemberPossibleTimeResponse response = planService.getMemberTime(request);
-        return new BaseResponse<>(response);
     }
 
     @PostMapping("/delete")
