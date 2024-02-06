@@ -251,6 +251,11 @@ public class PlanService {
             section = setSectionForEachTime(endNumberForEachSection, membersCount);
         }
 
+        //0시부터 23시까지 가능한 시간 정보 저장
+        for (int time = MIN_TIME_NUMBER; time <= MAX_TIME_NUMBER; time++) {
+            AvailableMemberDTO memberResponse = new AvailableMemberDTO(time, section[time], memberNames.get(time), memberIds.get(time));
+            memberResponses.add(memberResponse);
+        }
         return memberResponses;
     }
 
