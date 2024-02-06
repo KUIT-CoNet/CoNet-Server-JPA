@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Priority(0)
 @RestControllerAdvice
 public class StorageExceptionControllerAdvice {
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(StorageException.class)
     public BaseErrorResponse handel_PlatformException(StorageException e) {
         log.error("[handle_StorageException]", e);
         return new BaseErrorResponse(e.getExceptionStatus(), e.getMessage());
     }
+
 }

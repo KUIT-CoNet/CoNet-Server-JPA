@@ -28,7 +28,7 @@ public class TeamController {
      * @apiNote 모임 생성 api
      */
     @PostMapping
-    public BaseResponse<CreateTeamResponseDTO> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequestDTO teamRequest, @UserId Long userId, @RequestParam(value = "file") MultipartFile file) {
+    public BaseResponse<CreateTeamResponseDTO> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequestDTO teamRequest, @UserId Long userId, @RequestPart(value = "file") MultipartFile file) {
         CreateTeamResponseDTO response = teamService.createTeam(teamRequest, userId, file);
         return new BaseResponse<CreateTeamResponseDTO>(response);
     }
