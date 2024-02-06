@@ -246,6 +246,11 @@ public class PlanService {
                     });
         }
 
+        int[] section = membersCount;
+        if (teamMemberTotalCount >= SECTION_DIVISOR) {
+            section = setSectionForEachTime(endNumberForEachSection, membersCount);
+        }
+
         return memberResponses;
     }
 
@@ -264,5 +269,20 @@ public class PlanService {
         endNumberForEachSection.put(3, totalMemberCount);
 
         return endNumberForEachSection;
+    }
+
+    private static int[] setSectionForEachTime(Map<Integer, Long> endNumberForEachSection, int[] membersCount) {
+        int[] section = new int [ONE_DAY_HOURS];
+
+        for (int time = MIN_TIME_NUMBER; time <= MAX_TIME_NUMBER; time++) {
+            int count = membersCount[time];
+
+            if (count <= endNumberForEachSection.get(3)) section[time] = 3;
+            if (count <= endNumberForEachSection.get(2)) section[time] = 2;
+            if (count <= endNumberForEachSection.get(1)) section[time] = 1;
+            if (count == 0) section[time] = 0;
+        }
+
+        return section;
     }
 }
