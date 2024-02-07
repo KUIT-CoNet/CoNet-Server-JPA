@@ -1,6 +1,6 @@
 package com.kuit.conet.common.exception_handler;
 
-import com.kuit.conet.common.exception.StorageException;
+import com.kuit.conet.common.exception.FileException;
 import com.kuit.conet.common.response.BaseErrorResponse;
 import jakarta.annotation.Priority;
 import lombok.extern.slf4j.Slf4j;
@@ -12,13 +12,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @Priority(0)
 @RestControllerAdvice
-public class StorageExceptionControllerAdvice {
-
+public class FileExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(StorageException.class)
-    public BaseErrorResponse handel_PlatformException(StorageException e) {
-        log.error("[handle_StorageException]", e);
+    @ExceptionHandler(FileException.class)
+    public BaseErrorResponse handle_FileException(FileException e) {
+        log.error("[handle_FileException]", e);
         return new BaseErrorResponse(e.getExceptionStatus(), e.getMessage());
     }
-
 }

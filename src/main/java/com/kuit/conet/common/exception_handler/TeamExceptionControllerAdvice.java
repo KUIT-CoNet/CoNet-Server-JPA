@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Priority(0)
 @RestControllerAdvice
 public class TeamExceptionControllerAdvice {
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(TeamException.class)
     public BaseErrorResponse handel_TeamException(TeamException e) {
         log.error("[handle_TeamException]", e);
         return new BaseErrorResponse(e.getExceptionStatus(), e.getMessage());
     }
+    
 }

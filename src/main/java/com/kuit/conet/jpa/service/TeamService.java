@@ -52,13 +52,16 @@ public class TeamService {
         // 초대 코드 생성 및 코드 중복 확인
         String inviteCode = getRandomInviteCode();
 
+        // 이미지 파일 존재 여부 확인
+        validateFile(file);
+
         // 모임 생성 시간 찍기
         LocalDateTime codeGeneratedTime = LocalDateTime.now();
 
         // 팀 만든 멤버 정보 추출
         Member teamCreator = memberRepository.findById(userId);
 
-        //이미지 s3 업로드
+        // 이미지 s3 업로드
         String imgUrl = updateTeamImg(file);
 
         // team 생성

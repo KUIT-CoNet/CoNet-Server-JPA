@@ -1,10 +1,12 @@
 package com.kuit.conet.jpa.service.validator;
 
+import com.kuit.conet.common.exception.FileException;
 import com.kuit.conet.common.exception.TeamException;
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.repository.TeamMemberRepository;
 import com.kuit.conet.jpa.repository.TeamRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -64,5 +66,10 @@ public class TeamValidator {
         if (!teamMemberRepository.isTeamMember(teamId, userId)) {
             throw new TeamException(NOT_TEAM_MEMBER);
         }
+    }
+
+    public static void validateFile(MultipartFile file) {
+        if (file.isEmpty())
+            throw new FileException(NOT_FOUND_FILE);
     }
 }
