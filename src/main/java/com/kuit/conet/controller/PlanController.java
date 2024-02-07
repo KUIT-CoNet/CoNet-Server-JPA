@@ -103,7 +103,7 @@ public class PlanController {
     /**
      * @apiNote 대기 중인 특정 약속의 구성원, 가능한 모든 시간 조회 api
      */
-    @GetMapping("{planId}/available-time-slot")
+    @GetMapping("/{planId}/available-time-slot")
     public BaseResponse<MemberAvailableTimeResponseDTO> getMemberTime(@PathVariable @Valid Long planId) {
         MemberAvailableTimeResponseDTO response = planService.getAvailableTimeSlot(planId);
         return new BaseResponse<>(response);
