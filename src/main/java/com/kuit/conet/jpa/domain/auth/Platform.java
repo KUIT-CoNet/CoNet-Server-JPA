@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.INVALID_PLATFORM;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public enum Platform {
     APPLE("APPLE"),
