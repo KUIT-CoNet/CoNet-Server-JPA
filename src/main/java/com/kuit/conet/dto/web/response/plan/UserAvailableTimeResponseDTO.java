@@ -5,21 +5,21 @@ import lombok.*;
 
 import java.util.List;
 
+import static com.kuit.conet.jpa.domain.plan.AvailableTimeRegisteredStatus.*;
+
 @Getter
 @NoArgsConstructor
 public class UserAvailableTimeResponseDTO {
     private Long planId;
     private Long userId;
-    private Boolean hasRegisteredTime; // 가능한 시간을 입력했는지
-    private Boolean hasAvailableTime; // 가능한 시간이 존재하는지
+    private int availableTimeRegisteredStatus;
     private List<UserAvailableTimeDTO> timeSlot;
 
     public static UserAvailableTimeResponseDTO notRegistered(Long planId, Long userId) {
         UserAvailableTimeResponseDTO responseDTO = new UserAvailableTimeResponseDTO();
         responseDTO.planId = planId;
         responseDTO.userId = userId;
-        responseDTO.hasRegisteredTime = false;
-        responseDTO.hasAvailableTime = false;
+        responseDTO.availableTimeRegisteredStatus = NOT_REGISTERED.getStatus();
         responseDTO.timeSlot = null;
 
         return responseDTO;
@@ -29,8 +29,12 @@ public class UserAvailableTimeResponseDTO {
         UserAvailableTimeResponseDTO responseDTO = new UserAvailableTimeResponseDTO();
         responseDTO.planId = planId;
         responseDTO.userId = userId;
-        responseDTO.hasRegisteredTime = true;
-        responseDTO.hasAvailableTime = hasAvailableTime;
+        if (!hasAvailableTime) {
+            responseDTO.availableTimeRegisteredStatus = NO_AVAILABLE_TIME.getStatus();
+        }
+        if (hasAvailableTime) {
+            responseDTO.availableTimeRegisteredStatus = HAS_AVAILABLE_TIME.getStatus();
+        }
         responseDTO.timeSlot = timeSlot;
 
         return responseDTO;
