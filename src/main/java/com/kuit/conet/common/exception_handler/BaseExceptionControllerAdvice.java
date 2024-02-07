@@ -74,7 +74,7 @@ public class BaseExceptionControllerAdvice {
     @ExceptionHandler(MissingServletRequestPartException.class)
     public BaseErrorResponse handle_MissingServletRequestPartException(MissingServletRequestPartException e) {
         log.error("[handle_MissingServletRequestPartException]", e);
-        return new BaseErrorResponse(NOT_FOUND_FORM_DATA);
+        return new BaseErrorResponse(INAPPROPRIATE_DATA);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
