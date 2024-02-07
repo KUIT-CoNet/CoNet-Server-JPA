@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.io.IOException;
@@ -67,6 +68,13 @@ public class BaseExceptionControllerAdvice {
     public BaseErrorResponse handle_MethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("[handle_MethodArgumentNotValidException]", e);
         return new BaseErrorResponse(INAPPROPRIATE_DATA);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public BaseErrorResponse handle_MissingServletRequestPartException(MissingServletRequestPartException e) {
+        log.error("[handle_MissingServletRequestPartException]", e);
+        return new BaseErrorResponse(NOT_FOUND_FORM_DATA);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
