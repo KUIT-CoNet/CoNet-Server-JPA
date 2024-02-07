@@ -25,8 +25,8 @@ public class PlanMemberTimeRepository {
 
     public void deleteByTeamId(Long teamId) {
         em.createQuery("delete from PlanMemberTime pmt where pmt.plan.id in " +
-                "(select p.id from Plan p where p.team.id=:teamId)")
-                .setParameter("teamId",teamId)
+                        "(select p.id from Plan p where p.team.id=:teamId)")
+                .setParameter("teamId", teamId)
                 .executeUpdate();
     }
 
@@ -39,8 +39,8 @@ public class PlanMemberTimeRepository {
 
     public List<PlanMemberTime> findByTeamAndMemberId(Plan plan, Long userId) {
         return em.createQuery("select pmt " +
-                "from PlanMemberTime pmt where pmt.plan=:plan and pmt.member.id=:userId " +
-                "order by pmt.date", PlanMemberTime.class)
+                        "from PlanMemberTime pmt where pmt.plan=:plan and pmt.member.id=:userId " +
+                        "order by pmt.date", PlanMemberTime.class)
                 .setParameter("plan", plan)
                 .setParameter("userId", userId)
                 .getResultList();
@@ -53,6 +53,13 @@ public class PlanMemberTimeRepository {
                 .setParameter("plan", plan)
                 .setParameter("searchDate", searchDate)
                 .getResultList();
+    }
 
+    public int deleteOnPlanByUserId(Long userId) {
+        int deletedPlanCount = em.createQuery("delete from PlanMemberTime pmt where pmt.member.id=:userId")
+                .setParameter("userId", userId)
+                .executeUpdate();
+        em.flush();
+        return deletedPlanCount;
     }
 }

@@ -50,4 +50,20 @@ public class TeamMemberRepository {
                 .setParameter("teamId", teamId)
                 .executeUpdate();
     }
+
+    public void bookmarkTeam(Long userId, Long teamId) {
+        em.createQuery("update TeamMember tm set tm.bookMark = CASE WHEN tm.bookMark = true THEN false ELSE true END " +
+                        "where tm.member.id=:userId and tm.team.id=:teamId")
+                .setParameter("userId", userId)
+                .setParameter("teamId", teamId)
+                .executeUpdate();
+    }
+
+    public int deleteTeamMemberByUserId(Long userId) {
+        int deletedTeamMemberCount = em.createQuery("delete from TeamMember tm where tm.member.id=:userId")
+                .setParameter("userId", userId)
+                .executeUpdate();
+        em.flush();
+        return deletedTeamMemberCount;
+    }
 }

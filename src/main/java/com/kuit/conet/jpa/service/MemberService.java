@@ -2,10 +2,13 @@ package com.kuit.conet.jpa.service;
 
 import com.kuit.conet.dto.web.request.member.NameRequestDTO;
 import com.kuit.conet.dto.web.response.member.StorageImgResponseDTO;
+import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
 import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
+import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
 import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.storage.StorageDomain;
-import com.kuit.conet.jpa.repository.MemberRepository;
+import com.kuit.conet.jpa.repository.*;
+import com.kuit.conet.jpa.service.validator.TeamValidator;
 import com.kuit.conet.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 import static com.kuit.conet.jpa.service.validator.MemberValidator.validateActiveMember;
 import static com.kuit.conet.jpa.service.validator.MemberValidator.validateMemberExisting;
+import static com.kuit.conet.jpa.service.validator.TeamValidator.validateTeamExisting;
 import static com.kuit.conet.service.StorageService.getFileName;
 
 @Slf4j
@@ -23,8 +29,13 @@ import static com.kuit.conet.service.StorageService.getFileName;
 @Transactional
 @RequiredArgsConstructor
 public class MemberService {
+    private final TeamMemberRepository teamMemberRepository;
     private final MemberRepository memberRepository;
+    private final TeamRepository teamRepository;
     private final StorageService storageService;
+    private final PlanMemberRepository planMemberRepository;
+    private final PlanMemberTimeRepository planMemberTimeRepository;
+
     @Value("${spring.user.default-image}")
     private String defaultImg;
 
@@ -68,4 +79,51 @@ public class MemberService {
         return new MemberResponseDTO(member);
     }
 
+    public List<GetTeamResponseDTO> getBookmarks(Long userId) {
+        Member member = memberRepository.findById(userId);
+        validateMemberExisting(member);
+        validateActiveMember(member);
+
+        List<GetTeamResponseDTO> teamResponses = memberRepository.getBookmarks(userId);
+
+        return teamResponses;
+    }
+
+    public String bookmarkTeam(Long userId, TeamIdRequestDTO request) {
+        Member member = memberRepository.findById(userId);
+        validateMemberExisting(member);
+        validateActiveMember(member);
+
+        Long teamId = request.getTeamId();
+        validateTeamExisting(teamRepository.findById(teamId));
+
+        // 유저가 팀에 참가 중인지 검사
+        TeamValidator.isTeamMember(teamMemberRepository, teamId, userId);
+
+        teamMemberRepository.bookmarkTeam(userId, teamId);
+
+        if (teamMemberRepository.isBookmark(userId, teamId)) {
+            return "모임을 즐겨찾기에 추가하였습니다.";
+        } else {
+            return "모임을 즐겨찾기에서 삭제하였습니다.";
+        }
+    }
+
+    public void deleteMember(Long userId) {
+        Member member = memberRepository.findById(userId);
+        validateMemberExisting(member);
+        validateActiveMember(member);
+
+        // S3 에서 프로필 이미지 객체 삭제
+        storageService.deletePreviousImage(userId);
+
+        int deletedTeamMemberCount = teamMemberRepository.deleteTeamMemberByUserId(userId);
+        planMemberTimeRepository.deleteOnPlanByUserId(userId);
+        int deletedPlanMemberCount = planMemberRepository.deleteOnPlanByUserId(userId);
+
+        log.info(deletedTeamMemberCount + "");
+        log.info(deletedPlanMemberCount + "");
+
+        memberRepository.deleteUser(userId);
+    }
 }

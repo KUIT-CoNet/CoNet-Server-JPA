@@ -37,31 +37,6 @@ public class TeamService {
     private final TeamDao teamDao;
     private final UserDao userDao;
 
-    public RegenerateCodeResponse regenerateCode(TeamIdRequest request) {
-        String inviteCode;
-
-        // 초대 코드 생성 및 중복 확인
-        do {
-            inviteCode = generateInviteCode();
-        } while(teamDao.validateDuplicateCode(inviteCode));  // 중복되면 true 반환
-
-        // 모임 생성 시간 찍기
-        Timestamp codeGeneratedTime = Timestamp.valueOf(LocalDateTime.now());
-
-        // 모임 존재 여부 확인
-        if (!teamDao.isExistTeam(request.getTeamId())) {
-            throw new TeamException(NOT_FOUND_TEAM);
-        }
-
-        // 초대 코드, 생성시간 update
-        String newCode = teamDao.codeUpdate(request.getTeamId(), inviteCode, codeGeneratedTime);
-
-        LocalDateTime codeDeadline = codeGeneratedTime.toLocalDateTime().plusDays(1);
-        String codeDeadlineStr = codeDeadline.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
-
-        return new RegenerateCodeResponse(request.getTeamId(), newCode, codeDeadlineStr);
-    }
-
     public String deleteTeam(TeamIdRequest teamIdRequest) {
         // 모임 존재 여부 확인
         if (!teamDao.isExistTeam(teamIdRequest.getTeamId())) {
@@ -87,33 +62,6 @@ public class TeamService {
         teamDao.deleteTeam(teamIdRequest.getTeamId());
 
         return "모임 삭제에 성공하였습니다.";
-    }
-
-    public StorageImgResponse updateTeam(UpdateTeamRequest updateTeamRequest, MultipartFile file) {
-        String fileName = storageService.getFileName(file, StorageDomain.TEAM, updateTeamRequest.getTeamId());
-
-        if(!teamDao.isExistTeam(updateTeamRequest.getTeamId())) {
-            return null;
-        }
-
-        String imgUrl = null;
-
-        imgUrl = teamDao.getTeamImgUrl(updateTeamRequest.getTeamId());
-        if(imgUrl != null) {
-            String deleteFileName = storageService.getFileNameFromUrl(imgUrl);
-            storageService.deleteImage(deleteFileName);
-        }
-
-        // 새로운 이미지 S3에 업로드
-        imgUrl = storageService.uploadToS3(file, fileName);
-
-        // image update
-        StorageImgResponse response = teamDao.updateImg(updateTeamRequest.getTeamId(), imgUrl);
-
-        // name update
-        teamDao.updateName(updateTeamRequest.getTeamId(), updateTeamRequest.getTeamName());
-
-        return response;
     }
 
     public void bookmarkTeam(HttpServletRequest httpRequest, TeamIdRequest request) {

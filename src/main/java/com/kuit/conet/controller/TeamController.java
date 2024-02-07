@@ -5,10 +5,9 @@ import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.JoinTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
-import com.kuit.conet.dto.web.response.team.CreateTeamResponseDTO;
-import com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO;
-import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
-import com.kuit.conet.dto.web.response.team.JoinTeamResponseDTO;
+import com.kuit.conet.dto.web.request.team.UpdateTeamRequestDTO;
+import com.kuit.conet.dto.web.response.member.StorageImgResponseDTO;
+import com.kuit.conet.dto.web.response.team.*;
 import com.kuit.conet.jpa.service.TeamService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -88,36 +87,21 @@ public class TeamController {
         return new BaseResponse<>(response);
     }
 
-    /*
+    /**
+     * @apiNote 모임 수정 api
+     */
+    @PostMapping("/update")
+    public BaseResponse<StorageImgResponseDTO> updateTeam(@RequestPart(value = "request") @Valid UpdateTeamRequestDTO teamRequest, @UserId Long userId, @RequestParam(value = "file") MultipartFile file) {
+        StorageImgResponseDTO response = teamService.updateTeam(teamRequest, userId, file);
+        return new BaseResponse<StorageImgResponseDTO>(response);
+    }
 
+    /**
+     * @apiNote 모임 코드 재발급 api
+     */
     @PostMapping("/code")
-    public BaseResponse<RegenerateCodeResponse> regenerateCode(@RequestBody @Valid TeamIdRequest request) {
-        RegenerateCodeResponse response = teamService.regenerateCode(request);
+    public BaseResponse<RegenerateCodeResponseDTO> regenerateCode(@RequestBody @Valid TeamIdRequestDTO teamRequest) {
+        RegenerateCodeResponseDTO response = teamService.regenerateCode(teamRequest);
         return new BaseResponse<>(response);
     }
-
-
-    @PostMapping("/update")
-    public BaseResponse<StorageImgResponse> updateTeam(@RequestPart(value = "request") @Valid UpdateTeamRequest updateTeamRequest, @RequestParam(value = "file") MultipartFile file) {
-        StorageImgResponse response = teamService.updateTeam(updateTeamRequest, file);
-        return new BaseResponse<StorageImgResponse>(response);
-    }
-
-    @PostMapping("/bookmark")
-    public BaseResponse<String> bookmarkTeam(HttpServletRequest httpRequest, @RequestBody @Valid TeamIdRequest request) {
-        teamService.bookmarkTeam(httpRequest, request);
-        return new BaseResponse<>("모임을 즐겨찾기에 추가하였습니다.");
-    }
-
-    @PostMapping("/bookmark/delete")
-    public BaseResponse<String> unBookmarkTeam(HttpServletRequest httpRequest, @RequestBody @Valid TeamIdRequest request) {
-        teamService.unBookmarkTeam(httpRequest, request);
-        return new BaseResponse<>("모임을 즐겨찾기에서 삭제하였습니다.");
-    }
-
-    @GetMapping("/bookmark")
-    public BaseResponse<List<GetTeamResponse>> getBookmark(HttpServletRequest httpRequest) {
-        List<GetTeamResponse> responses = teamService.getBookmarks(httpRequest);
-        return new BaseResponse<>(responses);
-    }*/
 }
