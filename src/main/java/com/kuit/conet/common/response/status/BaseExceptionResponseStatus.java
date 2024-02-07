@@ -24,6 +24,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     SERVER_ERROR(3000, HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버에서 오류가 발생하였습니다."),
     DATABASE_ERROR(3001, HttpStatus.INTERNAL_SERVER_ERROR.value(), "데이터베이스에서 오류가 발생하였습니다."),
     BAD_SQL_GRAMMAR(3002, HttpStatus.INTERNAL_SERVER_ERROR.value(), "SQL에 오류가 있습니다."),
+    TIME_OUT_OF_BOUND(3003, HttpStatus.INTERNAL_SERVER_ERROR.value(), "범위를 벗어난 날짜 정보가 존재합니다."),
 
     /**
      * 4000: Authorization 오류
@@ -58,6 +59,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     USER_NOT_EXIST_IN_TEAM(5504, HttpStatus.BAD_REQUEST.value(), "모임에 참여하고 있지 않습니다."),
     NOT_FOUND_TEAM(5505, HttpStatus.NOT_FOUND.value(), "존재하지 않는 모임입니다."),
     NOT_TEAM_MEMBER(5507, HttpStatus.BAD_REQUEST.value(), "팀의 멤버가 아닙니다."),
+
     /**
      * 6000: 약속(Plan) 정보 오류
      */
@@ -65,7 +67,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     NOT_FIXED_PLAN(6001, HttpStatus.BAD_REQUEST.value(), "확정된 약속이 아닙니다."),
     NOT_PAST_PLAN(6002, HttpStatus.BAD_REQUEST.value(), "지난 약속이 아닙니다."),
     ALREADY_FIXED_PLAN(6003, HttpStatus.BAD_REQUEST.value(), "이미 확정된 약속입니다."),
-    DATE_NOT_IN_PERIOD(6003, HttpStatus.BAD_REQUEST.value(), "정해진 기간에서 벗어난 날짜입니다."),
+    DATE_NOT_IN_PERIOD(6004, HttpStatus.BAD_REQUEST.value(), "정해진 기간에서 벗어난 날짜입니다."),
 
     /**
      * 9000: 기타 오류

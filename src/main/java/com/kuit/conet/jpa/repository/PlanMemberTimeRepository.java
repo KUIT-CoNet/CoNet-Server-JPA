@@ -1,11 +1,13 @@
 package com.kuit.conet.jpa.repository;
 
+import com.kuit.conet.dto.plan.MemberAvailableTimeDTO;
 import com.kuit.conet.jpa.domain.plan.Plan;
 import com.kuit.conet.jpa.domain.plan.PlanMemberTime;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.util.List;
 
 @Repository
@@ -41,6 +43,15 @@ public class PlanMemberTimeRepository {
                         "order by pmt.date", PlanMemberTime.class)
                 .setParameter("plan", plan)
                 .setParameter("userId", userId)
+                .getResultList();
+    }
+
+    public List<MemberAvailableTimeDTO> findMemberAndAvailableTimeOnDay(Plan plan, Date searchDate) {
+        return em.createQuery("select new com.kuit.conet.dto.plan.MemberAvailableTimeDTO(pmt.member.id, pmt.member.name, pmt.availableTime) " +
+                        "from PlanMemberTime pmt join pmt.member m " +
+                        "where pmt.plan=:plan and pmt.date=:searchDate", MemberAvailableTimeDTO.class)
+                .setParameter("plan", plan)
+                .setParameter("searchDate", searchDate)
                 .getResultList();
     }
 

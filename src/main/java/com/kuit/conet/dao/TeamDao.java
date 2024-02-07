@@ -3,7 +3,7 @@ package com.kuit.conet.dao;
 
 import com.kuit.conet.domain.team.Team;
 import com.kuit.conet.domain.team.TeamMember;
-import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
+import com.kuit.conet.dto.web.response.member.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
 import lombok.extern.slf4j.Slf4j;

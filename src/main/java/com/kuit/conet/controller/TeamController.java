@@ -6,7 +6,7 @@ import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.JoinTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
 import com.kuit.conet.dto.web.request.team.UpdateTeamRequestDTO;
-import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
+import com.kuit.conet.dto.web.response.member.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.team.*;
 import com.kuit.conet.jpa.service.TeamService;
 import jakarta.validation.Valid;

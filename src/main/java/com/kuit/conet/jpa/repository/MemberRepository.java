@@ -1,6 +1,6 @@
 package com.kuit.conet.jpa.repository;
 
-import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
+import com.kuit.conet.dto.web.response.member.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
 import com.kuit.conet.jpa.domain.member.Member;

@@ -1,8 +1,8 @@
 package com.kuit.conet.jpa.service;
 
 import com.kuit.conet.dto.web.request.member.NameRequestDTO;
+import com.kuit.conet.dto.web.response.member.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
-import com.kuit.conet.dto.web.response.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
 import com.kuit.conet.jpa.domain.member.Member;
