@@ -16,6 +16,7 @@ public class DateAndTimeFormatter {
     private static final String POSSIBLE_TIME_REGEX = ",";
     private static final int DATE_INDEX = 2;
     private static final String MINUTE_AND_SECOND = ":00:00";
+    private static final String SECOND = ":00";
     private static final String CONET_DATE_FORMAT = "yyyy. MM. dd";
     private static final String CONET_TIME_FORMAT = "HH:mm";
 
@@ -36,6 +37,10 @@ public class DateAndTimeFormatter {
         // HH:mm:ss -> HH:mm
         SimpleDateFormat dateFormat = new SimpleDateFormat(CONET_TIME_FORMAT);
         return dateFormat.format(time);
+    }
+
+    public static Time timeWithSeconds(String time) {
+        return Time.valueOf(time + SECOND);
     }
 
     public static Time timeIntegerToTime(FixPlanRequestDTO planRequest) {
