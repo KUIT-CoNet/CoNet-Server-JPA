@@ -127,6 +127,16 @@ public class PlanController {
         return new BaseResponse<>("사용자의 가능한 시간 등록에 성공하였습니다.");
     }
 
+    /**
+     * @apiNote 확정 약속 수정 api
+     */
+    @PostMapping("/update/fixed")
+    //TODO: history 관련 내용 삭제
+    public BaseResponse<String> updateFixedPlan(@UserId @Valid Long memberId, @RequestBody @Valid UpdateFixedPlanRequestDTO planRequest) {
+        planService.updateFixedPlan(memberId, planRequest);
+        return new BaseResponse<>("확정 약속의 정보를 수정하였습니다.");
+    }
+
 /*
 
     @PostMapping("/delete")
@@ -138,13 +148,6 @@ public class PlanController {
     @PostMapping("/update-waiting")
     public BaseResponse<String> updateWaitingPlan(@RequestBody @Valid UpdateWaitingPlanRequest planRequest) {
         String response = planService.updateWaitingPlan(planRequest);
-        return new BaseResponse<>(response);
-    }
-
-    @PostMapping("/update-fixed")
-    //TODO: history 관련 내용 삭제
-    public BaseResponse<String> updateFixedPlan(@RequestPart(value = "requestBody") @Valid UpdatePlanRequest planRequest, @RequestPart(value = "file", required = false) MultipartFile historyImg) {
-        String response = planService.updateFixedPlan(planRequest, historyImg);
         return new BaseResponse<>(response);
     }
 */

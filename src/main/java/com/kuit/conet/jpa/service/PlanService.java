@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.kuit.conet.jpa.service.validator.PlanValidator.*;
+import static com.kuit.conet.jpa.service.validator.TeamValidator.isTeamMember;
 import static com.kuit.conet.utils.DateAndTimeFormatter.*;
 
 @Slf4j
@@ -35,6 +36,7 @@ public class PlanService {
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final PlanRepository planRepository;
+    private final PlanMemberRepository planMemberRepository;
     private final PlanMemberTimeRepository planMemberTimeRepository;
 
     private final static int ONE_WEEK_DAYS = 7;
@@ -119,10 +121,10 @@ public class PlanService {
         return new FixPlanResponseDTO(plan);
     }
 
-    private void setPlanMember(List<Long> userIds, Plan plan) {
+    private void setPlanMember(List<Long> memberIds, Plan plan) {
         //cascade로 영속화
-        userIds.forEach(userId
-                -> PlanMember.createPlanMember(plan, memberRepository.findById(userId)));
+        memberIds.forEach(memberId
+                -> PlanMember.createPlanMember(plan, memberRepository.findById(memberId)));
     }
 
     private void deletePlanMemberTime(Plan plan) {
@@ -327,5 +329,24 @@ public class PlanService {
         return times.stream()
                 .map(time -> Integer.toString(time))
                 .collect(Collectors.joining(AVAILABLE_TIME_SPLIT_REGEX));
+    }
+
+    public void updateFixedPlan(Long memberId, UpdateFixedPlanRequestDTO planRequest) {
+        Plan plan = planRepository.findById(planRequest.getPlanId());
+
+        //약속 수정 권한이 있는지 확인(모임 구성원 여부)
+        isTeamMember(teamMemberRepository, plan.getTeamId(), memberId);
+
+        //확정된 약속일 때만 수정
+        validatePlanIsFixed(plan);
+
+        //약속 이름, 약속 날짜/시간 update
+        plan.updateFixedPlan(planRequest.getPlanName(), planRequest.getDate(), timeWithSeconds(planRequest.getTime()));
+
+        //구성원 update
+        //1. 기존 구성원 삭제
+        planMemberRepository.deleteOnPlan(plan);
+        //2. 새로운 구성원 추가
+        setPlanMember(planRequest.getMemberIds(), plan);
     }
 }

@@ -28,6 +28,13 @@ public class PlanValidator {
         }
     }
 
+    public static void validatePlanIsFixed(Plan plan) {
+        if (plan.getStatus() != FIXED) {
+            log.error(NOT_FIXED_PLAN.getMessage());
+            throw new PlanException(NOT_FIXED_PLAN);
+        }
+    }
+
     public static void validateDateInPeriod(Date date, Plan plan) {
         if (date.before(plan.getStartPeriod()) || date.after(plan.getEndPeriod())) {
             log.error(DATE_NOT_IN_PERIOD.getMessage());
