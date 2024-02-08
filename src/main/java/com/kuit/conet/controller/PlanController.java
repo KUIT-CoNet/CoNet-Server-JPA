@@ -75,16 +75,16 @@ public class PlanController {
      * / 조회한 유저의 참여 여부 포함
      */
     @GetMapping("/fixed")
-    public BaseResponse<SideMenuFixedPlanResponseDTO> getFixedPlan(@UserId @Valid Long userId, @ModelAttribute TeamFixedPlanInPeriodRequestDTO planRequest) {
+    public BaseResponse<SideMenuFixedPlanResponseDTO> getFixedPlan(@UserId @Valid Long memberId, @ModelAttribute TeamFixedPlanInPeriodRequestDTO planRequest) {
         // 지난 약속
         if (planRequest.getPeriod() == PlanPeriod.PAST) {
-            SideMenuFixedPlanResponseDTO response = planService.getFixedPastPlan(userId, planRequest.getTeamId());
+            SideMenuFixedPlanResponseDTO response = planService.getFixedPastPlan(memberId, planRequest.getTeamId());
             return new BaseResponse<>(response);
         }
 
         // 다가오는 약속
         if (planRequest.getPeriod() == PlanPeriod.ONCOMING) {
-            SideMenuFixedPlanResponseDTO response = planService.getFixedOncomingPlan(userId, planRequest.getTeamId());
+            SideMenuFixedPlanResponseDTO response = planService.getFixedOncomingPlan(memberId, planRequest.getTeamId());
             return new BaseResponse<>(response);
         }
 
