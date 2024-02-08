@@ -13,7 +13,7 @@ public class PlanDetailResponseDTO {
     private Long planId;
     private String planName;
     private String date; // yyyy. MM. dd
-    private String time; // hh:mm
+    private String time; // HH:mm
 
     // 참여자 정보
     private int memberCount;
