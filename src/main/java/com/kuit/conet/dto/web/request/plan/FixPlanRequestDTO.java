@@ -6,7 +6,6 @@ import java.sql.Date;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 public class FixPlanRequestDTO {
     private Long planId;
     private Date fixedDate;

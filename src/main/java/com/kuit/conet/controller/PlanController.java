@@ -75,16 +75,16 @@ public class PlanController {
      * / 조회한 유저의 참여 여부 포함
      */
     @GetMapping("/fixed")
-    public BaseResponse<SideMenuFixedPlanResponseDTO> getFixedPlan(@UserId @Valid Long userId, @ModelAttribute TeamFixedPlanInPeriodRequestDTO planRequest) {
+    public BaseResponse<SideMenuFixedPlanResponseDTO> getFixedPlan(@UserId @Valid Long memberId, @ModelAttribute TeamFixedPlanInPeriodRequestDTO planRequest) {
         // 지난 약속
         if (planRequest.getPeriod() == PlanPeriod.PAST) {
-            SideMenuFixedPlanResponseDTO response = planService.getFixedPastPlan(userId, planRequest.getTeamId());
+            SideMenuFixedPlanResponseDTO response = planService.getFixedPastPlan(memberId, planRequest.getTeamId());
             return new BaseResponse<>(response);
         }
 
         // 다가오는 약속
         if (planRequest.getPeriod() == PlanPeriod.ONCOMING) {
-            SideMenuFixedPlanResponseDTO response = planService.getFixedOncomingPlan(userId, planRequest.getTeamId());
+            SideMenuFixedPlanResponseDTO response = planService.getFixedOncomingPlan(memberId, planRequest.getTeamId());
             return new BaseResponse<>(response);
         }
 
@@ -128,13 +128,22 @@ public class PlanController {
     }
 
     /**
-     * @apiNote 확정 약속 수정 api
+     * @apiNote 확정된 약속 수정 api
      */
     @PostMapping("/update/fixed")
     //TODO: history 관련 내용 삭제
     public BaseResponse<String> updateFixedPlan(@UserId @Valid Long memberId, @RequestBody @Valid UpdateFixedPlanRequestDTO planRequest) {
         planService.updateFixedPlan(memberId, planRequest);
-        return new BaseResponse<>("확정 약속의 정보를 수정하였습니다.");
+        return new BaseResponse<>("확정 약속의 정보 수정을 성공하였습니다.");
+    }
+
+    /**
+     * @apiNote 대기 중인 약속 수정 api
+     */
+    @PostMapping("/update/waiting")
+    public BaseResponse<String> updateWaitingPlan(@UserId @Valid Long memberId, @RequestBody @Valid UpdateWaitingPlanRequestDTO planRequest) {
+        planService.updateWaitingPlan(memberId, planRequest);
+        return new BaseResponse<>("대기 중인 약속의 정보 수정을 성공하였습니다.");
     }
 
 /*
@@ -142,12 +151,6 @@ public class PlanController {
     @PostMapping("/delete")
     public BaseResponse<String> deletePlan(@RequestBody @Valid PlanIdRequest planRequest) {
         String response = planService.deletePlan(planRequest);
-        return new BaseResponse<>(response);
-    }
-
-    @PostMapping("/update-waiting")
-    public BaseResponse<String> updateWaitingPlan(@RequestBody @Valid UpdateWaitingPlanRequest planRequest) {
-        String response = planService.updateWaitingPlan(planRequest);
         return new BaseResponse<>(response);
     }
 */

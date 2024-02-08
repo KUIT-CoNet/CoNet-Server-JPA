@@ -54,13 +54,4 @@ public class PlanService {
         return "약속 삭제에 성공하였습니다.";
     }
 
-    public String updateWaitingPlan(UpdateWaitingPlanRequest planRequest) {
-        if (!planDao.isWaitingPlan(planRequest.getPlanId())) {
-            throw new PlanException(NOT_WAITING_PLAN);
-        }
-
-        planDao.updateWaitingPlan(planRequest.getPlanId(), planRequest.getPlanName());
-        return "약속 수정을 성공하였습니다.";
-    }
-
 }*/
