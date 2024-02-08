@@ -361,4 +361,24 @@ public class PlanService {
 
         plan.updateWaitingPlan(planRequest.getPlanName());
     }
+
+    public void deletePlan(Long memberId, Long planId) {
+        Plan plan = planRepository.findById(planId);
+
+        //약속 수정 권한이 있는지 확인(모임 구성원 여부)
+        validateMemberIsTeamMember(teamMemberRepository, plan.getTeamId(), memberId);
+
+        //약속 삭제
+        //변경 감지로 가능하지만 delete 쿼리가 일일이 실행되기 때문에 각각 벌크 연산 실행
+        //1. 확정 약속 -> plan_member 삭제
+        if (plan.isFixedPlan()) {
+            planMemberRepository.deleteOnPlan(plan);
+        }
+        //2. 대기 중인 약속 -> plan_member_time 삭제
+        if (!plan.isFixedPlan()) {
+            planMemberTimeRepository.deleteOnPlan(plan);
+        }
+
+        planRepository.delete(plan);
+    }
 }

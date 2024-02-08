@@ -24,6 +24,10 @@ public class PlanRepository {
         return plan.getId();
     }
 
+    public void delete(Plan plan) {
+        em.remove(plan);
+    }
+
     public Plan findById(Long planId) {
         return em.find(Plan.class, planId);
     }

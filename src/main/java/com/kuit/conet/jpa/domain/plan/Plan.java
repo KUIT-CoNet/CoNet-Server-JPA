@@ -98,4 +98,8 @@ public class Plan {
         return team.getId();
     }
 
+    public boolean isFixedPlan() {
+        return status == PlanStatus.FIXED;
+    }
+
 }
