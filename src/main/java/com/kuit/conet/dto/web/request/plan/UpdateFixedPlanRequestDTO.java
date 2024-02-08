@@ -6,7 +6,7 @@ import java.sql.Date;
 import java.util.List;
 
 @Getter
-public class UpdatePlanRequestDTO {
+public class UpdateFixedPlanRequestDTO {
     private Long planId;
     private String planName;
     private Date date; // yyyy-MM-dd
