@@ -1,6 +1,7 @@
 package com.kuit.conet.jpa.repository;
 
 import com.kuit.conet.dto.plan.MemberAvailableTimeDTO;
+import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.plan.Plan;
 import com.kuit.conet.jpa.domain.plan.PlanMemberTime;
 import jakarta.persistence.EntityManager;
@@ -27,6 +28,15 @@ public class PlanMemberTimeRepository {
         em.createQuery("delete from PlanMemberTime pmt where pmt.plan.id in " +
                         "(select p.id from Plan p where p.team.id=:teamId)")
                 .setParameter("teamId", teamId)
+                .executeUpdate();
+    }
+
+    public void deleteExistingAvailableTimeOnDate(Plan plan, Member member, Date deleteDate) {
+        int deletedPlanCount = em.createQuery("delete from PlanMemberTime pmt " +
+                "where pmt.plan=:plan and pmt.member=:member and pmt.date=:deleteDate")
+                .setParameter("plan", plan)
+                .setParameter("member", member)
+                .setParameter("deleteDate", deleteDate)
                 .executeUpdate();
     }
 

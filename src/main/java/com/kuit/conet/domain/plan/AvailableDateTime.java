@@ -6,11 +6,7 @@ import java.sql.Date;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@Setter
-public class PossibleDateTime {
+public class AvailableDateTime {
     private Date date;
     private List<Integer> time;
 }

@@ -77,6 +77,10 @@ public class Plan {
         this.planMembers.add(planMember);
     }
 
+    public void addPlanMemberTime(PlanMemberTime planMemberTime) {
+        this.planMemberTimes.add(planMemberTime);
+    }
+
     public int getPlanMembersCount() {
         return planMembers.size();
     }

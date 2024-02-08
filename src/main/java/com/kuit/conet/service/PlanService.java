@@ -33,40 +33,6 @@ public class PlanService {
     private final TeamDao teamDao;
     private final StorageService storageService;
 
-    public void saveTime(PossibleTimeRequest possibleTimeRequest, HttpServletRequest httpRequest) {
-        Long userId = Long.parseLong((String) httpRequest.getAttribute("userId"));
-
-        // 대기 중인 약속일 때만 시간 저장
-        if (!planDao.isWaitingPlan(possibleTimeRequest.getPlanId())) {
-            throw new PlanException(NOT_WAITING_PLAN);
-        }
-
-        for (PossibleDateTime possibleDateTime : possibleTimeRequest.getPossibleDateTimes()) {
-            // 7개의 날에 대하여 가능한 시간 저장
-            Date possibleDate = possibleDateTime.getDate();
-
-            // 7개의 날에 대하여 가능한 시간을 문자열로 변환
-            String possibleTimes = setPossibleTimeToString(possibleDateTime);
-
-            PlanMemberTime planMemberTime = new PlanMemberTime(possibleTimeRequest.getPlanId(), userId, possibleDate, possibleTimes);
-            planDao.deletePossibleDate(planMemberTime); // 기존 데이터 삭제
-            planDao.saveTime(planMemberTime);
-        }
-    }
-
-    // 특정 날짜에 가능한 시간을 문자열로 변환
-    private String setPossibleTimeToString(PossibleDateTime possibleDateTime) {
-        StringBuilder sb = new StringBuilder();
-        List<Integer> times = possibleDateTime.getTime();
-        if (times.isEmpty()) return "";
-
-        for (Integer time : times) {
-            sb.append(time).append(", ");
-        }
-
-        String strTime = sb.toString().trim().substring(0, sb.length()-2);
-        return strTime;
-    }
 
     public String deletePlan(PlanIdRequest planRequest) {
         //TODO: history 내용 삭제

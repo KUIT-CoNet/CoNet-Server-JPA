@@ -1,12 +1,14 @@
 package com.kuit.conet.jpa.service;
 
 
+import com.kuit.conet.domain.plan.AvailableDateTime;
 import com.kuit.conet.dto.plan.*;
 import com.kuit.conet.dto.web.request.plan.*;
 import com.kuit.conet.dto.plan.AvailableMemberDTO;
 import com.kuit.conet.dto.plan.MemberAvailableTimeDTO;
 import com.kuit.conet.dto.plan.MemberDateTimeDTO;
 import com.kuit.conet.dto.web.response.plan.*;
+import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.plan.*;
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.repository.*;
@@ -19,6 +21,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.kuit.conet.jpa.service.validator.PlanValidator.*;
 import static com.kuit.conet.utils.DateAndTimeFormatter.*;
@@ -39,9 +42,8 @@ public class PlanService {
     private final static int MIN_TIME_NUMBER = 0;
     private final static int MAX_TIME_NUMBER = 23;
     private final static String AVAILABLE_TIME_SPLIT_REGEX = ",";
+    private final static String NO_AVAILABLE_TIME = "";
     private final static int SECTION_DIVISOR = 3;
-    private final static String SECTION = "section";
-    private final static String INTERVAL_NUMBER = "intervalEndNumberForEachSection";
 
     public CreatePlanResponseDTO createPlan(CreatePlanRequestDTO planRequest) {
         Date endDate = setEndDate(planRequest.getPlanStartDate());
@@ -277,7 +279,7 @@ public class PlanService {
     }
 
     private static int[] setSectionForEachTime(Map<Integer, Long> endNumberForEachSection, int[] membersCount) {
-        int[] section = new int [ONE_DAY_HOURS];
+        int[] section = new int[ONE_DAY_HOURS];
 
         for (int time = MIN_TIME_NUMBER; time <= MAX_TIME_NUMBER; time++) {
             int count = membersCount[time];
@@ -289,5 +291,41 @@ public class PlanService {
         }
 
         return section;
+    }
+
+    public void registerAvailableTime(Long memberId, RegisterAvailableTimeRequestDTO planRequest) {
+        Plan plan = planRepository.findById(planRequest.getPlanId());
+        Member member = memberRepository.findById(memberId);
+
+        //대기 중인 약속일 때만 시간 저장
+        validatePlanIsWaiting(plan);
+
+        //7개의 날에 대하여 가능한 시간 저장
+        for (AvailableDateTime availableDateTime : planRequest.getAvailableDateTimes()) {
+            savePlanMemberTime(availableDateTime, plan, member);
+        }
+    }
+
+    private void savePlanMemberTime(AvailableDateTime availableDateTime, Plan plan, Member member) {
+        Date availableDate = availableDateTime.getDate();
+
+        //해당 날짜의 기존 데이터 삭제
+        planMemberTimeRepository.deleteExistingAvailableTimeOnDate(plan, member, availableDate);
+
+        //7개의 날에 대하여 가능한 시간을 문자열로 변환
+        String availableTimes = setAvailableTimeToString(availableDateTime.getTime());
+
+        //가능한 시간 저장
+        PlanMemberTime planMemberTime = PlanMemberTime.createPlanMemberTime(plan, member, availableDate, availableTimes);
+    }
+
+    // 특정 날짜에 가능한 시간을 문자열로 변환
+    private String setAvailableTimeToString(List<Integer> times) {
+        //가능한 시간이 없는 경우
+        if (times.isEmpty()) return NO_AVAILABLE_TIME;
+
+        return times.stream()
+                .map(time -> Integer.toString(time))
+                .collect(Collectors.joining(AVAILABLE_TIME_SPLIT_REGEX));
     }
 }

@@ -118,12 +118,16 @@ public class PlanController {
         return new BaseResponse<>(response);
     }
 
-/*
-    @PostMapping("/time")
-    public BaseResponse<String> registerTime(HttpServletRequest httpRequest, @RequestBody @Valid PossibleTimeRequest request) {
-        planService.saveTime(request, httpRequest);
+    /**
+     * @apiNote 대기 중인 특정 약속의 나의 가능한 시간 저장 api
+     */
+    @PostMapping("/available-time-slot")
+    public BaseResponse<String> registerAvailableTime(@UserId @Valid Long memberId, @RequestBody @Valid RegisterAvailableTimeRequestDTO planRequest) {
+        planService.registerAvailableTime(memberId, planRequest);
         return new BaseResponse<>("사용자의 가능한 시간 등록에 성공하였습니다.");
     }
+
+/*
 
     @PostMapping("/delete")
     public BaseResponse<String> deletePlan(@RequestBody @Valid PlanIdRequest planRequest) {
@@ -142,12 +146,6 @@ public class PlanController {
     public BaseResponse<String> updateFixedPlan(@RequestPart(value = "requestBody") @Valid UpdatePlanRequest planRequest, @RequestPart(value = "file", required = false) MultipartFile historyImg) {
         String response = planService.updateFixedPlan(planRequest, historyImg);
         return new BaseResponse<>(response);
-    }
-
-    @GetMapping("/member-plan")
-    public BaseResponse<List<MemberIsInPlanResponse>> getMemberIsInPlan(@ModelAttribute @Valid PlanIdRequest planRequest) {
-        List<MemberIsInPlanResponse> responses = planService.getMemberIsInPlan(planRequest);
-        return new BaseResponse<>(responses);
     }
 */
 }

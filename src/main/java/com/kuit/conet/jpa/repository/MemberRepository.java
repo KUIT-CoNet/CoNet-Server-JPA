@@ -28,7 +28,7 @@ public class MemberRepository {
     }
 
     public StorageImgResponseDTO getImgUrlResponse(Long userId) {
-        return em.createQuery("select new com.kuit.conet.dto.web.response.StorageImgResponseDTO(m.name, m.imgUrl) " +
+        return em.createQuery("select new com.kuit.conet.dto.web.response.member.StorageImgResponseDTO(m.name, m.imgUrl) " +
                         "from Member m where m.id=:userId and m.status=:status", StorageImgResponseDTO.class)
                 .setParameter("userId", userId)
                 .setParameter("status", MemberStatus.ACTIVE)
@@ -48,7 +48,7 @@ public class MemberRepository {
 
     public List<GetTeamMemberResponseDTO> getMembersByTeamId(Long teamId) {
         return em.createQuery("select new com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO(m.id,m.name,m.imgUrl) " +
-                        "from TeamMember tm join tm.member m where tm.team.id=:teamId")
+                        "from TeamMember tm join tm.member m where tm.team.id=:teamId", GetTeamMemberResponseDTO.class)
                 .setParameter("teamId", teamId)
                 .getResultList();
     }
