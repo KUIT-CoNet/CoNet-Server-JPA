@@ -98,7 +98,7 @@ public class MemberService {
         validateTeamExisting(teamRepository.findById(teamId));
 
         // 유저가 팀에 참가 중인지 검사
-        TeamValidator.isTeamMember(teamMemberRepository, teamId, userId);
+        TeamValidator.validateMemberIsTeamMember(teamMemberRepository, teamId, userId);
 
         teamMemberRepository.bookmarkTeam(userId, teamId);
 
