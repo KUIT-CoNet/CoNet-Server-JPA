@@ -1,6 +1,8 @@
 package com.kuit.conet.jpa.domain.member;
 
+import com.kuit.conet.jpa.domain.auth.Platform;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -8,7 +10,7 @@ import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
 //TODO: 생성 메서드 사용하게 되면 @NoArgsConstructor(access = AccessLevel.PROTECTED) 설정 -> 생성메서드 외 생성자 사용 방지
 public class Member {
@@ -34,6 +36,16 @@ public class Member {
     @ColumnDefault("'ACTIVE'")
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
+
+    public static Member createMember(String email, Platform platform, String platformId) {
+        Member member = new Member();
+
+        member.email = email;
+        member.platform = platform.getPlatform();
+        member.platformId = platformId;
+
+        return member;
+    }
 
     public void updateImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;

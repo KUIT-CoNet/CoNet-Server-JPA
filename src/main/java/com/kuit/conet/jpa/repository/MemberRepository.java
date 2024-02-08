@@ -3,6 +3,7 @@ package com.kuit.conet.jpa.repository;
 import com.kuit.conet.dto.web.response.member.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
+import com.kuit.conet.jpa.domain.auth.Platform;
 import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.member.MemberStatus;
 import jakarta.persistence.EntityManager;
@@ -24,6 +25,20 @@ public class MemberRepository {
 
     public Member findById(Long id) {
         return em.find(Member.class, id);
+    }
+
+    public Long save(Member oauthMember) {
+        em.persist(oauthMember);
+        return oauthMember.getId();
+    }
+
+    public List<Long> findByPlatformAndPlatformId(Platform platform, String platformId) {
+        return em.createQuery("select m.id from Member m " +
+                        "where m.platform=:platform and m.platformId=:platformId and m.status=:status", Long.class)
+                .setParameter("platform", platform.getPlatform())
+                .setParameter("platformId", platformId)
+                .setParameter("status", MemberStatus.ACTIVE)
+                .getResultList();
     }
 
     public StorageImgResponseDTO getImgUrlResponse(Long userId) {

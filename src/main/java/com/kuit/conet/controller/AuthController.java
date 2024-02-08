@@ -1,19 +1,17 @@
 package com.kuit.conet.controller;
 
 import com.kuit.conet.annotation.ClientIp;
-import com.kuit.conet.annotation.UserId;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.auth.LoginRequestDTO;
-import com.kuit.conet.dto.web.request.auth.OptionTermRequestDTO;
-import com.kuit.conet.dto.web.request.auth.PutOptionTermAndNameRequestDTO;
-import com.kuit.conet.dto.web.response.auth.AgreeTermAndPutNameResponseDTO;
 import com.kuit.conet.dto.web.response.auth.LoginResponseDTO;
-import com.kuit.conet.service.AuthService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.kuit.conet.jpa.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -36,13 +34,13 @@ public class AuthController {
         return new BaseResponse<LoginResponseDTO>(response);
     }
 
-    @PostMapping("/regenerate-token")
+/*    @PostMapping("/regenerate-token")
     public BaseResponse<LoginResponseDTO> regenerateToken(HttpServletRequest httpRequest, @ClientIp String clientIp) {
         LoginResponseDTO response = authService.regenerateToken((String) httpRequest.getAttribute("token"), clientIp);
         return new BaseResponse<LoginResponseDTO>(response);
-    }
+    }*/
 
-    // 이용 약관 동의 및 이름 입력 DB 업데이트
+/*    // 이용 약관 동의 및 이름 입력 DB 업데이트
     @PostMapping("/term-and-name")
     public BaseResponse<AgreeTermAndPutNameResponseDTO> agreeTermAndPutName(@RequestBody @Valid PutOptionTermAndNameRequestDTO nameRequest, @UserId Long userId, @ClientIp String clientIp) {
         AgreeTermAndPutNameResponseDTO response = authService.agreeTermAndPutName(nameRequest, userId, clientIp);
@@ -53,5 +51,5 @@ public class AuthController {
     public BaseResponse<String> updateOptionTerm(@RequestBody @Valid OptionTermRequestDTO optionTermRequest, @UserId Long userId) {
         authService.updateOptionTerm(optionTermRequest, userId);
         return new BaseResponse<>("선택 약관의 선택 여부 변경을 성공하였습니다.");
-    }
+    }*/
 }

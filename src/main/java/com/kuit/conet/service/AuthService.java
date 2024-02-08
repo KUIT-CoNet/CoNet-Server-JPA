@@ -1,3 +1,4 @@
+/*
 package com.kuit.conet.service;
 
 import com.kuit.conet.dto.web.request.auth.OptionTermRequestDTO;
@@ -114,4 +115,4 @@ public class AuthService {
 
         userDao.updateOptionTerm(optionTermRequest, userId);
     }
-}
+}*/
