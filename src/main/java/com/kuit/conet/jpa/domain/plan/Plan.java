@@ -90,6 +90,10 @@ public class Plan {
         fixedTime = time;
     }
 
+    public void updateWaitingPlan(String planName) {
+        name = planName;
+    }
+
     public Long getTeamId() {
         return team.getId();
     }

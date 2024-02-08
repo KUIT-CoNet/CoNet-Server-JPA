@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.kuit.conet.jpa.service.validator.PlanValidator.*;
-import static com.kuit.conet.jpa.service.validator.TeamValidator.isTeamMember;
+import static com.kuit.conet.jpa.service.validator.TeamValidator.validateMemberIsTeamMember;
 import static com.kuit.conet.utils.DateAndTimeFormatter.*;
 
 @Slf4j
@@ -334,11 +334,11 @@ public class PlanService {
     public void updateFixedPlan(Long memberId, UpdateFixedPlanRequestDTO planRequest) {
         Plan plan = planRepository.findById(planRequest.getPlanId());
 
-        //약속 수정 권한이 있는지 확인(모임 구성원 여부)
-        isTeamMember(teamMemberRepository, plan.getTeamId(), memberId);
-
         //확정된 약속일 때만 수정
         validatePlanIsFixed(plan);
+
+        //약속 수정 권한이 있는지 확인(모임 구성원 여부)
+        validateMemberIsTeamMember(teamMemberRepository, plan.getTeamId(), memberId);
 
         //약속 이름, 약속 날짜/시간 update
         plan.updateFixedPlan(planRequest.getPlanName(), planRequest.getDate(), timeWithSeconds(planRequest.getTime()));
@@ -348,5 +348,17 @@ public class PlanService {
         planMemberRepository.deleteOnPlan(plan);
         //2. 새로운 구성원 추가
         setPlanMember(planRequest.getMemberIds(), plan);
+    }
+
+    public void updateWaitingPlan(Long memberId, UpdateWaitingPlanRequestDTO planRequest) {
+        Plan plan = planRepository.findById(planRequest.getPlanId());
+
+        //대기 중인 약속일 때만 나의 가능한 시간 조회
+        validatePlanIsWaiting(plan);
+
+        //약속 수정 권한이 있는지 확인(모임 구성원 여부)
+        validateMemberIsTeamMember(teamMemberRepository, plan.getTeamId(), memberId);
+
+        plan.updateWaitingPlan(planRequest.getPlanName());
     }
 }

@@ -128,13 +128,22 @@ public class PlanController {
     }
 
     /**
-     * @apiNote 확정 약속 수정 api
+     * @apiNote 확정된 약속 수정 api
      */
     @PostMapping("/update/fixed")
     //TODO: history 관련 내용 삭제
     public BaseResponse<String> updateFixedPlan(@UserId @Valid Long memberId, @RequestBody @Valid UpdateFixedPlanRequestDTO planRequest) {
         planService.updateFixedPlan(memberId, planRequest);
-        return new BaseResponse<>("확정 약속의 정보를 수정하였습니다.");
+        return new BaseResponse<>("확정 약속의 정보 수정을 성공하였습니다.");
+    }
+
+    /**
+     * @apiNote 대기 중인 약속 수정 api
+     */
+    @PostMapping("/update/waiting")
+    public BaseResponse<String> updateWaitingPlan(@UserId @Valid Long memberId, @RequestBody @Valid UpdateWaitingPlanRequestDTO planRequest) {
+        planService.updateWaitingPlan(memberId, planRequest);
+        return new BaseResponse<>("대기 중인 약속의 정보 수정을 성공하였습니다.");
     }
 
 /*
@@ -142,12 +151,6 @@ public class PlanController {
     @PostMapping("/delete")
     public BaseResponse<String> deletePlan(@RequestBody @Valid PlanIdRequest planRequest) {
         String response = planService.deletePlan(planRequest);
-        return new BaseResponse<>(response);
-    }
-
-    @PostMapping("/update-waiting")
-    public BaseResponse<String> updateWaitingPlan(@RequestBody @Valid UpdateWaitingPlanRequest planRequest) {
-        String response = planService.updateWaitingPlan(planRequest);
         return new BaseResponse<>(response);
     }
 */
