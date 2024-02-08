@@ -20,7 +20,6 @@ public class PlanMemberTimeRepository {
         int deletedPlanCount = em.createQuery("delete from PlanMemberTime pmt where pmt.plan=:plan")
                 .setParameter("plan", plan)
                 .executeUpdate();
-        em.flush();
         return deletedPlanCount;
     }
 
