@@ -331,7 +331,7 @@ public class PlanService {
                 .collect(Collectors.joining(AVAILABLE_TIME_SPLIT_REGEX));
     }
 
-    public String updateFixedPlan(Long memberId, UpdateFixedPlanRequestDTO planRequest) {
+    public void updateFixedPlan(Long memberId, UpdateFixedPlanRequestDTO planRequest) {
         Plan plan = planRepository.findById(planRequest.getPlanId());
 
         //약속 수정 권한이 있는지 확인(모임 구성원 여부)
@@ -343,6 +343,10 @@ public class PlanService {
         //약속 이름, 약속 날짜/시간 update
         plan.updateFixedPlan(planRequest.getPlanName(), planRequest.getDate(), timeWithSeconds(planRequest.getTime()));
 
-        return "확정 약속의 정보를 수정하였습니다.";
+        //구성원 update
+        //1. 기존 구성원 삭제
+        planMemberRepository.deleteOnPlan(plan);
+        //2. 새로운 구성원 추가
+        setPlanMember(planRequest.getMemberIds(), plan);
     }
 }
