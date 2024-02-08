@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.sql.Date;
 
 @Entity
 @Getter
@@ -20,5 +20,5 @@ public class Notice {
     @Lob
     private String content;
 
-    private LocalDate date;
+    private Date date;
 }

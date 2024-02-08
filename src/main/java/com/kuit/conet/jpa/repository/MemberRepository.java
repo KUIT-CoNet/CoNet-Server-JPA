@@ -23,6 +23,7 @@ public class MemberRepository {
     private String defaultImg;
 
     public Member findById(Long id) {
+        System.out.println("id " + id);
         return em.find(Member.class, id);
     }
 
