@@ -1,19 +1,15 @@
 package com.kuit.conet.dto.web.request.plan;
 
-import lombok.*;
+import lombok.Getter;
 
+import java.sql.Date;
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class UpdatePlanRequestDTO {
     private Long planId;
     private String planName;
-    private String date; // yyyy-MM-dd
+    private Date date; // yyyy-MM-dd
     private String time; // hh:mm
-    private List<Long> members; // 구성원 userId
-
+    private List<Long> memberIds; // 구성원 userId
 }
