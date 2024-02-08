@@ -146,12 +146,12 @@ public class PlanController {
         return new BaseResponse<>("대기 중인 약속의 정보 수정을 성공하였습니다.");
     }
 
-/*
-
-    @PostMapping("/delete")
-    public BaseResponse<String> deletePlan(@RequestBody @Valid PlanIdRequest planRequest) {
-        String response = planService.deletePlan(planRequest);
-        return new BaseResponse<>(response);
+    /**
+     * @apiNote 약속 삭제 api
+     */
+    @DeleteMapping("/{planId}")
+    public BaseResponse<String> deletePlan(@UserId @Valid Long memberId, @PathVariable @Valid Long planId) {
+        planService.deletePlan(memberId, planId);
+        return new BaseResponse<>("약속 삭제에 성공하였습니다.");
     }
-*/
 }
