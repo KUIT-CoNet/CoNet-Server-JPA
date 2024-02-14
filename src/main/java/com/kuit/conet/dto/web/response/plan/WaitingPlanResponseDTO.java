@@ -1,7 +1,7 @@
 package com.kuit.conet.dto.web.response.plan;
 
 import com.kuit.conet.dto.plan.WaitingPlanDTO;
-import lombok.*;
+import lombok.Getter;
 
 import java.util.List;
 

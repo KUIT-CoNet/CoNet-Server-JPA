@@ -2,13 +2,11 @@ package com.kuit.conet.dto.web.response.team;
 
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.service.validator.TeamValidator;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class GetTeamResponseDTO {
     private Long teamId;
     private String teamName;

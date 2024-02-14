@@ -1,14 +1,13 @@
 package com.kuit.conet.dto.web.response.plan;
 
 import com.kuit.conet.dto.plan.UserAvailableTimeDTO;
-import lombok.*;
+import lombok.Getter;
 
 import java.util.List;
 
 import static com.kuit.conet.jpa.domain.plan.AvailableTimeRegisteredStatus.*;
 
 @Getter
-@NoArgsConstructor
 public class UserAvailableTimeResponseDTO {
     private Long planId;
     private Long userId;

@@ -22,7 +22,7 @@ public class HomeRepository {
         // team_member(userId, status) -> plan(teamId, fixed_date, status)
 
         return em.createQuery("select distinct p.fixedDate " +
-                        "from PlanMembe정r pm join Plan p on pm.plan.id = p.id " +
+                        "from PlanMember pm join Plan p on pm.plan.id = p.id " +
                         "where pm.member.id = :userId " +
                         "and p.status = :status " +
                         "and FUNCTION('DATE_FORMAT', p.fixedDate, '%Y-%m') = :searchDate", Date.class)

@@ -5,10 +5,6 @@ import com.kuit.conet.jpa.domain.team.Team;
 import lombok.*;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class JoinTeamResponseDTO {
     private String userName;
     private String teamName;

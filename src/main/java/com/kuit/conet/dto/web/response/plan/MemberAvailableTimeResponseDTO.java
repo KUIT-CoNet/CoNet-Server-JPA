@@ -2,7 +2,6 @@ package com.kuit.conet.dto.web.response.plan;
 
 import com.kuit.conet.dto.plan.MemberDateTimeDTO;
 import com.kuit.conet.jpa.domain.plan.Plan;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.sql.Date;
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-@AllArgsConstructor
 public class MemberAvailableTimeResponseDTO {
     private Long teamId;
     private Long planId;

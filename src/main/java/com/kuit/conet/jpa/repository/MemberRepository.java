@@ -47,7 +47,7 @@ public class MemberRepository {
     }
 
     public List<GetTeamMemberResponseDTO> getMembersByTeamId(Long teamId) {
-        return em.createQuery("select new com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO(m.id,m.name,m.imgUrl) " +
+        return em.createQuery("select new com.kuit.conet.dto.web.response.team.GetTeamMemberResponseDTO(m.id, m.name, m.imgUrl) " +
                         "from TeamMember tm join tm.member m where tm.team.id=:teamId", GetTeamMemberResponseDTO.class)
                 .setParameter("teamId", teamId)
                 .getResultList();

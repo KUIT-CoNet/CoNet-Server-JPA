@@ -1,14 +1,12 @@
 package com.kuit.conet.jpa.service;
 
-import com.kuit.conet.annotation.UserId;
 import com.kuit.conet.dto.home.HomeFixedPlanOnDayDTO;
 import com.kuit.conet.dto.plan.WaitingPlanDTO;
-import com.kuit.conet.dto.web.request.plan.HomePlanRequestDTO;
+import com.kuit.conet.dto.web.request.home.HomePlanRequestDTO;
 import com.kuit.conet.dto.web.response.plan.HomePlanOnDayResponseDTO;
 import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponseDTO;
 import com.kuit.conet.dto.web.response.plan.WaitingPlanResponseDTO;
 import com.kuit.conet.jpa.repository.HomeRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,9 +40,9 @@ public class HomeService {
     }
 
     public WaitingPlanResponseDTO getHomeWaitingPlan(Long userId) {
-        List<WaitingPlanDTO> plans = homeRepository.getHomeWaitingPlans(userId);
+        List<WaitingPlanDTO> homeWaitingPlans = homeRepository.getHomeWaitingPlans(userId);
 
-        return new WaitingPlanResponseDTO(plans);
+        return new WaitingPlanResponseDTO(homeWaitingPlans);
     }
 
 }
