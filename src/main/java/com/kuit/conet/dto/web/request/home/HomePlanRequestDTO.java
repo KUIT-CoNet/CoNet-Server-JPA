@@ -1,9 +1,8 @@
 package com.kuit.conet.dto.web.request.home;
 
-import lombok.*;
+import lombok.Getter;
 
 @Getter
-@Setter
 public class HomePlanRequestDTO {
     private String searchDate;
     // 특정 달의 조회: "yyyy-MM"
