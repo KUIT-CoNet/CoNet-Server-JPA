@@ -5,6 +5,7 @@ import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.auth.LoginRequestDTO;
 import com.kuit.conet.dto.web.response.auth.LoginResponseDTO;
 import com.kuit.conet.jpa.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,11 +35,11 @@ public class AuthController {
         return new BaseResponse<LoginResponseDTO>(response);
     }
 
-/*    @PostMapping("/regenerate-token")
+    @PostMapping("/regenerate-token")
     public BaseResponse<LoginResponseDTO> regenerateToken(HttpServletRequest httpRequest, @ClientIp String clientIp) {
         LoginResponseDTO response = authService.regenerateToken((String) httpRequest.getAttribute("token"), clientIp);
         return new BaseResponse<LoginResponseDTO>(response);
-    }*/
+    }
 
 /*    // 이용 약관 동의 및 이름 입력 DB 업데이트
     @PostMapping("/term-and-name")

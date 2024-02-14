@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.NOT_FOUND_USER;
+import static com.kuit.conet.jpa.service.validator.AuthValidator.compareClientIpFromRedis;
+import static com.kuit.conet.jpa.service.validator.AuthValidator.validateRefreshTokenExisting;
 
 @Slf4j
 @Service
@@ -77,5 +79,18 @@ public class AuthService {
         redisTemplate.opsForValue().set(refreshToken, clientIp);
 
         return new LoginResponseDTO(targetMember.getEmail(), accessToken, refreshToken, isRegistered);
+    }
+
+    public LoginResponseDTO regenerateToken(String refreshToken, String clientIp) {
+        // Redis 에서 해당 refresh token 찾기
+        String existingIp = redisTemplate.opsForValue().get(refreshToken);
+
+        // 찾은 값의 validation 처리
+        validateRefreshTokenExisting(existingIp);
+        compareClientIpFromRedis(existingIp, clientIp);
+
+        Long userId = jwtParser.getUserIdFromToken(refreshToken);
+        Member existingMember = memberRepository.findById(userId);
+        return getLoginResponse(existingMember, clientIp, true);
     }
 }
