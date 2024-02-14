@@ -1,12 +1,14 @@
 package com.kuit.conet.jpa.service;
 
 
-import com.kuit.conet.domain.plan.AvailableDateTime;
+import com.kuit.conet.dto.plan.AvailableDateTimeDTO;
 import com.kuit.conet.dto.plan.*;
 import com.kuit.conet.dto.web.request.plan.*;
 import com.kuit.conet.dto.plan.AvailableMemberDTO;
 import com.kuit.conet.dto.plan.MemberAvailableTimeDTO;
 import com.kuit.conet.dto.plan.MemberDateTimeDTO;
+import com.kuit.conet.dto.web.request.plan.TeamFixedPlanOnDateRequestDTO;
+import com.kuit.conet.dto.web.request.plan.TeamWaitingPlanRequestDTO;
 import com.kuit.conet.dto.web.response.plan.*;
 import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.plan.*;
@@ -303,12 +305,12 @@ public class PlanService {
         validatePlanIsWaiting(plan);
 
         //7개의 날에 대하여 가능한 시간 저장
-        for (AvailableDateTime availableDateTime : planRequest.getAvailableDateTimes()) {
+        for (AvailableDateTimeDTO availableDateTime : planRequest.getAvailableDateTimes()) {
             savePlanMemberTime(availableDateTime, plan, member);
         }
     }
 
-    private void savePlanMemberTime(AvailableDateTime availableDateTime, Plan plan, Member member) {
+    private void savePlanMemberTime(AvailableDateTimeDTO availableDateTime, Plan plan, Member member) {
         Date availableDate = availableDateTime.getDate();
 
         //해당 날짜의 기존 데이터 삭제

@@ -30,7 +30,7 @@ public class TeamController {
     @PostMapping
     public BaseResponse<CreateTeamResponseDTO> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequestDTO teamRequest, @UserId Long userId, @RequestPart(value = "file") MultipartFile file) {
         CreateTeamResponseDTO response = teamService.createTeam(teamRequest, userId, file);
-        return new BaseResponse<CreateTeamResponseDTO>(response);
+        return new BaseResponse<>(response);
     }
 
     /**
@@ -39,7 +39,7 @@ public class TeamController {
     @PostMapping("/join")
     public BaseResponse<JoinTeamResponseDTO> joinTeam(@RequestBody @Valid JoinTeamRequestDTO teamRequest, @UserId Long userId) {
         JoinTeamResponseDTO response = teamService.joinTeam(teamRequest, userId);
-        return new BaseResponse<JoinTeamResponseDTO>(response);
+        return new BaseResponse<>(response);
     }
 
     /**
@@ -48,7 +48,7 @@ public class TeamController {
     @GetMapping
     public BaseResponse<List<GetTeamResponseDTO>> getTeam(@UserId Long userId) {
         List<GetTeamResponseDTO> responses = teamService.getTeam(userId);
-        return new BaseResponse<List<GetTeamResponseDTO>>(responses);
+        return new BaseResponse<>(responses);
     }
 
     /**
@@ -57,7 +57,7 @@ public class TeamController {
     @PostMapping("/leave")
     public BaseResponse<String> leaveTeam(@RequestBody @Valid TeamIdRequestDTO teamRequest, @UserId Long userId) {
         String response = teamService.leaveTeam(teamRequest, userId);
-        return new BaseResponse<String>(response);
+        return new BaseResponse<>(response);
     }
 
     /**
@@ -66,7 +66,7 @@ public class TeamController {
     @DeleteMapping("/{teamId}")
     public BaseResponse<String> deleteTeam(@PathVariable Long teamId, @UserId Long userId) {
         String response = teamService.deleteTeam(teamId, userId);
-        return new BaseResponse<String>(response);
+        return new BaseResponse<>(response);
     }
 
     /**
@@ -93,7 +93,7 @@ public class TeamController {
     @PostMapping("/update")
     public BaseResponse<StorageImgResponseDTO> updateTeam(@RequestPart(value = "request") @Valid UpdateTeamRequestDTO teamRequest, @UserId Long userId, @RequestParam(value = "file") MultipartFile file) {
         StorageImgResponseDTO response = teamService.updateTeam(teamRequest, userId, file);
-        return new BaseResponse<StorageImgResponseDTO>(response);
+        return new BaseResponse<>(response);
     }
 
     /**

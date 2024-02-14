@@ -20,6 +20,6 @@ public class NoticeController {
     @GetMapping
     public BaseResponse<NoticeResponseDTO> getNotice(@UserId Long userId) {
         NoticeResponseDTO response = noticeService.getNotice(userId);
-        return new BaseResponse<NoticeResponseDTO>(response);
+        return new BaseResponse<>(response);
     }
 }

@@ -2,7 +2,7 @@ package com.kuit.conet.controller;
 
 import com.kuit.conet.annotation.UserId;
 import com.kuit.conet.common.response.BaseResponse;
-import com.kuit.conet.dto.web.request.plan.HomePlanRequestDTO;
+import com.kuit.conet.dto.web.request.home.HomePlanRequestDTO;
 import com.kuit.conet.dto.web.response.plan.HomePlanOnDayResponseDTO;
 import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponseDTO;
 import com.kuit.conet.dto.web.response.plan.WaitingPlanResponseDTO;
