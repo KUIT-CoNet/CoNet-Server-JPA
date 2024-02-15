@@ -109,9 +109,11 @@ public class PlanService {
         return new SideMenuFixedPlanResponseDTO(fixedOncomingPlans);
     }
 
-    public FixPlanResponseDTO fixPlan(FixPlanRequestDTO planRequest) {
+    public FixPlanResponseDTO fixPlan(Long memberId, FixPlanRequestDTO planRequest) {
         Plan plan = planRepository.findById(planRequest.getPlanId());
 
+        //모임에 속한 사용자인지 검사
+        validateMemberIsTeamMember(teamMemberRepository, plan.getTeamId(), memberId);
         //이미 확정된 약속인지 검사
         validatePlanIsAlreadyFixed(plan);
         //범위 내에 존재하는 날짜인지 검사

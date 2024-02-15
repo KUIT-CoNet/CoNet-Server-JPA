@@ -97,8 +97,8 @@ public class PlanController {
      * @apiNote 약속 확정 api
      */
     @PostMapping("/fix")
-    public BaseResponse<FixPlanResponseDTO> fixPlan(@RequestBody @Valid FixPlanRequestDTO planRequest) {
-        FixPlanResponseDTO response = planService.fixPlan(planRequest);
+    public BaseResponse<FixPlanResponseDTO> fixPlan(@MemberId @Valid Long memberId, @RequestBody @Valid FixPlanRequestDTO planRequest) {
+        FixPlanResponseDTO response = planService.fixPlan(memberId, planRequest);
         return new BaseResponse<>(response);
     }
 
