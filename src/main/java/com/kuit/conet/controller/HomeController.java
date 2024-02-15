@@ -32,9 +32,8 @@ public class HomeController {
     /**
      * @apiNote 홈 특정 날짜의 확정 약속 조회 api
      * / 날짜(yyyy. MM. dd) / 시각(HH:mm) / 모임 명 / 약속 명
-     * / '나'의 직접적인 참여 여부와 무관
+     * / 내가 참여하는 약속만 조회
      * */
-    //TODO: 내가 참여하는 약속만 조회
     @GetMapping("/day")
     public BaseResponse<HomePlanOnDayResponseDTO> getHomeFixedPlanOnDay(@UserId Long userId, @ModelAttribute @Valid HomePlanRequestDTO homeRequest) {
         HomePlanOnDayResponseDTO response = homeService.getHomeFixedPlanOnDay(userId, homeRequest);

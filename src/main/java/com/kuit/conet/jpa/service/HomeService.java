@@ -25,7 +25,6 @@ public class HomeService {
     private final HomeRepository homeRepository;
 
     public PlanDateOnMonthResponseDTO getHomeFixedPlanInMonth(Long userId, HomePlanRequestDTO homeRequest) {
-        //TODO: utils/DateFormatValidator 생성 후, request에 날짜가 형식에 맞추어 잘 왔는지 검사하기 (정규표현식으로)
         List<Date> fixedPlansInMonth = homeRepository.getHomeFixedPlansInMonth(userId, homeRequest.getSearchDate());
         List<Integer> planDates = datesToIntegerList(fixedPlansInMonth);
 
@@ -33,7 +32,6 @@ public class HomeService {
     }
 
     public HomePlanOnDayResponseDTO getHomeFixedPlanOnDay(Long userId, HomePlanRequestDTO homeRequest) {
-        //TODO: utils/DateFormatValidator 생성 후, request에 날짜가 형식에 맞추어 잘 왔는지 검사하기 (정규표현식으로)
         List<HomeFixedPlanOnDayDTO> plans = homeRepository.getHomeFixedPlansOnDay(userId, homeRequest.getSearchDate());
 
         return new HomePlanOnDayResponseDTO(plans.size(), plans);
