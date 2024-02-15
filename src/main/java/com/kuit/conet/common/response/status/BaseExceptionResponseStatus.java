@@ -46,8 +46,8 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
      * 5000: 회원 정보 오류
      */
     INVALID_PLATFORM(5001, HttpStatus.BAD_REQUEST.value(), "플랫폼 정보가 올바르지 않습니다."),
-    NOT_FOUND_USER(5002, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 사용자입니다."),
-    INACTIVE_USER(5003, HttpStatus.BAD_REQUEST.value(), "활성화 상태가 아닌 사용자입니다."),
+    NOT_FOUND_MEMBER(5002, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 사용자입니다."),
+    INACTIVE_MEMBER(5003, HttpStatus.BAD_REQUEST.value(), "활성화 상태가 아닌 사용자입니다."),
 
     /**
      * 5500: 모임(Team) 정보 오류
@@ -55,8 +55,8 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
 
     NOT_FOUND_INVITE_CODE(5501, HttpStatus.NOT_FOUND.value(), "존재하지 않는 초대 코드입니다."),
     EXPIRED_INVITE_CODE(5502, HttpStatus.BAD_REQUEST.value(), "초대 코드 유효 기간이 만료되었습니다."),
-    EXIST_USER_IN_TEAM(5503, HttpStatus.BAD_REQUEST.value(), "모임에 이미 참여 중입니다."),
-    USER_NOT_EXIST_IN_TEAM(5504, HttpStatus.BAD_REQUEST.value(), "모임에 참여하고 있지 않습니다."),
+    EXIST_MEMBER_IN_TEAM(5503, HttpStatus.BAD_REQUEST.value(), "모임에 이미 참여 중입니다."),
+    MEMBER_NOT_EXIST_IN_TEAM(5504, HttpStatus.BAD_REQUEST.value(), "모임에 참여하고 있지 않습니다."),
     NOT_FOUND_TEAM(5505, HttpStatus.NOT_FOUND.value(), "존재하지 않는 모임입니다."),
     NOT_TEAM_MEMBER(5507, HttpStatus.BAD_REQUEST.value(), "팀의 멤버가 아닙니다."),
 

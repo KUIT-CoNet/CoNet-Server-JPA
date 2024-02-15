@@ -7,11 +7,11 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class UserAvailableTimeDTO {
+public class OneMemberAvailableTimeDTO {
     private Date date;
     private List<Integer> availableTimes;
 
-    public UserAvailableTimeDTO(Date date) {
+    public OneMemberAvailableTimeDTO(Date date) {
         this.date = date;
     }
 

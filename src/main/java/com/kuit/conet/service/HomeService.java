@@ -24,21 +24,21 @@ import static com.kuit.conet.utils.DateAndTimeFormatter.*;
 public class HomeService {
     private final HomeRepository homeRepository;
 
-    public PlanDateOnMonthResponseDTO getHomeFixedPlanInMonth(Long userId, HomePlanRequestDTO homeRequest) {
-        List<Date> fixedPlansInMonth = homeRepository.getHomeFixedPlansInMonth(userId, homeRequest.getSearchDate());
+    public PlanDateOnMonthResponseDTO getHomeFixedPlanInMonth(Long memberId, HomePlanRequestDTO homeRequest) {
+        List<Date> fixedPlansInMonth = homeRepository.getHomeFixedPlansInMonth(memberId, homeRequest.getSearchDate());
         List<Integer> planDates = datesToIntegerList(fixedPlansInMonth);
 
         return new PlanDateOnMonthResponseDTO(planDates);
     }
 
-    public HomePlanOnDayResponseDTO getHomeFixedPlanOnDay(Long userId, HomePlanRequestDTO homeRequest) {
-        List<HomeFixedPlanOnDayDTO> plans = homeRepository.getHomeFixedPlansOnDay(userId, homeRequest.getSearchDate());
+    public HomePlanOnDayResponseDTO getHomeFixedPlanOnDay(Long memberId, HomePlanRequestDTO homeRequest) {
+        List<HomeFixedPlanOnDayDTO> plans = homeRepository.getHomeFixedPlansOnDay(memberId, homeRequest.getSearchDate());
 
         return new HomePlanOnDayResponseDTO(plans.size(), plans);
     }
 
-    public WaitingPlanResponseDTO getHomeWaitingPlan(Long userId) {
-        List<WaitingPlanDTO> homeWaitingPlans = homeRepository.getHomeWaitingPlans(userId);
+    public WaitingPlanResponseDTO getHomeWaitingPlan(Long memberId) {
+        List<WaitingPlanDTO> homeWaitingPlans = homeRepository.getHomeWaitingPlans(memberId);
 
         return new WaitingPlanResponseDTO(homeWaitingPlans);
     }

@@ -8,13 +8,13 @@ import lombok.Getter;
 public class MemberResponseDTO {
     private String name;
     private String email;
-    private String userImgUrl;
+    private String memberImgUrl;
     private Platform platform;
 
     public MemberResponseDTO(Member member) {
         this.name = member.getName();
         this.email = member.getEmail();
-        this.userImgUrl = member.getImgUrl();
+        this.memberImgUrl = member.getImgUrl();
         this.platform = member.getPlatform();
     }
 }

@@ -1,6 +1,6 @@
 package com.kuit.conet.controller;
 
-import com.kuit.conet.annotation.UserId;
+import com.kuit.conet.annotation.MemberId;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.home.HomePlanRequestDTO;
 import com.kuit.conet.dto.web.response.plan.HomePlanOnDayResponseDTO;
@@ -24,9 +24,9 @@ public class HomeController {
      * / 날짜 (dd)
      * */
     @GetMapping("/month")
-    public BaseResponse<PlanDateOnMonthResponseDTO> getHomeFixedPlanInMonth(@UserId Long userId, @ModelAttribute @Valid HomePlanRequestDTO homeRequest) {
+    public BaseResponse<PlanDateOnMonthResponseDTO> getHomeFixedPlanInMonth(@MemberId Long memberId, @ModelAttribute @Valid HomePlanRequestDTO homeRequest) {
         log.info("홈 특정 달의 확정 약속이 존재하는 날짜 조회 api searchDate: {}", homeRequest.getSearchDate());
-        PlanDateOnMonthResponseDTO response = homeService.getHomeFixedPlanInMonth(userId, homeRequest);
+        PlanDateOnMonthResponseDTO response = homeService.getHomeFixedPlanInMonth(memberId, homeRequest);
         return new BaseResponse<>(response);
     }
 
@@ -36,8 +36,8 @@ public class HomeController {
      * / 내가 참여하는 약속만 조회
      * */
     @GetMapping("/day")
-    public BaseResponse<HomePlanOnDayResponseDTO> getHomeFixedPlanOnDay(@UserId Long userId, @ModelAttribute @Valid HomePlanRequestDTO homeRequest) {
-        HomePlanOnDayResponseDTO response = homeService.getHomeFixedPlanOnDay(userId, homeRequest);
+    public BaseResponse<HomePlanOnDayResponseDTO> getHomeFixedPlanOnDay(@MemberId Long memberId, @ModelAttribute @Valid HomePlanRequestDTO homeRequest) {
+        HomePlanOnDayResponseDTO response = homeService.getHomeFixedPlanOnDay(memberId, homeRequest);
         return new BaseResponse<>(response);
     }
 
@@ -47,8 +47,8 @@ public class HomeController {
      * / '나'의 직접적인 참여 여부와 무관
      * */
     @GetMapping("/waiting")
-    public BaseResponse<WaitingPlanResponseDTO> getHomeWaitingPlan(@UserId Long userId) {
-        WaitingPlanResponseDTO response = homeService.getHomeWaitingPlan(userId);
+    public BaseResponse<WaitingPlanResponseDTO> getHomeWaitingPlan(@MemberId Long memberId) {
+        WaitingPlanResponseDTO response = homeService.getHomeWaitingPlan(memberId);
         return new BaseResponse<>(response);
     }
 }

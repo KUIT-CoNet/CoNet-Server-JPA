@@ -1,6 +1,6 @@
 package com.kuit.conet.common.exception_handler;
 
-import com.kuit.conet.common.exception.UserException;
+import com.kuit.conet.common.exception.MemberException;
 import com.kuit.conet.common.response.BaseErrorResponse;
 import jakarta.annotation.Priority;
 import lombok.extern.slf4j.Slf4j;
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @Priority(0)
 @RestControllerAdvice
-public class UserExceptionControllerAdvice {
+public class MemberExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserException.class)
-    public BaseErrorResponse handel_UserException(UserException e) {
-        log.error("[handle_UserException]", e);
+    @ExceptionHandler(MemberException.class)
+    public BaseErrorResponse handel_MemberException(MemberException e) {
+        log.error("[handel_MemberException]", e);
         return new BaseErrorResponse(e.getExceptionStatus(), e.getMessage());
     }
 }

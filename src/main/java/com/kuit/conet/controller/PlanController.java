@@ -1,6 +1,6 @@
 package com.kuit.conet.controller;
 
-import com.kuit.conet.annotation.UserId;
+import com.kuit.conet.annotation.MemberId;
 import com.kuit.conet.common.exception.PlanException;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.plan.TeamFixedPlanOnDateRequestDTO;
@@ -77,7 +77,7 @@ public class PlanController {
      * / 조회한 유저의 참여 여부 포함
      */
     @GetMapping("/fixed")
-    public BaseResponse<SideMenuFixedPlanResponseDTO> getFixedPlan(@UserId @Valid Long memberId, @ModelAttribute TeamFixedPlanInPeriodRequestDTO planRequest) {
+    public BaseResponse<SideMenuFixedPlanResponseDTO> getFixedPlan(@MemberId @Valid Long memberId, @ModelAttribute TeamFixedPlanInPeriodRequestDTO planRequest) {
         // 지난 약속
         if (planRequest.getPeriod() == PlanPeriod.PAST) {
             SideMenuFixedPlanResponseDTO response = planService.getFixedPastPlan(memberId, planRequest.getTeamId());
@@ -106,8 +106,8 @@ public class PlanController {
      * @apiNote 대기 중인 특정 약속의 구성원, 가능한 모든 시간 조회 api
      */
     @GetMapping("/{planId}/available-time-slot")
-    public BaseResponse<MemberAvailableTimeResponseDTO> getMemberTime(@PathVariable @Valid Long planId) {
-        MemberAvailableTimeResponseDTO response = planService.getAvailableTimeSlot(planId);
+    public BaseResponse<AllMemberAvailableTimeResponseDTO> getAllMemberTimeSlot(@PathVariable @Valid Long planId) {
+        AllMemberAvailableTimeResponseDTO response = planService.getAllMemberAvailableTimeSlot(planId);
         return new BaseResponse<>(response);
     }
 
@@ -115,8 +115,8 @@ public class PlanController {
      * @apiNote 대기 중인 특정 약속의 나의 가능한 시간 조회 api
      */
     @GetMapping("/{planId}/available-time-slot/my")
-    public BaseResponse<UserAvailableTimeResponseDTO> getUserTimeSlot(@PathVariable @Valid Long planId, @UserId @Valid Long userId) {
-        UserAvailableTimeResponseDTO response = planService.getUserAvailableTimeSlot(planId, userId);
+    public BaseResponse<OneMemberAvailableTimeResponseDTO> getOneMemberTimeSlot(@PathVariable @Valid Long planId, @MemberId @Valid Long memberId) {
+        OneMemberAvailableTimeResponseDTO response = planService.getOneMemberAvailableTimeSlot(planId, memberId);
         return new BaseResponse<>(response);
     }
 
@@ -124,7 +124,7 @@ public class PlanController {
      * @apiNote 대기 중인 특정 약속의 나의 가능한 시간 저장 api
      */
     @PostMapping("/available-time-slot")
-    public BaseResponse<String> registerAvailableTime(@UserId @Valid Long memberId, @RequestBody @Valid RegisterAvailableTimeRequestDTO planRequest) {
+    public BaseResponse<String> registerAvailableTime(@MemberId @Valid Long memberId, @RequestBody @Valid RegisterAvailableTimeRequestDTO planRequest) {
         planService.registerAvailableTime(memberId, planRequest);
         return new BaseResponse<>("사용자의 가능한 시간 등록에 성공하였습니다.");
     }
@@ -133,7 +133,7 @@ public class PlanController {
      * @apiNote 확정된 약속 수정 api
      */
     @PostMapping("/update/fixed")
-    public BaseResponse<String> updateFixedPlan(@UserId @Valid Long memberId, @RequestBody @Valid UpdateFixedPlanRequestDTO planRequest) {
+    public BaseResponse<String> updateFixedPlan(@MemberId @Valid Long memberId, @RequestBody @Valid UpdateFixedPlanRequestDTO planRequest) {
         planService.updateFixedPlan(memberId, planRequest);
         return new BaseResponse<>("확정 약속의 정보 수정을 성공하였습니다.");
     }
@@ -142,7 +142,7 @@ public class PlanController {
      * @apiNote 대기 중인 약속 수정 api
      */
     @PostMapping("/update/waiting")
-    public BaseResponse<String> updateWaitingPlan(@UserId @Valid Long memberId, @RequestBody @Valid UpdateWaitingPlanRequestDTO planRequest) {
+    public BaseResponse<String> updateWaitingPlan(@MemberId @Valid Long memberId, @RequestBody @Valid UpdateWaitingPlanRequestDTO planRequest) {
         planService.updateWaitingPlan(memberId, planRequest);
         return new BaseResponse<>("대기 중인 약속의 정보 수정을 성공하였습니다.");
     }
@@ -151,7 +151,7 @@ public class PlanController {
      * @apiNote 약속 삭제 api
      */
     @DeleteMapping("/{planId}")
-    public BaseResponse<String> deletePlan(@UserId @Valid Long memberId, @PathVariable @Valid Long planId) {
+    public BaseResponse<String> deletePlan(@MemberId @Valid Long memberId, @PathVariable @Valid Long planId) {
         planService.deletePlan(memberId, planId);
         return new BaseResponse<>("약속 삭제에 성공하였습니다.");
     }

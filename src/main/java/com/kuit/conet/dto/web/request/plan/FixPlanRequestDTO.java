@@ -10,5 +10,5 @@ public class FixPlanRequestDTO {
     private Long planId;
     private Date fixedDate;
     private Long fixedTime;
-    private List<Long> userIds;
+    private List<Long> memberIds;
 }

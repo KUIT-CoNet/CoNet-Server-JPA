@@ -1,6 +1,6 @@
 package com.kuit.conet.dto.web.response.plan;
 
-import com.kuit.conet.dto.plan.UserAvailableTimeDTO;
+import com.kuit.conet.dto.plan.OneMemberAvailableTimeDTO;
 import lombok.Getter;
 
 import java.util.List;
@@ -8,26 +8,26 @@ import java.util.List;
 import static com.kuit.conet.domain.plan.AvailableTimeRegisteredStatus.*;
 
 @Getter
-public class UserAvailableTimeResponseDTO {
+public class OneMemberAvailableTimeResponseDTO {
     private Long planId;
-    private Long userId;
+    private Long memberId;
     private int availableTimeRegisteredStatus;
-    private List<UserAvailableTimeDTO> timeSlot;
+    private List<OneMemberAvailableTimeDTO> timeSlot;
 
-    public static UserAvailableTimeResponseDTO notRegistered(Long planId, Long userId) {
-        UserAvailableTimeResponseDTO responseDTO = new UserAvailableTimeResponseDTO();
+    public static OneMemberAvailableTimeResponseDTO notRegistered(Long planId, Long memberId) {
+        OneMemberAvailableTimeResponseDTO responseDTO = new OneMemberAvailableTimeResponseDTO();
         responseDTO.planId = planId;
-        responseDTO.userId = userId;
+        responseDTO.memberId = memberId;
         responseDTO.availableTimeRegisteredStatus = NOT_REGISTERED.getStatus();
         responseDTO.timeSlot = null;
 
         return responseDTO;
     }
 
-    public static UserAvailableTimeResponseDTO registered(Long planId, Long userId, Boolean hasAvailableTime, List<UserAvailableTimeDTO> timeSlot) {
-        UserAvailableTimeResponseDTO responseDTO = new UserAvailableTimeResponseDTO();
+    public static OneMemberAvailableTimeResponseDTO registered(Long planId, Long memberId, Boolean hasAvailableTime, List<OneMemberAvailableTimeDTO> timeSlot) {
+        OneMemberAvailableTimeResponseDTO responseDTO = new OneMemberAvailableTimeResponseDTO();
         responseDTO.planId = planId;
-        responseDTO.userId = userId;
+        responseDTO.memberId = memberId;
         if (!hasAvailableTime) {
             responseDTO.availableTimeRegisteredStatus = NO_AVAILABLE_TIME.getStatus();
         }

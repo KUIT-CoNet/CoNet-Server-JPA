@@ -1,6 +1,6 @@
 package com.kuit.conet.controller;
 
-import com.kuit.conet.annotation.UserId;
+import com.kuit.conet.annotation.MemberId;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.team.CreateTeamRequestDTO;
 import com.kuit.conet.dto.web.request.team.JoinTeamRequestDTO;
@@ -28,9 +28,9 @@ public class TeamController {
      * @apiNote 모임 생성 api
      */
     @PostMapping
-    public BaseResponse<CreateTeamResponseDTO> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequestDTO teamRequest, @UserId Long userId, @RequestPart(value = "file") MultipartFile file) {
-        log.debug("userId TeamController: {}", userId);
-        CreateTeamResponseDTO response = teamService.createTeam(teamRequest, userId, file);
+    public BaseResponse<CreateTeamResponseDTO> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequestDTO teamRequest, @MemberId Long memberId, @RequestPart(value = "file") MultipartFile file) {
+        log.debug("memberId TeamController: {}", memberId);
+        CreateTeamResponseDTO response = teamService.createTeam(teamRequest, memberId, file);
         return new BaseResponse<>(response);
     }
 
@@ -38,8 +38,8 @@ public class TeamController {
      * @apiNote 모임 참가 api
      */
     @PostMapping("/join")
-    public BaseResponse<JoinTeamResponseDTO> joinTeam(@RequestBody @Valid JoinTeamRequestDTO teamRequest, @UserId Long userId) {
-        JoinTeamResponseDTO response = teamService.joinTeam(teamRequest, userId);
+    public BaseResponse<JoinTeamResponseDTO> joinTeam(@RequestBody @Valid JoinTeamRequestDTO teamRequest, @MemberId Long memberId) {
+        JoinTeamResponseDTO response = teamService.joinTeam(teamRequest, memberId);
         return new BaseResponse<>(response);
     }
 
@@ -47,8 +47,8 @@ public class TeamController {
      * @apiNote 모임 리스트 조회 api
      */
     @GetMapping
-    public BaseResponse<List<GetTeamResponseDTO>> getTeam(@UserId Long userId) {
-        List<GetTeamResponseDTO> responses = teamService.getTeam(userId);
+    public BaseResponse<List<GetTeamResponseDTO>> getTeam(@MemberId Long memberId) {
+        List<GetTeamResponseDTO> responses = teamService.getTeam(memberId);
         return new BaseResponse<>(responses);
     }
 
@@ -56,8 +56,8 @@ public class TeamController {
      * @apiNote 모임 탈퇴 api
      */
     @PostMapping("/leave")
-    public BaseResponse<String> leaveTeam(@RequestBody @Valid TeamIdRequestDTO teamRequest, @UserId Long userId) {
-        String response = teamService.leaveTeam(teamRequest, userId);
+    public BaseResponse<String> leaveTeam(@RequestBody @Valid TeamIdRequestDTO teamRequest, @MemberId Long memberId) {
+        String response = teamService.leaveTeam(teamRequest, memberId);
         return new BaseResponse<>(response);
     }
 
@@ -65,8 +65,8 @@ public class TeamController {
      * @apiNote 모임 삭제 api
      */
     @DeleteMapping("/{teamId}")
-    public BaseResponse<String> deleteTeam(@PathVariable Long teamId, @UserId Long userId) {
-        String response = teamService.deleteTeam(teamId, userId);
+    public BaseResponse<String> deleteTeam(@PathVariable Long teamId, @MemberId Long memberId) {
+        String response = teamService.deleteTeam(teamId, memberId);
         return new BaseResponse<>(response);
     }
 
@@ -74,8 +74,8 @@ public class TeamController {
      * @apiNote 모임 구성원 조회 api
      */
     @GetMapping("/{teamId}/members")
-    public BaseResponse<List<GetTeamMemberResponseDTO>> getTeamMembers(@PathVariable @Valid Long teamId, @UserId @Valid Long userId) {
-        List<GetTeamMemberResponseDTO> response = teamService.getTeamMembers(teamId, userId);
+    public BaseResponse<List<GetTeamMemberResponseDTO>> getTeamMembers(@PathVariable @Valid Long teamId, @MemberId @Valid Long memberId) {
+        List<GetTeamMemberResponseDTO> response = teamService.getTeamMembers(teamId, memberId);
         return new BaseResponse<>(response);
     }
 
@@ -83,8 +83,8 @@ public class TeamController {
      * @apiNote 모임 상세 조회 api
      */
     @GetMapping("/{teamId}")
-    public BaseResponse<GetTeamResponseDTO> getTeamDetail(@PathVariable Long teamId, @UserId Long userId) {
-        GetTeamResponseDTO response = teamService.getTeamDetail(teamId, userId);
+    public BaseResponse<GetTeamResponseDTO> getTeamDetail(@PathVariable Long teamId, @MemberId Long memberId) {
+        GetTeamResponseDTO response = teamService.getTeamDetail(teamId, memberId);
         return new BaseResponse<>(response);
     }
 
@@ -92,8 +92,8 @@ public class TeamController {
      * @apiNote 모임 수정 api
      */
     @PostMapping("/update")
-    public BaseResponse<StorageImgResponseDTO> updateTeam(@RequestPart(value = "request") @Valid UpdateTeamRequestDTO teamRequest, @UserId Long userId, @RequestParam(value = "file") MultipartFile file) {
-        StorageImgResponseDTO response = teamService.updateTeam(teamRequest, userId, file);
+    public BaseResponse<StorageImgResponseDTO> updateTeam(@RequestPart(value = "request") @Valid UpdateTeamRequestDTO teamRequest, @MemberId Long memberId, @RequestParam(value = "file") MultipartFile file) {
+        StorageImgResponseDTO response = teamService.updateTeam(teamRequest, memberId, file);
         return new BaseResponse<>(response);
     }
 

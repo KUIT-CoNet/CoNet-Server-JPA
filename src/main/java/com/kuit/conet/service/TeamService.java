@@ -47,7 +47,7 @@ public class TeamService {
     private final PlanMemberTimeRepository planMemberTimeRepository;
     private final TeamMemberRepository teamMemberRepository;
 
-    public CreateTeamResponseDTO createTeam(CreateTeamRequestDTO teamRequest, Long userId, MultipartFile file) {
+    public CreateTeamResponseDTO createTeam(CreateTeamRequestDTO teamRequest, Long memberId, MultipartFile file) {
         // 초대 코드 생성 및 코드 중복 확인
         String inviteCode = getRandomInviteCode();
 
@@ -58,7 +58,7 @@ public class TeamService {
         LocalDateTime codeGeneratedTime = LocalDateTime.now();
 
         // 팀 만든 멤버 정보 추출
-        Member teamCreator = memberRepository.findById(userId);
+        Member teamCreator = memberRepository.findById(memberId);
 
         // 이미지 s3 업로드
         String imgUrl = updateTeamImg(file);
@@ -70,55 +70,55 @@ public class TeamService {
         return new CreateTeamResponseDTO(newTeam);
     }
 
-    public JoinTeamResponseDTO joinTeam(JoinTeamRequestDTO teamRequest, Long userId) {
+    public JoinTeamResponseDTO joinTeam(JoinTeamRequestDTO teamRequest, Long memberId) {
         // 필요한 정보 조회
         String inviteCode = getInviteCodeFromRequest(teamRequest);
-        Member user = memberRepository.findById(userId);
+        Member member = memberRepository.findById(memberId);
         Team team = teamRepository.findByInviteCode(inviteCode);
 
         // 모임에 이미 존재하는 회원인지 확인
-        validateNewMemberInTeam(teamRepository, userId, team);
+        validateNewMemberInTeam(teamRepository, memberId, team);
 
         // 초대 코드 생성 시간과 모임 참가 요청 시간 비교
         compareInviteCodeAndRequestTime(team);
 
         // team에 teamMember 추가 (변경 감지)
-        TeamMember.createTeamMember(team, user);
+        TeamMember.createTeamMember(team, member);
 
-        return new JoinTeamResponseDTO(team, user);
+        return new JoinTeamResponseDTO(team, member);
     }
 
-    public List<GetTeamResponseDTO> getTeam(Long userId) {
-        List<Team> teams = teamRepository.findByUserId(userId);
+    public List<GetTeamResponseDTO> getTeam(Long memberId) {
+        List<Team> teams = teamRepository.findByMemberId(memberId);
 
-        return generateTeamReturnResponse(teams, userId);
+        return generateTeamReturnResponse(teams, memberId);
     }
 
 
-    public String leaveTeam(TeamIdRequestDTO teamRequest, Long userId) {
+    public String leaveTeam(TeamIdRequestDTO teamRequest, Long memberId) {
         Team team = teamRepository.findById(teamRequest.getTeamId());
 
         // 모임 존재 여부 확인
         validateTeamExisting(team);
 
         // 팀에 존재하는 멤버인지 확인
-        validateMemberIsTeamMember(teamMemberRepository, team.getId(), userId);
+        validateMemberIsTeamMember(teamMemberRepository, team.getId(), memberId);
 
         //변경 감지 이용
-        TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(team.getId(), userId);
+        TeamMember teamMember = teamMemberRepository.findByTeamIdAndMemberId(team.getId(), memberId);
         team.deleteMember(teamMember);
 
         return SUCCESS_LEAVE_TEAM;
     }
 
-    public String deleteTeam(Long teamId, Long userId) {
+    public String deleteTeam(Long teamId, Long memberId) {
         Team team = teamRepository.findById(teamId);
 
         // 모임 존재 여부 확인
         validateTeamExisting(team);
 
         // 모임 삭제 권한이 있는지 확인
-        validateMemberIsTeamMember(teamMemberRepository, teamId, userId);
+        validateMemberIsTeamMember(teamMemberRepository, teamId, memberId);
 
         //image 삭제
         deleteImage(teamId);
@@ -132,11 +132,11 @@ public class TeamService {
         return SUCCESS_DELETE_TEAM;
     }
 
-    public StorageImgResponseDTO updateTeam(UpdateTeamRequestDTO teamRequest, Long userId, MultipartFile file) {
+    public StorageImgResponseDTO updateTeam(UpdateTeamRequestDTO teamRequest, Long memberId, MultipartFile file) {
         String fileName = storageService.getFileName(file, StorageDomain.TEAM);
         Team team = teamRepository.findById(teamRequest.getTeamId());
         validateTeamExisting(team);
-        validateMemberIsTeamMember(teamMemberRepository, teamRequest.getTeamId(), userId);
+        validateMemberIsTeamMember(teamMemberRepository, teamRequest.getTeamId(), memberId);
 
         // 새로운 이미지 S3에 업로드
         String newImgUrl = storageService.uploadToS3(file, fileName);
@@ -166,18 +166,18 @@ public class TeamService {
         return new RegenerateCodeResponseDTO(teamRequest.getTeamId(), newInviteCode, codeDeadlineStr);
     }
 
-    public List<GetTeamMemberResponseDTO> getTeamMembers(Long teamId, Long userId) {
+    public List<GetTeamMemberResponseDTO> getTeamMembers(Long teamId, Long memberId) {
         //팀 구성원인지 확인
-        validateMemberIsTeamMember(teamMemberRepository, teamId, userId);
+        validateMemberIsTeamMember(teamMemberRepository, teamId, memberId);
 
         return memberRepository.getMembersByTeamId(teamId);
     }
 
-    public GetTeamResponseDTO getTeamDetail(Long teamId, Long userId) {
+    public GetTeamResponseDTO getTeamDetail(Long teamId, Long memberId) {
         // 유저가 팀에 참가 중인지 검사
-        validateMemberIsTeamMember(teamMemberRepository, teamId, userId);
+        validateMemberIsTeamMember(teamMemberRepository, teamId, memberId);
 
-        GetTeamResponseDTO getTeamResponse = teamRepository.getTeamDetail(teamId, userId);
+        GetTeamResponseDTO getTeamResponse = teamRepository.getTeamDetail(teamId, memberId);
         return getTeamResponse;
     }
 
@@ -225,24 +225,24 @@ public class TeamService {
         return inviteCode;
     }
 
-    private List<GetTeamResponseDTO> generateTeamReturnResponse(List<Team> teams, Long userId) {
+    private List<GetTeamResponseDTO> generateTeamReturnResponse(List<Team> teams, Long memberId) {
         // 모임의 created_at 시간 비교해서 3일 안지났으면 isNew 값 true, 지났으면 false로 반환
         List<GetTeamResponseDTO> teamReturnResponses = new ArrayList<>();
 
         for (Team team : teams) {
             GetTeamResponseDTO teamResponse;
             if (!isNewTeam(team)) {
-                teamResponse = generateTeamResponse(team, userId, false);
+                teamResponse = generateTeamResponse(team, memberId, false);
             } else {
-                teamResponse = generateTeamResponse(team, userId, true);
+                teamResponse = generateTeamResponse(team, memberId, true);
             }
             teamReturnResponses.add(teamResponse);
         }
         return teamReturnResponses;
     }
 
-    private GetTeamResponseDTO generateTeamResponse(Team team, Long userId, boolean b) {
+    private GetTeamResponseDTO generateTeamResponse(Team team, Long memberId, boolean b) {
         return new GetTeamResponseDTO(team.getId(), team.getName(), team.getImgUrl(), teamMemberRepository.getCount(team.getId()),
-                false, teamMemberRepository.isBookmark(userId, team.getId()));
+                false, teamMemberRepository.isBookmark(memberId, team.getId()));
     }
 }

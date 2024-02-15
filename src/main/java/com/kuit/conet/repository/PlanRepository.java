@@ -74,12 +74,12 @@ public class PlanRepository {
                 .getResultList();
     }
 
-    public List<SideMenuFixedPlanDTO> getFixedPastPlans(Long teamId, Long userId) {
+    public List<SideMenuFixedPlanDTO> getFixedPastPlans(Long teamId, Long memberId) {
         return em.createQuery("select new com.kuit.conet.dto.plan.SideMenuFixedPlanDTO(p.id, p.name, p.fixedDate, p.fixedTime, " +
                         "                                                                       function('DATEDIFF', CURRENT_DATE, p.fixedDate), " + // 약속이 지난 지 며칠 ?
                         "                                                                       (select count(pm)>0 " +
                         "                                                                        from PlanMember pm " +
-                        "                                                                        where pm.plan.id=p.id and pm.member.id=:userId)) " +
+                        "                                                                        where pm.plan.id=p.id and pm.member.id=:memberId)) " +
                         "from Plan p " +
                         "where p.team.id=:teamId " +
                         "and p.status=:status " +
@@ -87,16 +87,16 @@ public class PlanRepository {
                         "order by p.fixedDate desc, p.fixedTime desc ", SideMenuFixedPlanDTO.class)
                 .setParameter("teamId", teamId)
                 .setParameter("status", PlanStatus.FIXED)
-                .setParameter("userId", userId)
+                .setParameter("memberId", memberId)
                 .getResultList();
     }
 
-    public List<SideMenuFixedPlanDTO> getFixedOncomingPlans(Long teamId, Long userId) {
+    public List<SideMenuFixedPlanDTO> getFixedOncomingPlans(Long teamId, Long memberId) {
         return em.createQuery("select new com.kuit.conet.dto.plan.SideMenuFixedPlanDTO(p.id, p.name, p.fixedDate, p.fixedTime, " +
                         "                                                                       function('DATEDIFF', p.fixedDate, CURRENT_DATE), " + // 며칠 남은 약속 ?
                         "                                                                       (select count(pm)>0 " +
                         "                                                                        from PlanMember pm " +
-                        "                                                                        where pm.plan.id=p.id and pm.member.id=:userId)) " +
+                        "                                                                        where pm.plan.id=p.id and pm.member.id=:memberId)) " +
                         "from Plan p " +
                         "where p.team.id=:teamId " +
                         "and p.status=:status " +
@@ -104,7 +104,7 @@ public class PlanRepository {
                         "order by p.fixedDate, p.fixedTime ", SideMenuFixedPlanDTO.class)
                 .setParameter("teamId", teamId)
                 .setParameter("status", PlanStatus.FIXED)
-                .setParameter("userId", userId)
+                .setParameter("memberId", memberId)
                 .getResultList();
     }
 

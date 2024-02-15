@@ -17,17 +17,17 @@ public class TeamMemberRepository {
         return teamMember.getId();
     }
 
-    public Boolean isBookmark(Long userId, Long teamId) {
-        return em.createQuery("select tm.bookMark from TeamMember tm where tm.team.id=:teamId and tm.member.id=:userId", boolean.class)
-                .setParameter("userId", userId)
+    public Boolean isBookmark(Long memberId, Long teamId) {
+        return em.createQuery("select tm.bookMark from TeamMember tm where tm.team.id=:teamId and tm.member.id=:memberId", boolean.class)
+                .setParameter("memberId", memberId)
                 .setParameter("teamId", teamId)
                 .getSingleResult();
     }
 
-    public TeamMember findByTeamIdAndUserId(Long teamId, Long userId) {
-        return em.createQuery("select tm from TeamMember tm where tm.team.id=:teamId and tm.member.id=:userId", TeamMember.class)
+    public TeamMember findByTeamIdAndMemberId(Long teamId, Long memberId) {
+        return em.createQuery("select tm from TeamMember tm where tm.team.id=:teamId and tm.member.id=:memberId", TeamMember.class)
                 .setParameter("teamId", teamId)
-                .setParameter("userId", userId)
+                .setParameter("memberId", memberId)
                 .getSingleResult();
     }
 
@@ -38,9 +38,9 @@ public class TeamMemberRepository {
                 .getSingleResult();
     }
 
-    public boolean isTeamMember(Long teamId, Long userId) {
-        return em.createQuery("select count(tm)>0 from TeamMember tm where tm.team.id=:teamId and tm.member.id=:userId", Boolean.class)
-                .setParameter("userId", userId)
+    public boolean isTeamMember(Long teamId, Long memberId) {
+        return em.createQuery("select count(tm)>0 from TeamMember tm where tm.team.id=:teamId and tm.member.id=:memberId", Boolean.class)
+                .setParameter("memberId", memberId)
                 .setParameter("teamId", teamId)
                 .getSingleResult();
     }
@@ -51,17 +51,17 @@ public class TeamMemberRepository {
                 .executeUpdate();
     }
 
-    public void bookmarkTeam(Long userId, Long teamId) {
+    public void bookmarkTeam(Long memberId, Long teamId) {
         em.createQuery("update TeamMember tm set tm.bookMark = CASE WHEN tm.bookMark = true THEN false ELSE true END " +
-                        "where tm.member.id=:userId and tm.team.id=:teamId")
-                .setParameter("userId", userId)
+                        "where tm.member.id=:memberId and tm.team.id=:teamId")
+                .setParameter("memberId", memberId)
                 .setParameter("teamId", teamId)
                 .executeUpdate();
     }
 
-    public int deleteTeamMemberByUserId(Long userId) {
-        int deletedTeamMemberCount = em.createQuery("delete from TeamMember tm where tm.member.id=:userId")
-                .setParameter("userId", userId)
+    public int deleteTeamMemberByMemberId(Long memberId) {
+        int deletedTeamMemberCount = em.createQuery("delete from TeamMember tm where tm.member.id=:memberId")
+                .setParameter("memberId", memberId)
                 .executeUpdate();
         em.flush();
         return deletedTeamMemberCount;

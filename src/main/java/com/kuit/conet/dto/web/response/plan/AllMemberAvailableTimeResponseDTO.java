@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-public class MemberAvailableTimeResponseDTO {
+public class AllMemberAvailableTimeResponseDTO {
     private Long teamId;
     private Long planId;
     private String planName;
@@ -18,7 +18,7 @@ public class MemberAvailableTimeResponseDTO {
     private Map<Integer, Long> endNumberForEachSection; // 각 구간의 최대 인원 수
     private List<MemberDateTimeDTO> availableMemberDateTime;
 
-    public MemberAvailableTimeResponseDTO(Long teamId, Plan plan, Map<Integer, Long> endNumberForEachSection, List<MemberDateTimeDTO> availableMemberDateTime) {
+    public AllMemberAvailableTimeResponseDTO(Long teamId, Plan plan, Map<Integer, Long> endNumberForEachSection, List<MemberDateTimeDTO> availableMemberDateTime) {
         this.teamId = teamId;
         this.planId = plan.getId();
         this.planName = plan.getName();

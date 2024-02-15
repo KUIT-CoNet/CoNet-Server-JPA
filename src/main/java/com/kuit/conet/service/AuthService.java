@@ -1,20 +1,18 @@
 package com.kuit.conet.service;
 
-import com.kuit.conet.auth.apple.AppleUserProvider;
-import com.kuit.conet.auth.kakao.KakaoUserProvider;
+import com.kuit.conet.auth.apple.AppleMemberProvider;
+import com.kuit.conet.auth.kakao.KakaoMemberProvider;
 import com.kuit.conet.domain.auth.Platform;
 import com.kuit.conet.domain.member.Member;
 import com.kuit.conet.dto.web.request.auth.LoginRequestDTO;
 import com.kuit.conet.dto.web.request.auth.PutOptionTermAndNameRequestDTO;
 import com.kuit.conet.dto.web.response.auth.TermAndNameResponseDTO;
-import com.kuit.conet.dto.web.response.auth.UserResponseDTO;
+import com.kuit.conet.dto.web.response.auth.MemberResponseDTO;
 import com.kuit.conet.dto.web.response.auth.LoginResponseDTO;
 import com.kuit.conet.repository.MemberRepository;
-import com.kuit.conet.service.validator.AuthValidator;
 import com.kuit.conet.service.validator.MemberValidator;
 import com.kuit.conet.utils.auth.JwtParser;
 import com.kuit.conet.utils.auth.JwtTokenProvider;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,8 +30,8 @@ import static com.kuit.conet.service.validator.AuthValidator.*;
 @RequiredArgsConstructor
 public class AuthService {
     private final MemberRepository memberRepository;
-    private final AppleUserProvider appleUserProvider;
-    private final KakaoUserProvider kakaoUserProvider;
+    private final AppleMemberProvider appleMemberProvider;
+    private final KakaoMemberProvider kakaoMemberProvider;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtParser jwtParser;
@@ -43,21 +41,21 @@ public class AuthService {
     private String defaultMemberImg;
 
     public LoginResponseDTO appleLogin(LoginRequestDTO loginRequest, String clientIp) {
-        UserResponseDTO applePlatformUser = appleUserProvider.getApplePlatformUser(loginRequest.getIdToken());
-        return generateLoginResponse(Platform.APPLE, applePlatformUser.getEmail(), applePlatformUser.getPlatformId(), clientIp);
+        MemberResponseDTO applePlatformMember = appleMemberProvider.getApplePlatformMember(loginRequest.getIdToken());
+        return generateLoginResponse(Platform.APPLE, applePlatformMember.getEmail(), applePlatformMember.getPlatformId(), clientIp);
     }
 
     public LoginResponseDTO kakaoLogin(LoginRequestDTO loginRequest, String clientIp) {
-        UserResponseDTO kakaoPlatformUser = kakaoUserProvider.getPayloadFromIdToken(loginRequest.getIdToken());
-        return generateLoginResponse(Platform.KAKAO, kakaoPlatformUser.getEmail(), kakaoPlatformUser.getPlatformId(), clientIp);
+        MemberResponseDTO kakaoPlatformMember = kakaoMemberProvider.getPayloadFromIdToken(loginRequest.getIdToken());
+        return generateLoginResponse(Platform.KAKAO, kakaoPlatformMember.getEmail(), kakaoPlatformMember.getPlatformId(), clientIp);
     }
 
     private LoginResponseDTO generateLoginResponse(Platform platform, String email, String platformId, String clientIp) {
-        List<Long> findUserId = memberRepository.findByPlatformAndPlatformId(platform, platformId);
+        List<Long> findMemberId = memberRepository.findByPlatformAndPlatformId(platform, platformId);
 
         //회원가입이 되어 있는 멤버
-        if (!findUserId.isEmpty()) {
-            Member member = memberRepository.findById(findUserId.get(FIRST_INDEX));
+        if (!findMemberId.isEmpty()) {
+            Member member = memberRepository.findById(findMemberId.get(FIRST_INDEX));
             MemberValidator.validateMemberExisting(member);
 
             return login(clientIp, member);
@@ -98,14 +96,14 @@ public class AuthService {
         return new LoginResponseDTO(targetMember.getEmail(), accessToken, refreshToken, isRegistered);
     }
 
-    public TermAndNameResponseDTO agreeTermAndPutName(Long userId, PutOptionTermAndNameRequestDTO nameRequest) {
-        Member member = memberRepository.findById(userId);
+    public TermAndNameResponseDTO agreeTermAndPutName(Long memberId, PutOptionTermAndNameRequestDTO nameRequest) {
+        Member member = memberRepository.findById(memberId);
         member.agreeTermAndPutName(nameRequest.getName());
 
         return new TermAndNameResponseDTO(member);
     }
 
-    public LoginResponseDTO regenerateToken(Long userId, String refreshToken, String clientIp) {
+    public LoginResponseDTO regenerateToken(Long memberId, String refreshToken, String clientIp) {
         // Redis 에서 해당 refresh token 찾기
         String existingIp = redisTemplate.opsForValue().get(refreshToken);
 
@@ -113,7 +111,7 @@ public class AuthService {
         validateRefreshTokenExisting(existingIp);
         compareClientIpFromRedis(existingIp, clientIp);
 
-        Member member = memberRepository.findById(userId);
+        Member member = memberRepository.findById(memberId);
 
         return getLoginResponse(member, clientIp, true);
     }
