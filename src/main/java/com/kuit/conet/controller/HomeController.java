@@ -6,7 +6,7 @@ import com.kuit.conet.dto.web.request.home.HomePlanRequestDTO;
 import com.kuit.conet.dto.web.response.plan.HomePlanOnDayResponseDTO;
 import com.kuit.conet.dto.web.response.plan.PlanDateOnMonthResponseDTO;
 import com.kuit.conet.dto.web.response.plan.WaitingPlanResponseDTO;
-import com.kuit.conet.jpa.service.HomeService;
+import com.kuit.conet.service.HomeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

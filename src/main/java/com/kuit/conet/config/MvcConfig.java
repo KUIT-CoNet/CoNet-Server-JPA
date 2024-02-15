@@ -1,6 +1,6 @@
 package com.kuit.conet.config;
 
-import com.kuit.conet.utils.StringToEnumConverter;
+import com.kuit.conet.utils.StringToPlanPeriodConverter;
 import com.kuit.conet.utils.auth.BearerAuthInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,23 +18,24 @@ import java.util.List;
 public class MvcConfig implements WebMvcConfigurer {
     private final UserIdResolver userIdResolver;
     private final ClientIpResolver clientIpResolver;
+    private final RefreshTokenResolver refreshTokenResolver;
     private final BearerAuthInterceptor bearerAuthInterceptor;
 
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(userIdResolver);
         resolvers.add(clientIpResolver);
+        resolvers.add(refreshTokenResolver);
     }
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new StringToEnumConverter());
+        registry.addConverter(new StringToPlanPeriodConverter());
     }
 
     public void addInterceptors(InterceptorRegistry registry) {
         log.info("Interceptor 등록");
+        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/auth/term");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/auth/regenerate-token");
-        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/auth/term-and-name");
-        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/auth/option-term");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/user");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/user/name");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/user/image");

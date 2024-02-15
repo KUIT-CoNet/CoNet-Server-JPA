@@ -1,117 +1,120 @@
 package com.kuit.conet.service;
 
-import com.kuit.conet.dto.web.request.auth.OptionTermRequestDTO;
-import com.kuit.conet.utils.auth.JwtParser;
-import com.kuit.conet.utils.auth.JwtTokenProvider;
 import com.kuit.conet.auth.apple.AppleUserProvider;
 import com.kuit.conet.auth.kakao.KakaoUserProvider;
-import com.kuit.conet.common.exception.InvalidTokenException;
-import com.kuit.conet.common.exception.UserException;
-import com.kuit.conet.dao.UserDao;
-import com.kuit.conet.jpa.domain.auth.Platform;
-import com.kuit.conet.domain.user.User;
+import com.kuit.conet.domain.auth.Platform;
+import com.kuit.conet.domain.member.Member;
 import com.kuit.conet.dto.web.request.auth.LoginRequestDTO;
 import com.kuit.conet.dto.web.request.auth.PutOptionTermAndNameRequestDTO;
-import com.kuit.conet.dto.web.response.auth.AgreeTermAndPutNameResponseDTO;
-import com.kuit.conet.dto.web.response.auth.ApplePlatformUserResponseDTO;
-import com.kuit.conet.dto.web.response.auth.KakaoPlatformUserResponseDTO;
+import com.kuit.conet.dto.web.response.auth.TermAndNameResponseDTO;
+import com.kuit.conet.dto.web.response.auth.UserResponseDTO;
 import com.kuit.conet.dto.web.response.auth.LoginResponseDTO;
+import com.kuit.conet.repository.MemberRepository;
+import com.kuit.conet.service.validator.AuthValidator;
+import com.kuit.conet.service.validator.MemberValidator;
+import com.kuit.conet.utils.auth.JwtParser;
+import com.kuit.conet.utils.auth.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.*;
+import static com.kuit.conet.service.validator.AuthValidator.*;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserDao userDao;
+    private final MemberRepository memberRepository;
     private final AppleUserProvider appleUserProvider;
     private final KakaoUserProvider kakaoUserProvider;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtParser jwtParser;
+    private static final int FIRST_INDEX = 0;
+
+    @Value("${spring.user.default-image}")
+    private String defaultMemberImg;
 
     public LoginResponseDTO appleLogin(LoginRequestDTO loginRequest, String clientIp) {
-        ApplePlatformUserResponseDTO applePlatformUser = appleUserProvider.getApplePlatformUser(loginRequest.getIdToken());
+        UserResponseDTO applePlatformUser = appleUserProvider.getApplePlatformUser(loginRequest.getIdToken());
         return generateLoginResponse(Platform.APPLE, applePlatformUser.getEmail(), applePlatformUser.getPlatformId(), clientIp);
     }
 
     public LoginResponseDTO kakaoLogin(LoginRequestDTO loginRequest, String clientIp) {
-        KakaoPlatformUserResponseDTO kakaoPlatformUser = kakaoUserProvider.getPayloadFromIdToken(loginRequest.getIdToken());
+        UserResponseDTO kakaoPlatformUser = kakaoUserProvider.getPayloadFromIdToken(loginRequest.getIdToken());
         return generateLoginResponse(Platform.KAKAO, kakaoPlatformUser.getEmail(), kakaoPlatformUser.getPlatformId(), clientIp);
     }
 
     private LoginResponseDTO generateLoginResponse(Platform platform, String email, String platformId, String clientIp) {
-        List<Long> findUserId = userDao.findByPlatformAndPlatformId(platform, platformId);
-        if (!findUserId.isEmpty()) {
-            User findUser = userDao.findById(findUserId.get(0));
-            if (findUser == null) {
-                throw new UserException(NOT_FOUND_USER);
-            }
+        List<Long> findUserId = memberRepository.findByPlatformAndPlatformId(platform, platformId);
 
-            // 회원가입은 되어있는데, 필수 약관 동의 혹은 이름 입력이 되어있지 않은 유저
-            if (!findUser.getServiceTerm() || findUser.getName() == null) {
-                log.info("회원가입은 되어 있으나, 약관 동의 및 이름 입력이 필요합니다.");
-                return getLoginResponse(findUser, clientIp, false);
-            } else {
-                // 이미 회원가입과 약관 동의 및 이름 입력이 모두 되어있는 유저
-                log.info("로그인에 성공하였습니다.");
-                return getLoginResponse(findUser, clientIp, true);
-            }
+        //회원가입이 되어 있는 멤버
+        if (!findUserId.isEmpty()) {
+            Member member = memberRepository.findById(findUserId.get(FIRST_INDEX));
+            MemberValidator.validateMemberExisting(member);
+
+            return login(clientIp, member);
+        }
+
+        //회원가입이 필요한 멤버
+        return signUp(platform, email, platformId, clientIp);
+    }
+
+    private LoginResponseDTO signUp(Platform platform, String email, String platformId, String clientIp) {
+        // 회원가입이 필요한 멤버
+        Member signUpMember = Member.createMember(email, defaultMemberImg, platform, platformId);
+        memberRepository.save(signUpMember);
+
+        log.info("회원가입 성공! 약관 동의 및 이름 입력이 필요합니다.");
+
+        return getLoginResponse(signUpMember, clientIp, false);
+    }
+
+    private LoginResponseDTO login(String clientIp, Member member) {
+        // 회원가입은 되어있는데, 필수 약관 동의 혹은 이름 입력이 되어있지 않은 유저
+        if (!member.getServiceTerm() || member.getName() == null) {
+            log.info("회원가입은 되어 있으나, 약관 동의 및 이름 입력이 필요합니다.");
+            return getLoginResponse(member, clientIp, false);
         } else {
-            // 회원가입이 필요한 멤버
-            User oauthUser = new User(email, platform, platformId);
-            User savedUser = userDao.save(oauthUser);
-            log.info("회원가입 성공! 약관 동의 및 이름 입력이 필요합니다.");
-            return getLoginResponse(savedUser, clientIp, false);
+            // 이미 회원가입과 약관 동의 및 이름 입력이 모두 되어있는 유저
+            log.info("로그인에 성공하였습니다.");
+            return getLoginResponse(member, clientIp, true);
         }
     }
 
-    private LoginResponseDTO getLoginResponse(User targetUser, String clientIp, Boolean isRegistered) {
-        String accessToken = jwtTokenProvider.createAccessToken(targetUser.getUserId());
-        String refreshToken = jwtTokenProvider.createRefreshToken(targetUser.getUserId());
+    private LoginResponseDTO getLoginResponse(Member targetMember, String clientIp, Boolean isRegistered) {
+        String accessToken = jwtTokenProvider.createAccessToken(targetMember.getId());
+        String refreshToken = jwtTokenProvider.createRefreshToken(targetMember.getId());
         // Redis 에 refresh token 저장
         redisTemplate.opsForValue().set(refreshToken, clientIp);
 
-        return new LoginResponseDTO(targetUser.getEmail(), accessToken, refreshToken, isRegistered);
+        return new LoginResponseDTO(targetMember.getEmail(), accessToken, refreshToken, isRegistered);
     }
 
-    public LoginResponseDTO regenerateToken(String refreshToken, String clientIp) {
+    public TermAndNameResponseDTO agreeTermAndPutName(Long userId, PutOptionTermAndNameRequestDTO nameRequest) {
+        Member member = memberRepository.findById(userId);
+        member.agreeTermAndPutName(nameRequest.getName());
+
+        return new TermAndNameResponseDTO(member);
+    }
+
+    public LoginResponseDTO regenerateToken(Long userId, String refreshToken, String clientIp) {
         // Redis 에서 해당 refresh token 찾기
         String existingIp = redisTemplate.opsForValue().get(refreshToken);
 
         // 찾은 값의 validation 처리
-        if (existingIp == null) {
-            throw new InvalidTokenException(INVALID_REFRESH_TOKEN);
-        } else if (!existingIp.equals(clientIp)) {
-            throw new InvalidTokenException(IP_MISMATCH);
-        }
+        validateRefreshTokenExisting(existingIp);
+        compareClientIpFromRedis(existingIp, clientIp);
 
-        Long userId = jwtParser.getUserIdFromToken(refreshToken);
-        User existingUser = userDao.findById(userId);
-        return getLoginResponse(existingUser, clientIp, true);
-    }
+        Member member = memberRepository.findById(userId);
 
-    public AgreeTermAndPutNameResponseDTO agreeTermAndPutName(PutOptionTermAndNameRequestDTO nameRequest, Long userId, String clientIp) {
-        // 이용 약관 및 이름 입력 DB update
-        User user = userDao.agreeTermAndPutName(nameRequest.getName(), nameRequest.getOptionTerm(), userId);
-
-        return new AgreeTermAndPutNameResponseDTO(user.getName(), user.getEmail(), user.getServiceTerm(), user.getOptionTerm());
-    }
-
-    public void updateOptionTerm(OptionTermRequestDTO optionTermRequest, Long userId) {
-        // 선택 약관에 대한 데이터베이스 값과 입력 값 비교
-        // -> 동일하면 exception
-        if (optionTermRequest.getOption() == userDao.getOptionTerm(userId)) {
-            throw new UserException(OPTION_TERM_ALREADY_SET);
-        }
-
-        userDao.updateOptionTerm(optionTermRequest, userId);
+        return getLoginResponse(member, clientIp, true);
     }
 }

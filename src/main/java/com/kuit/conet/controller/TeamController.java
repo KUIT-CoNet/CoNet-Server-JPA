@@ -8,7 +8,7 @@ import com.kuit.conet.dto.web.request.team.TeamIdRequestDTO;
 import com.kuit.conet.dto.web.request.team.UpdateTeamRequestDTO;
 import com.kuit.conet.dto.web.response.member.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.team.*;
-import com.kuit.conet.jpa.service.TeamService;
+import com.kuit.conet.service.TeamService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

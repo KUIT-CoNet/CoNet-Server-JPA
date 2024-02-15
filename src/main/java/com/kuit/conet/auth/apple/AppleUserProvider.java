@@ -3,7 +3,7 @@ package com.kuit.conet.auth.apple;
 import com.kuit.conet.utils.auth.JwtParser;
 import com.kuit.conet.utils.auth.PublicKeyGenerator;
 import com.kuit.conet.common.exception.InvalidTokenException;
-import com.kuit.conet.dto.web.response.auth.ApplePlatformUserResponseDTO;
+import com.kuit.conet.dto.web.response.auth.UserResponseDTO;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ public class AppleUserProvider {
     private final PublicKeyGenerator publicKeyGenerator;
     private final AppleClaimsValidator appleClaimsValidator;
 
-    public ApplePlatformUserResponseDTO getApplePlatformUser(String identityToken) {
+    public UserResponseDTO getApplePlatformUser(String identityToken) {
         Map<String, String> headers = jwtParser.parseHeaders(identityToken);
         ApplePublicKeys applePublicKeys = appleClient.getApplePublicKeys();
         PublicKey publicKey = publicKeyGenerator.generateApplePublicKey(headers, applePublicKeys);
@@ -29,7 +29,7 @@ public class AppleUserProvider {
         Claims claims = jwtParser.parsePublicKeyAndGetClaims(identityToken, publicKey);
         validateClaims(claims);
 
-        return new ApplePlatformUserResponseDTO(claims.getSubject(), claims.get("email", String.class));
+        return new UserResponseDTO(claims.getSubject(), claims.get("email", String.class));
         /*
            claims 의 subject = User domain 의 platformId
          * */

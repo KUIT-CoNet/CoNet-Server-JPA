@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-import static com.kuit.conet.jpa.domain.plan.AvailableTimeRegisteredStatus.*;
+import static com.kuit.conet.domain.plan.AvailableTimeRegisteredStatus.*;
 
 @Getter
 public class UserAvailableTimeResponseDTO {

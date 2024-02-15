@@ -1,9 +1,9 @@
 package com.kuit.conet.auth.kakao;
 
+import com.kuit.conet.dto.web.response.auth.UserResponseDTO;
 import com.kuit.conet.utils.auth.JwtParser;
 import com.kuit.conet.utils.auth.PublicKeyGenerator;
 import com.kuit.conet.common.exception.InvalidTokenException;
-import com.kuit.conet.dto.web.response.auth.KakaoPlatformUserResponseDTO;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +27,7 @@ public class KakaoUserProvider {
     @Value("${oauth.kakao.client-id}")
     private String clientId;
 
-    public KakaoPlatformUserResponseDTO getPayloadFromIdToken(String identityToken) {
+    public UserResponseDTO getPayloadFromIdToken(String identityToken) {
         Map<String, String> headers = jwtParser.parseHeaders(identityToken);
         KakaoPublicKeys kakaoPublicKeys = kakaoClient.getKakaoOIDCOpenKeys();
         PublicKey publicKey = publicKeyGenerator.generateKakaoPublicKey(headers, kakaoPublicKeys);
@@ -35,7 +35,7 @@ public class KakaoUserProvider {
         Claims claims = jwtParser.parsePublicKeyAndGetClaims(identityToken, publicKey);
         validateClaims(claims);
 
-        return new KakaoPlatformUserResponseDTO(claims.getSubject(), claims.get("email", String.class));
+        return new UserResponseDTO(claims.getSubject(), claims.get("email", String.class));
     }
     private void validateClaims(Claims claims) {
         if (!claims.getIssuer().contains(iss) && claims.getAudience().equals(clientId)) {
