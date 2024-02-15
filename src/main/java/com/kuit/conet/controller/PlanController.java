@@ -35,7 +35,7 @@ public class PlanController {
     }
 
     /**
-     * @apiNote 약속 상세 정보 조회 api
+     * @apiNote 약속 상세 정보 조회 api / 확정 약속만 가능
      */
     @GetMapping("/{planId}")
     public BaseResponse<PlanDetailResponseDTO> getPlan(@PathVariable @Valid Long planId) {
@@ -133,7 +133,6 @@ public class PlanController {
      * @apiNote 확정된 약속 수정 api
      */
     @PostMapping("/update/fixed")
-    //TODO: history 관련 내용 삭제
     public BaseResponse<String> updateFixedPlan(@UserId @Valid Long memberId, @RequestBody @Valid UpdateFixedPlanRequestDTO planRequest) {
         planService.updateFixedPlan(memberId, planRequest);
         return new BaseResponse<>("확정 약속의 정보 수정을 성공하였습니다.");

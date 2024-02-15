@@ -14,6 +14,7 @@ import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.plan.*;
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.repository.*;
+import com.kuit.conet.jpa.service.validator.PlanValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -65,11 +66,16 @@ public class PlanService {
     }
 
     public PlanDetailResponseDTO getPlanDetail(Long planId) {
-        Plan plan = planRepository.findWithMembersById(planId);
+        Plan plan = planRepository.findById(planId);
 
-        List<PlanMemberDTO> planMemberList = setPlanMemberDTOS(plan);
+        //확정 약속인 경우 상세 정보 조회 가능
+        PlanValidator.validatePlanIsFixed(plan);
 
-        return new PlanDetailResponseDTO(plan, planMemberList);
+        Plan planWithMembers = planRepository.findWithMembersById(planId);
+
+        List<PlanMemberDTO> planMemberList = setPlanMemberDTOS(planWithMembers);
+
+        return new PlanDetailResponseDTO(planWithMembers, planMemberList);
     }
 
     public TeamPlanOnDayResponseDTO getFixedPlanOnDay(TeamFixedPlanOnDateRequestDTO planRequest) {
