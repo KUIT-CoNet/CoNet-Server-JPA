@@ -15,8 +15,6 @@ import com.kuit.conet.dto.web.request.plan.TeamFixedPlanOnDateRequestDTO;
 import com.kuit.conet.dto.web.request.plan.TeamWaitingPlanRequestDTO;
 import com.kuit.conet.dto.web.response.plan.*;
 import com.kuit.conet.domain.member.Member;
-import com.kuit.conet.jpa.domain.plan.*;
-import com.kuit.conet.jpa.repository.*;
 import com.kuit.conet.repository.*;
 import com.kuit.conet.service.validator.PlanValidator;
 import lombok.RequiredArgsConstructor;

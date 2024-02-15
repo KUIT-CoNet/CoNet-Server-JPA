@@ -10,7 +10,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-@Slf4j
 @Component
 public class UserIdResolver implements HandlerMethodArgumentResolver {
     //Interceptor 이후 동작
@@ -24,7 +23,6 @@ public class UserIdResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        log.debug("UserIdResolver userId: {}", request.getAttribute("userId"));
         return request.getAttribute("userId");
     }
 }

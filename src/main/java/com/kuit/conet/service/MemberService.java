@@ -7,7 +7,6 @@ import com.kuit.conet.dto.web.response.member.MemberResponseDTO;
 import com.kuit.conet.dto.web.response.team.GetTeamResponseDTO;
 import com.kuit.conet.domain.member.Member;
 import com.kuit.conet.domain.storage.StorageDomain;
-import com.kuit.conet.jpa.repository.*;
 import com.kuit.conet.repository.*;
 import com.kuit.conet.service.validator.TeamValidator;
 import lombok.RequiredArgsConstructor;

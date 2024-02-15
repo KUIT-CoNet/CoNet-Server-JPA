@@ -10,7 +10,6 @@ import com.kuit.conet.dto.web.request.team.UpdateTeamRequestDTO;
 import com.kuit.conet.dto.web.response.member.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.team.*;
 import com.kuit.conet.domain.member.Member;
-import com.kuit.conet.jpa.repository.*;
 import com.kuit.conet.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
