@@ -52,7 +52,7 @@ public class AuthController {
     }
 
     /**
-     * @apiNote 토큰 재생성 api
+     * @apiNote 토큰 재발급 api
      * */
     @PostMapping("/regenerate-token")
     public BaseResponse<LoginResponseDTO> regenerateToken(@UserId @Valid Long userId, @RefreshToken @Valid String refreshToken, @ClientIp String clientIp) {
