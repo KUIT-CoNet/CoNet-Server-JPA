@@ -3,6 +3,7 @@ package com.kuit.conet.controller;
 import com.kuit.conet.annotation.ClientIp;
 import com.kuit.conet.annotation.RefreshToken;
 import com.kuit.conet.annotation.UserId;
+import com.kuit.conet.common.exception.PlatformException;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.auth.LoginRequestDTO;
 import com.kuit.conet.dto.web.request.auth.PutOptionTermAndNameRequestDTO;
@@ -12,10 +13,10 @@ import com.kuit.conet.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.INVALID_PLATFORM;
+import static com.kuit.conet.domain.auth.Platform.*;
 
 @Slf4j
 @RestController
@@ -25,21 +26,20 @@ public class AuthController {
     private final AuthService authService;
 
     /**
-     * @apiNote 애플 로그인 api
+     * @apiNote 로그인 api
      * */
-    @PostMapping("/login/apple")
-    public BaseResponse<LoginResponseDTO> loginApple(@RequestBody @Valid LoginRequestDTO loginRequest, @ClientIp String clientIp) {
-        LoginResponseDTO response = authService.appleLogin(loginRequest, clientIp);
-        return new BaseResponse<>(response);
-    }
+    @PostMapping("/login")
+    public BaseResponse<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginRequest, @ClientIp String clientIp) {//ENUM mapping 를 위한 @ModelAttribute
+        if (loginRequest.getPlatform() == KAKAO) {
+            LoginResponseDTO response = authService.kakaoLogin(loginRequest, clientIp);
+            return new BaseResponse<>(response);
+        }
+        if (loginRequest.getPlatform() == APPLE) {
+            LoginResponseDTO response = authService.appleLogin(loginRequest, clientIp);
+            return new BaseResponse<>(response);
+        }
 
-    /**
-     * @apiNote 카카오 로그인 api
-     * */
-    @PostMapping("/login/kakao")
-    public BaseResponse<LoginResponseDTO> loginKakao(@RequestBody @Valid LoginRequestDTO loginRequest, @ClientIp String clientIp) {
-        LoginResponseDTO response = authService.kakaoLogin(loginRequest, clientIp);
-        return new BaseResponse<>(response);
+        throw new PlatformException(INVALID_PLATFORM);
     }
 
     /**

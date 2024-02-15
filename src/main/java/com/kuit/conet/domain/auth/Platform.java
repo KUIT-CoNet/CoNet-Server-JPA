@@ -1,26 +1,12 @@
 package com.kuit.conet.domain.auth;
 
-import java.util.Arrays;
-import java.util.Objects;
-
-import com.kuit.conet.common.exception.PlatformException;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.kuit.conet.utils.PlatformDeserializer;
 import lombok.Getter;
-import lombok.AllArgsConstructor;
-
-import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.INVALID_PLATFORM;
 
 @Getter
-@AllArgsConstructor
+@JsonDeserialize(using = PlatformDeserializer.class)
 public enum Platform {
-    APPLE("APPLE"),
-    KAKAO("KAKAO");
-
-    private String platform;
-
-    public static Platform from(String platform) {
-        return Arrays.stream(values())
-                .filter(it -> Objects.equals(it.platform, platform))
-                .findFirst()
-                .orElseThrow(() -> new PlatformException(INVALID_PLATFORM));
-    }
+    APPLE,
+    KAKAO
 }
