@@ -3,6 +3,8 @@ package com.kuit.conet.controller;
 import com.kuit.conet.annotation.UserId;
 import com.kuit.conet.common.exception.PlanException;
 import com.kuit.conet.common.response.BaseResponse;
+import com.kuit.conet.dto.web.request.plan.TeamFixedPlanOnDateRequestDTO;
+import com.kuit.conet.dto.web.request.plan.TeamWaitingPlanRequestDTO;
 import com.kuit.conet.dto.web.response.plan.PlanDetailResponseDTO;
 import com.kuit.conet.dto.web.request.plan.TeamFixedPlanInPeriodRequestDTO;
 import com.kuit.conet.dto.web.request.plan.*;
@@ -33,7 +35,7 @@ public class PlanController {
     }
 
     /**
-     * @apiNote 약속 상세 정보 조회 api
+     * @apiNote 약속 상세 정보 조회 api / 확정 약속만 가능
      */
     @GetMapping("/{planId}")
     public BaseResponse<PlanDetailResponseDTO> getPlan(@PathVariable @Valid Long planId) {
@@ -75,16 +77,16 @@ public class PlanController {
      * / 조회한 유저의 참여 여부 포함
      */
     @GetMapping("/fixed")
-    public BaseResponse<SideMenuFixedPlanResponseDTO> getFixedPlan(@UserId @Valid Long userId, @ModelAttribute TeamFixedPlanInPeriodRequestDTO planRequest) {
+    public BaseResponse<SideMenuFixedPlanResponseDTO> getFixedPlan(@UserId @Valid Long memberId, @ModelAttribute TeamFixedPlanInPeriodRequestDTO planRequest) {
         // 지난 약속
         if (planRequest.getPeriod() == PlanPeriod.PAST) {
-            SideMenuFixedPlanResponseDTO response = planService.getFixedPastPlan(userId, planRequest.getTeamId());
+            SideMenuFixedPlanResponseDTO response = planService.getFixedPastPlan(memberId, planRequest.getTeamId());
             return new BaseResponse<>(response);
         }
 
         // 다가오는 약속
         if (planRequest.getPeriod() == PlanPeriod.ONCOMING) {
-            SideMenuFixedPlanResponseDTO response = planService.getFixedOncomingPlan(userId, planRequest.getTeamId());
+            SideMenuFixedPlanResponseDTO response = planService.getFixedOncomingPlan(memberId, planRequest.getTeamId());
             return new BaseResponse<>(response);
         }
 
@@ -118,36 +120,39 @@ public class PlanController {
         return new BaseResponse<>(response);
     }
 
-/*
-    @PostMapping("/time")
-    public BaseResponse<String> registerTime(HttpServletRequest httpRequest, @RequestBody @Valid PossibleTimeRequest request) {
-        planService.saveTime(request, httpRequest);
+    /**
+     * @apiNote 대기 중인 특정 약속의 나의 가능한 시간 저장 api
+     */
+    @PostMapping("/available-time-slot")
+    public BaseResponse<String> registerAvailableTime(@UserId @Valid Long memberId, @RequestBody @Valid RegisterAvailableTimeRequestDTO planRequest) {
+        planService.registerAvailableTime(memberId, planRequest);
         return new BaseResponse<>("사용자의 가능한 시간 등록에 성공하였습니다.");
     }
 
-    @PostMapping("/delete")
-    public BaseResponse<String> deletePlan(@RequestBody @Valid PlanIdRequest planRequest) {
-        String response = planService.deletePlan(planRequest);
-        return new BaseResponse<>(response);
+    /**
+     * @apiNote 확정된 약속 수정 api
+     */
+    @PostMapping("/update/fixed")
+    public BaseResponse<String> updateFixedPlan(@UserId @Valid Long memberId, @RequestBody @Valid UpdateFixedPlanRequestDTO planRequest) {
+        planService.updateFixedPlan(memberId, planRequest);
+        return new BaseResponse<>("확정 약속의 정보 수정을 성공하였습니다.");
     }
 
-    @PostMapping("/update-waiting")
-    public BaseResponse<String> updateWaitingPlan(@RequestBody @Valid UpdateWaitingPlanRequest planRequest) {
-        String response = planService.updateWaitingPlan(planRequest);
-        return new BaseResponse<>(response);
+    /**
+     * @apiNote 대기 중인 약속 수정 api
+     */
+    @PostMapping("/update/waiting")
+    public BaseResponse<String> updateWaitingPlan(@UserId @Valid Long memberId, @RequestBody @Valid UpdateWaitingPlanRequestDTO planRequest) {
+        planService.updateWaitingPlan(memberId, planRequest);
+        return new BaseResponse<>("대기 중인 약속의 정보 수정을 성공하였습니다.");
     }
 
-    @PostMapping("/update-fixed")
-    //TODO: history 관련 내용 삭제
-    public BaseResponse<String> updateFixedPlan(@RequestPart(value = "requestBody") @Valid UpdatePlanRequest planRequest, @RequestPart(value = "file", required = false) MultipartFile historyImg) {
-        String response = planService.updateFixedPlan(planRequest, historyImg);
-        return new BaseResponse<>(response);
+    /**
+     * @apiNote 약속 삭제 api
+     */
+    @DeleteMapping("/{planId}")
+    public BaseResponse<String> deletePlan(@UserId @Valid Long memberId, @PathVariable @Valid Long planId) {
+        planService.deletePlan(memberId, planId);
+        return new BaseResponse<>("약속 삭제에 성공하였습니다.");
     }
-
-    @GetMapping("/member-plan")
-    public BaseResponse<List<MemberIsInPlanResponse>> getMemberIsInPlan(@ModelAttribute @Valid PlanIdRequest planRequest) {
-        List<MemberIsInPlanResponse> responses = planService.getMemberIsInPlan(planRequest);
-        return new BaseResponse<>(responses);
-    }
-*/
 }

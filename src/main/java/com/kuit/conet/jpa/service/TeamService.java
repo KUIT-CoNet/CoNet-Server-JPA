@@ -103,7 +103,7 @@ public class TeamService {
         validateTeamExisting(team);
 
         // 팀에 존재하는 멤버인지 확인
-        isTeamMember(teamMemberRepository, team.getId(), userId);
+        validateMemberIsTeamMember(teamMemberRepository, team.getId(), userId);
 
         //변경 감지 이용
         TeamMember teamMember = teamMemberRepository.findByTeamIdAndUserId(team.getId(), userId);
@@ -119,7 +119,7 @@ public class TeamService {
         validateTeamExisting(team);
 
         // 모임 삭제 권한이 있는지 확인
-        isTeamMember(teamMemberRepository, teamId, userId);
+        validateMemberIsTeamMember(teamMemberRepository, teamId, userId);
 
         //image 삭제
         deleteImage(teamId);
@@ -137,7 +137,7 @@ public class TeamService {
         String fileName = storageService.getFileName(file, StorageDomain.TEAM);
         Team team = teamRepository.findById(teamRequest.getTeamId());
         validateTeamExisting(team);
-        isTeamMember(teamMemberRepository, teamRequest.getTeamId(), userId);
+        validateMemberIsTeamMember(teamMemberRepository, teamRequest.getTeamId(), userId);
 
         // 새로운 이미지 S3에 업로드
         String newImgUrl = storageService.uploadToS3(file, fileName);
@@ -169,14 +169,14 @@ public class TeamService {
 
     public List<GetTeamMemberResponseDTO> getTeamMembers(Long teamId, Long userId) {
         //팀 구성원인지 확인
-        isTeamMember(teamMemberRepository, teamId, userId);
+        validateMemberIsTeamMember(teamMemberRepository, teamId, userId);
 
         return memberRepository.getMembersByTeamId(teamId);
     }
 
     public GetTeamResponseDTO getTeamDetail(Long teamId, Long userId) {
         // 유저가 팀에 참가 중인지 검사
-        isTeamMember(teamMemberRepository, teamId, userId);
+        validateMemberIsTeamMember(teamMemberRepository, teamId, userId);
 
         GetTeamResponseDTO getTeamResponse = teamRepository.getTeamDetail(teamId, userId);
         return getTeamResponse;

@@ -1,11 +1,10 @@
 package com.kuit.conet.dto.web.request.plan;
 
-import lombok.*;
+import lombok.Getter;
 
 import java.sql.Date;
 
 @Getter
-@Setter
 public class CreatePlanRequestDTO {
     private Long teamId;
     private String planName;

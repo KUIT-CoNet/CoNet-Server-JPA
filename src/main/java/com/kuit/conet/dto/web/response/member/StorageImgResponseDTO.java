@@ -1,13 +1,11 @@
 package com.kuit.conet.dto.web.response.member;
 
 import com.kuit.conet.jpa.domain.team.Team;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class StorageImgResponseDTO {
     private String name;
     private String imgUrl;

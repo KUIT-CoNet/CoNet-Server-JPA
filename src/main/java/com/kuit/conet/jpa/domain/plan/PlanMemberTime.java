@@ -29,4 +29,16 @@ public class PlanMemberTime {
     @Column(length = 500)
     private String availableTime;
 
+    public static PlanMemberTime createPlanMemberTime(Plan plan, Member member, Date date, String availableTime) {
+        PlanMemberTime planMemberTime = new PlanMemberTime();
+        planMemberTime.plan = plan;
+        planMemberTime.member = member;
+        planMemberTime.date = date;
+        planMemberTime.availableTime = availableTime;
+
+        plan.addPlanMemberTime(planMemberTime);
+
+        return planMemberTime;
+    }
+
 }

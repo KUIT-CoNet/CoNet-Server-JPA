@@ -11,11 +11,9 @@ public class PlanMemberRepository {
     private final EntityManager em;
 
     public int deleteOnPlan(Plan plan) {
-        int deletedPlanCount = em.createQuery("delete from PlanMember pm where pm.plan=:plan")
+        return em.createQuery("delete from PlanMember pm where pm.plan=:plan")
                 .setParameter("plan", plan)
                 .executeUpdate();
-        em.flush();
-        return deletedPlanCount;
     }
 
     public void deleteByTeamId(Long teamId) {

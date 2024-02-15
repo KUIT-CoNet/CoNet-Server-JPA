@@ -1,15 +1,20 @@
 package com.kuit.conet.jpa.service;
 
 
+import com.kuit.conet.dto.plan.AvailableDateTimeDTO;
 import com.kuit.conet.dto.plan.*;
 import com.kuit.conet.dto.web.request.plan.*;
 import com.kuit.conet.dto.plan.AvailableMemberDTO;
 import com.kuit.conet.dto.plan.MemberAvailableTimeDTO;
 import com.kuit.conet.dto.plan.MemberDateTimeDTO;
+import com.kuit.conet.dto.web.request.plan.TeamFixedPlanOnDateRequestDTO;
+import com.kuit.conet.dto.web.request.plan.TeamWaitingPlanRequestDTO;
 import com.kuit.conet.dto.web.response.plan.*;
+import com.kuit.conet.jpa.domain.member.Member;
 import com.kuit.conet.jpa.domain.plan.*;
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.repository.*;
+import com.kuit.conet.jpa.service.validator.PlanValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,8 +24,10 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.kuit.conet.jpa.service.validator.PlanValidator.*;
+import static com.kuit.conet.jpa.service.validator.TeamValidator.validateMemberIsTeamMember;
 import static com.kuit.conet.utils.DateAndTimeFormatter.*;
 
 @Slf4j
@@ -32,6 +39,7 @@ public class PlanService {
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final PlanRepository planRepository;
+    private final PlanMemberRepository planMemberRepository;
     private final PlanMemberTimeRepository planMemberTimeRepository;
 
     private final static int ONE_WEEK_DAYS = 7;
@@ -39,9 +47,8 @@ public class PlanService {
     private final static int MIN_TIME_NUMBER = 0;
     private final static int MAX_TIME_NUMBER = 23;
     private final static String AVAILABLE_TIME_SPLIT_REGEX = ",";
+    private final static String NO_AVAILABLE_TIME = "";
     private final static int SECTION_DIVISOR = 3;
-    private final static String SECTION = "section";
-    private final static String INTERVAL_NUMBER = "intervalEndNumberForEachSection";
 
     public CreatePlanResponseDTO createPlan(CreatePlanRequestDTO planRequest) {
         Date endDate = setEndDate(planRequest.getPlanStartDate());
@@ -59,11 +66,16 @@ public class PlanService {
     }
 
     public PlanDetailResponseDTO getPlanDetail(Long planId) {
-        Plan plan = planRepository.findWithMembersById(planId);
+        Plan plan = planRepository.findById(planId);
 
-        List<PlanMemberDTO> planMemberList = setPlanMemberDTOS(plan);
+        //확정 약속인 경우 상세 정보 조회 가능
+        PlanValidator.validatePlanIsFixed(plan);
 
-        return new PlanDetailResponseDTO(plan, planMemberList);
+        Plan planWithMembers = planRepository.findWithMembersById(planId);
+
+        List<PlanMemberDTO> planMemberList = setPlanMemberDTOS(planWithMembers);
+
+        return new PlanDetailResponseDTO(planWithMembers, planMemberList);
     }
 
     public TeamPlanOnDayResponseDTO getFixedPlanOnDay(TeamFixedPlanOnDateRequestDTO planRequest) {
@@ -117,10 +129,10 @@ public class PlanService {
         return new FixPlanResponseDTO(plan);
     }
 
-    private void setPlanMember(List<Long> userIds, Plan plan) {
+    private void setPlanMember(List<Long> memberIds, Plan plan) {
         //cascade로 영속화
-        userIds.forEach(userId
-                -> PlanMember.createPlanMember(plan, memberRepository.findById(userId)));
+        memberIds.forEach(memberId
+                -> PlanMember.createPlanMember(plan, memberRepository.findById(memberId)));
     }
 
     private void deletePlanMemberTime(Plan plan) {
@@ -277,7 +289,7 @@ public class PlanService {
     }
 
     private static int[] setSectionForEachTime(Map<Integer, Long> endNumberForEachSection, int[] membersCount) {
-        int[] section = new int [ONE_DAY_HOURS];
+        int[] section = new int[ONE_DAY_HOURS];
 
         for (int time = MIN_TIME_NUMBER; time <= MAX_TIME_NUMBER; time++) {
             int count = membersCount[time];
@@ -289,5 +301,92 @@ public class PlanService {
         }
 
         return section;
+    }
+
+    public void registerAvailableTime(Long memberId, RegisterAvailableTimeRequestDTO planRequest) {
+        Plan plan = planRepository.findById(planRequest.getPlanId());
+        Member member = memberRepository.findById(memberId);
+
+        //대기 중인 약속일 때만 시간 저장
+        validatePlanIsWaiting(plan);
+
+        //7개의 날에 대하여 가능한 시간 저장
+        for (AvailableDateTimeDTO availableDateTime : planRequest.getAvailableDateTimes()) {
+            savePlanMemberTime(availableDateTime, plan, member);
+        }
+    }
+
+    private void savePlanMemberTime(AvailableDateTimeDTO availableDateTime, Plan plan, Member member) {
+        Date availableDate = availableDateTime.getDate();
+
+        //해당 날짜의 기존 데이터 삭제
+        planMemberTimeRepository.deleteExistingAvailableTimeOnDate(plan, member, availableDate);
+
+        //7개의 날에 대하여 가능한 시간을 문자열로 변환
+        String availableTimes = setAvailableTimeToString(availableDateTime.getTime());
+
+        //가능한 시간 저장
+        PlanMemberTime planMemberTime = PlanMemberTime.createPlanMemberTime(plan, member, availableDate, availableTimes);
+    }
+
+    // 특정 날짜에 가능한 시간을 문자열로 변환
+    private String setAvailableTimeToString(List<Integer> times) {
+        //가능한 시간이 없는 경우
+        if (times.isEmpty()) return NO_AVAILABLE_TIME;
+
+        return times.stream()
+                .map(time -> Integer.toString(time))
+                .collect(Collectors.joining(AVAILABLE_TIME_SPLIT_REGEX));
+    }
+
+    public void updateFixedPlan(Long memberId, UpdateFixedPlanRequestDTO planRequest) {
+        Plan plan = planRepository.findById(planRequest.getPlanId());
+
+        //확정된 약속일 때만 수정
+        validatePlanIsFixed(plan);
+
+        //약속 수정 권한이 있는지 확인(모임 구성원 여부)
+        validateMemberIsTeamMember(teamMemberRepository, plan.getTeamId(), memberId);
+
+        //약속 이름, 약속 날짜/시간 update
+        plan.updateFixedPlan(planRequest.getPlanName(), planRequest.getDate(), timeWithSeconds(planRequest.getTime()));
+
+        //구성원 update
+        //1. 기존 구성원 삭제
+        planMemberRepository.deleteOnPlan(plan);
+        //2. 새로운 구성원 추가
+        setPlanMember(planRequest.getMemberIds(), plan);
+    }
+
+    public void updateWaitingPlan(Long memberId, UpdateWaitingPlanRequestDTO planRequest) {
+        Plan plan = planRepository.findById(planRequest.getPlanId());
+
+        //대기 중인 약속일 때만 나의 가능한 시간 조회
+        validatePlanIsWaiting(plan);
+
+        //약속 수정 권한이 있는지 확인(모임 구성원 여부)
+        validateMemberIsTeamMember(teamMemberRepository, plan.getTeamId(), memberId);
+
+        plan.updateWaitingPlan(planRequest.getPlanName());
+    }
+
+    public void deletePlan(Long memberId, Long planId) {
+        Plan plan = planRepository.findById(planId);
+
+        //약속 수정 권한이 있는지 확인(모임 구성원 여부)
+        validateMemberIsTeamMember(teamMemberRepository, plan.getTeamId(), memberId);
+
+        //약속 삭제
+        //변경 감지로 가능하지만 delete 쿼리가 일일이 실행되기 때문에 각각 벌크 연산 실행
+        //1. 확정 약속 -> plan_member 삭제
+        if (plan.isFixedPlan()) {
+            planMemberRepository.deleteOnPlan(plan);
+        }
+        //2. 대기 중인 약속 -> plan_member_time 삭제
+        if (!plan.isFixedPlan()) {
+            planMemberTimeRepository.deleteOnPlan(plan);
+        }
+
+        planRepository.delete(plan);
     }
 }

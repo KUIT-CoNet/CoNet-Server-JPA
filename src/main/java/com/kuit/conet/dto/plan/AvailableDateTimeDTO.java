@@ -1,4 +1,4 @@
-package com.kuit.conet.domain.plan;
+package com.kuit.conet.dto.plan;
 
 import lombok.*;
 
@@ -6,11 +6,7 @@ import java.sql.Date;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@Setter
-public class PossibleDateTime {
+public class AvailableDateTimeDTO {
     private Date date;
     private List<Integer> time;
 }

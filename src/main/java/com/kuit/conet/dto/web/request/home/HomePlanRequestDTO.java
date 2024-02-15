@@ -1,12 +1,10 @@
-package com.kuit.conet.dto.web.request.plan;
+package com.kuit.conet.dto.web.request.home;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class HomePlanRequestDTO {
     private String searchDate;
     // 특정 달의 조회: "yyyy-MM"

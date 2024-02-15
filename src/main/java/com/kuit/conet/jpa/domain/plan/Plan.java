@@ -1,6 +1,5 @@
 package com.kuit.conet.jpa.domain.plan;
 
-import com.kuit.conet.dto.plan.PlanMemberDTO;
 import com.kuit.conet.jpa.domain.team.Team;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -77,8 +76,30 @@ public class Plan {
         this.planMembers.add(planMember);
     }
 
+    public void addPlanMemberTime(PlanMemberTime planMemberTime) {
+        this.planMemberTimes.add(planMemberTime);
+    }
+
     public int getPlanMembersCount() {
         return planMembers.size();
+    }
+
+    public void updateFixedPlan(String planName, Date date, Time time) {
+        name = planName;
+        fixedDate = date;
+        fixedTime = time;
+    }
+
+    public void updateWaitingPlan(String planName) {
+        name = planName;
+    }
+
+    public Long getTeamId() {
+        return team.getId();
+    }
+
+    public boolean isFixedPlan() {
+        return status == PlanStatus.FIXED;
     }
 
 }

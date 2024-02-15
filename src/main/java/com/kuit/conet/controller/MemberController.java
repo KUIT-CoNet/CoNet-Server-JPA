@@ -30,7 +30,7 @@ public class MemberController {
     }
 
     @PostMapping("/image")
-    public BaseResponse<StorageImgResponseDTO> updateImg(@UserId Long userId, @RequestParam(value = "file") MultipartFile file) {
+    public BaseResponse<StorageImgResponseDTO> updateImg(@UserId Long userId, @RequestPart(value = "file") MultipartFile file) {
         StorageImgResponseDTO response = memberService.updateImg(userId, file);
         return new BaseResponse<>(response);
     }

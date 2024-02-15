@@ -2,13 +2,11 @@ package com.kuit.conet.dto.web.response.team;
 
 import com.kuit.conet.jpa.domain.team.Team;
 import com.kuit.conet.jpa.service.validator.TeamValidator;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class GetTeamResponseDTO {
     private Long teamId;
     private String teamName;
@@ -18,11 +16,11 @@ public class GetTeamResponseDTO {
     private Boolean bookmark;
 
 
-    public GetTeamResponseDTO(Team team, Long teamMemberCount, Boolean bookmark) {
+    public GetTeamResponseDTO(Team team, int teamMemberCount, Boolean bookmark) {
         this.teamId = team.getId();
         this.teamName = team.getName();
         this.teamImgUrl = team.getImgUrl();
-        this.teamMemberCount = teamMemberCount;
+        this.teamMemberCount = (long) teamMemberCount;
         this.bookmark = bookmark;
 
         //isNew 결정

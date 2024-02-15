@@ -1,7 +1,7 @@
 package com.kuit.conet.dto.web.response.member;
 
 import com.kuit.conet.jpa.domain.member.Member;
-import lombok.*;
+import lombok.Getter;
 
 @Getter
 public class MemberResponseDTO {
