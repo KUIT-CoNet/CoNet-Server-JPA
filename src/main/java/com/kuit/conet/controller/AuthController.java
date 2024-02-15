@@ -51,6 +51,9 @@ public class AuthController {
         return new BaseResponse<>(response);
     }
 
+    /**
+     * @apiNote 토큰 재생성 api
+     * */
     @PostMapping("/regenerate-token")
     public BaseResponse<LoginResponseDTO> regenerateToken(@UserId @Valid Long userId, @RefreshToken @Valid String refreshToken, @ClientIp String clientIp) {
         LoginResponseDTO response = authService.regenerateToken(userId, refreshToken, clientIp);
