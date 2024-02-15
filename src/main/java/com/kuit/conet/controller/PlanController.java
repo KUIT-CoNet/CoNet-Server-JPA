@@ -35,7 +35,7 @@ public class PlanController {
     }
 
     /**
-     * @apiNote 약속 상세 정보 조회 api
+     * @apiNote 약속 상세 정보 조회 api / 확정 약속만 가능
      */
     @GetMapping("/{planId}")
     public BaseResponse<PlanDetailResponseDTO> getPlan(@PathVariable @Valid Long planId) {
