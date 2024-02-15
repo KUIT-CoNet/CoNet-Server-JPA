@@ -52,7 +52,7 @@ public class MemberController {
         return new BaseResponse<>(memberService.bookmarkTeam(memberId, request));
     }
 
-    @DeleteMapping()
+    @DeleteMapping
     public BaseResponse<String> deleteMember(@MemberId Long memberId) {
         memberService.deleteMember(memberId);
         return new BaseResponse<>("유저 탈퇴에 성공하였습니다.");

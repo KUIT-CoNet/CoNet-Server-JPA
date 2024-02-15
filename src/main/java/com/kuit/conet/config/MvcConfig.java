@@ -39,7 +39,6 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/member");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/member/name");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/member/image");
-        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/member/delete");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/member/bookmark");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/{teamId}");
