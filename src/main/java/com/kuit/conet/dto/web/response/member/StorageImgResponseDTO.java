@@ -1,6 +1,6 @@
 package com.kuit.conet.dto.web.response.member;
 
-import com.kuit.conet.jpa.domain.team.Team;
+import com.kuit.conet.domain.team.Team;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

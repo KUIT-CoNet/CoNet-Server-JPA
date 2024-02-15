@@ -7,7 +7,7 @@ import com.kuit.conet.dto.web.request.auth.LoginRequestDTO;
 import com.kuit.conet.dto.web.request.auth.PutOptionTermAndNameRequestDTO;
 import com.kuit.conet.dto.web.response.auth.TermAndNameResponseDTO;
 import com.kuit.conet.dto.web.response.auth.LoginResponseDTO;
-import com.kuit.conet.jpa.service.AuthService;
+import com.kuit.conet.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

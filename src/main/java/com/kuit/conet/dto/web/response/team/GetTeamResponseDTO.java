@@ -1,7 +1,7 @@
 package com.kuit.conet.dto.web.response.team;
 
-import com.kuit.conet.jpa.domain.team.Team;
-import com.kuit.conet.jpa.service.validator.TeamValidator;
+import com.kuit.conet.domain.team.Team;
+import com.kuit.conet.service.validator.TeamValidator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

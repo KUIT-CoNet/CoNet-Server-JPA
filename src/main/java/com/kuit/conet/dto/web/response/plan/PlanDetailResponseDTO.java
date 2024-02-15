@@ -1,7 +1,7 @@
 package com.kuit.conet.dto.web.response.plan;
 
 import com.kuit.conet.dto.plan.PlanMemberDTO;
-import com.kuit.conet.jpa.domain.plan.Plan;
+import com.kuit.conet.domain.plan.Plan;
 import lombok.*;
 
 import java.util.List;

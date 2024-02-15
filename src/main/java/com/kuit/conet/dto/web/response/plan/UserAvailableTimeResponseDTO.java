@@ -5,8 +5,6 @@ import lombok.Getter;
 
 import java.util.List;
 
-import static com.kuit.conet.jpa.domain.plan.AvailableTimeRegisteredStatus.*;
-
 @Getter
 public class UserAvailableTimeResponseDTO {
     private Long planId;
