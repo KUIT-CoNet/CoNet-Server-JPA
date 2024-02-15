@@ -29,6 +29,7 @@ public class TeamController {
      */
     @PostMapping
     public BaseResponse<CreateTeamResponseDTO> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequestDTO teamRequest, @UserId Long userId, @RequestPart(value = "file") MultipartFile file) {
+        log.debug("userId TeamController: {}", userId);
         CreateTeamResponseDTO response = teamService.createTeam(teamRequest, userId, file);
         return new BaseResponse<>(response);
     }

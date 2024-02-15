@@ -20,17 +20,17 @@ public class BearerAuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest httpRequest,
                              HttpServletResponse httpResponse, Object handler) {
-        log.info("interceptor.preHandle 호출");
+        log.debug("interceptor.preHandle 호출");
         String token = authExtractor.extract(httpRequest, "Bearer");
         httpRequest.setAttribute("token", token);
-        log.info("Token: {}", token);
+        log.debug("Token: {}", token);
 
         if (token == null || token.length() == 0) {
             return true;
         }
 
         Long userId = jwtParser.getUserIdFromToken(token);
-        log.info("userId: {}", userId);
+        log.debug("userId: {}", userId);
         httpRequest.setAttribute("userId", userId);
 
         return true;
