@@ -1,6 +1,6 @@
 package com.kuit.conet.config;
 
-import com.kuit.conet.utils.StringToEnumConverter;
+import com.kuit.conet.utils.StringToPlanPeriodConverter;
 import com.kuit.conet.utils.auth.BearerAuthInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new StringToEnumConverter());
+        registry.addConverter(new StringToPlanPeriodConverter());
     }
 
     public void addInterceptors(InterceptorRegistry registry) {
