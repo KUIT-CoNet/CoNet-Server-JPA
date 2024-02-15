@@ -26,9 +26,9 @@ public class TeamValidator {
         }
     }
 
-    public static void validateNewMemberInTeam(TeamRepository teamRepository, Long userId, Team team) {
-        if (teamRepository.isExistUser(team.getId(), userId)) {
-            throw new TeamException(EXIST_USER_IN_TEAM);
+    public static void validateNewMemberInTeam(TeamRepository teamRepository, Long memberId, Team team) {
+        if (teamRepository.isExistMember(team.getId(), memberId)) {
+            throw new TeamException(EXIST_MEMBER_IN_TEAM);
         }
     }
 
@@ -62,8 +62,8 @@ public class TeamValidator {
         }
     }
 
-    public static void validateMemberIsTeamMember(TeamMemberRepository teamMemberRepository, Long teamId, Long userId) {
-        if (!teamMemberRepository.isTeamMember(teamId, userId)) {
+    public static void validateMemberIsTeamMember(TeamMemberRepository teamMemberRepository, Long teamId, Long memberId) {
+        if (!teamMemberRepository.isTeamMember(teamId, memberId)) {
             throw new TeamException(NOT_TEAM_MEMBER);
         }
     }

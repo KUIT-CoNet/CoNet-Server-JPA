@@ -16,13 +16,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
-    private final UserIdResolver userIdResolver;
+    private final MemberIdResolver memberIdResolver;
     private final ClientIpResolver clientIpResolver;
     private final RefreshTokenResolver refreshTokenResolver;
     private final BearerAuthInterceptor bearerAuthInterceptor;
 
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(userIdResolver);
+        resolvers.add(memberIdResolver);
         resolvers.add(clientIpResolver);
         resolvers.add(refreshTokenResolver);
     }
@@ -36,17 +36,17 @@ public class MvcConfig implements WebMvcConfigurer {
         log.info("Interceptor 등록");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/auth/term");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/auth/regenerate-token");
-        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/user");
-        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/user/name");
-        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/user/image");
-        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/user/delete");
+        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/member");
+        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/member/name");
+        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/member/image");
+        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/member/delete");
+        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/member/bookmark");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/{teamId}");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/{teamId}/members");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/create");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/join");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/leave");
-        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/user/bookmark");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/team/bookmark/delete");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/plan/fixed");
         registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/plan/{planId}");

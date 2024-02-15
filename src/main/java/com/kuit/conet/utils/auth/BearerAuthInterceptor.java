@@ -29,9 +29,9 @@ public class BearerAuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        Long userId = jwtParser.getUserIdFromToken(token);
-        log.debug("userId: {}", userId);
-        httpRequest.setAttribute("userId", userId);
+        Long memberId = jwtParser.getMemberIdFromToken(token);
+        log.debug("memberId: {}", memberId);
+        httpRequest.setAttribute("memberId", memberId);
 
         return true;
     }

@@ -23,9 +23,9 @@ public class PlanMemberRepository {
                 .executeUpdate();
     }
 
-    public int deleteOnPlanByUserId(Long userId) {
-        int deletedPlanMemberCount = em.createQuery("delete from PlanMember pm where pm.member.id=:userId")
-                .setParameter("userId", userId)
+    public int deleteOnPlanByMemberId(Long memberId) {
+        int deletedPlanMemberCount = em.createQuery("delete from PlanMember pm where pm.member.id=:memberId")
+                .setParameter("memberId", memberId)
                 .executeUpdate();
         em.flush();
         return deletedPlanMemberCount;

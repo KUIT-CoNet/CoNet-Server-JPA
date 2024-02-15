@@ -36,16 +36,16 @@ public class TeamRepository {
                 .getSingleResult();
     }
 
-    public boolean isExistUser(Long teamId, Long userId) {
-        return em.createQuery("select count(tm) > 0 from Team t join t.teamMembers tm on t.id =:teamId and tm.member.id=:userId", Boolean.class)
-                .setParameter("userId", userId)
+    public boolean isExistMember(Long teamId, Long memberId) {
+        return em.createQuery("select count(tm) > 0 from Team t join t.teamMembers tm on t.id =:teamId and tm.member.id=:memberId", Boolean.class)
+                .setParameter("memberId", memberId)
                 .setParameter("teamId", teamId)
                 .getSingleResult();
     }
 
-    public List<Team> findByUserId(Long userId) {
-        return em.createQuery("select t from Team t join t.teamMembers tm on tm.member.id=:userId", Team.class)
-                .setParameter("userId", userId)
+    public List<Team> findByMemberId(Long memberId) {
+        return em.createQuery("select t from Team t join t.teamMembers tm on tm.member.id=:memberId", Team.class)
+                .setParameter("memberId", memberId)
                 .getResultList();
     }
 
@@ -61,11 +61,11 @@ public class TeamRepository {
                 .executeUpdate();
     }
 
-    public GetTeamResponseDTO getTeamDetail(Long teamId, Long userId) {
+    public GetTeamResponseDTO getTeamDetail(Long teamId, Long memberId) {
         return em.createQuery("select new com.kuit.conet.dto.web.response.team.GetTeamResponseDTO(t, size(t.teamMembers), tm.bookMark) " +
-                        "from Team t join t.teamMembers tm where t.id = :teamId and tm.member.id=:userId", GetTeamResponseDTO.class)
+                        "from Team t join t.teamMembers tm where t.id = :teamId and tm.member.id=:memberId", GetTeamResponseDTO.class)
                 .setParameter("teamId", teamId)
-                .setParameter("userId", userId)
+                .setParameter("memberId", memberId)
                 .getSingleResult();
     }
 }

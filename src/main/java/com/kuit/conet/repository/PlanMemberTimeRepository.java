@@ -39,19 +39,20 @@ public class PlanMemberTimeRepository {
                 .executeUpdate();
     }
 
-    public boolean isUserAvailableTimeDataExist(Plan plan, Long userId) {
-        return em.createQuery("select count(pmt) > 0 from PlanMemberTime pmt where pmt.plan=:plan and pmt.member.id=:userId", Boolean.class)
+    public boolean isMemberAvailableTimeDataExist(Plan plan, Long memberId) {
+        return em.createQuery("select count(pmt) > 0 from PlanMemberTime pmt " +
+                        "where pmt.plan=:plan and pmt.member.id=:memberId", Boolean.class)
                 .setParameter("plan", plan)
-                .setParameter("userId", userId)
+                .setParameter("memberId", memberId)
                 .getSingleResult();
     }
 
-    public List<PlanMemberTime> findByTeamAndMemberId(Plan plan, Long userId) {
+    public List<PlanMemberTime> findByTeamAndMemberId(Plan plan, Long memberId) {
         return em.createQuery("select pmt " +
-                        "from PlanMemberTime pmt where pmt.plan=:plan and pmt.member.id=:userId " +
+                        "from PlanMemberTime pmt where pmt.plan=:plan and pmt.member.id=:memberId " +
                         "order by pmt.date", PlanMemberTime.class)
                 .setParameter("plan", plan)
-                .setParameter("userId", userId)
+                .setParameter("memberId", memberId)
                 .getResultList();
     }
 
@@ -64,9 +65,9 @@ public class PlanMemberTimeRepository {
                 .getResultList();
     }
 
-    public int deleteOnPlanByUserId(Long userId) {
-        int deletedPlanCount = em.createQuery("delete from PlanMemberTime pmt where pmt.member.id=:userId")
-                .setParameter("userId", userId)
+    public int deleteOnPlanByMemberId(Long memberId) {
+        int deletedPlanCount = em.createQuery("delete from PlanMemberTime pmt where pmt.member.id=:memberId")
+                .setParameter("memberId", memberId)
                 .executeUpdate();
         em.flush();
         return deletedPlanCount;

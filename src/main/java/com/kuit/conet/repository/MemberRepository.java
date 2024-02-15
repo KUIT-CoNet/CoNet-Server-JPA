@@ -42,20 +42,20 @@ public class MemberRepository {
                 .getResultList();
     }
 
-    public StorageImgResponseDTO getImgUrlResponse(Long userId) {
+    public StorageImgResponseDTO getImgUrlResponse(Long memberId) {
         return em.createQuery("select new com.kuit.conet.dto.web.response.member.StorageImgResponseDTO(m.name, m.imgUrl) " +
-                        "from Member m where m.id=:userId and m.status=:status", StorageImgResponseDTO.class)
-                .setParameter("userId", userId)
+                        "from Member m where m.id=:memberId and m.status=:status", StorageImgResponseDTO.class)
+                .setParameter("memberId", memberId)
                 .setParameter("status", MemberStatus.ACTIVE)
                 .getSingleResult();
     }
 
-    public Boolean isDefaultImage(Long userId) {
+    public Boolean isDefaultImage(Long memberId) {
         return em.createQuery("select case when " +
-                        "(select m.imgUrl from Member m where m.id=:userId and m.status=:status) " +
+                        "(select m.imgUrl from Member m where m.id=:memberId and m.status=:status) " +
                         "= :defaultImg " +
                         "then TRUE else FALSE end from Member m", Boolean.class)
-                .setParameter("userId", userId)
+                .setParameter("memberId", memberId)
                 .setParameter("status", MemberStatus.ACTIVE)
                 .setParameter("defaultImg", defaultImg)
                 .getSingleResult();
@@ -68,16 +68,18 @@ public class MemberRepository {
                 .getResultList();
     }
 
-    public List<GetTeamResponseDTO> getBookmarks(Long userId) {
-        return em.createQuery("select new com.kuit.conet.dto.web.response.team.GetTeamResponseDTO(t, (select count(tm) from TeamMember tm where tm.team.id=t.id), tm.bookMark) " +
-                        "from TeamMember tm join tm.team t where tm.member.id=:userId", GetTeamResponseDTO.class)
-                .setParameter("userId", userId)
+    public List<GetTeamResponseDTO> getBookmarks(Long memberId) {
+        return em.createQuery("select new com.kuit.conet.dto.web.response.team.GetTeamResponseDTO(t, (select count(tm) from TeamMember tm " +
+                        "where tm.team.id=t.id), tm.bookMark) " +
+                        "from TeamMember tm join tm.team t where tm.member.id=:memberId", GetTeamResponseDTO.class)
+                .setParameter("memberId", memberId)
                 .getResultList();
     }
 
-    public void deleteUser(Long userId) {
-        em.createQuery("update Member m set m.platform='', m.platformId='', m.imgUrl='', m.serviceTerm=False, m.status='INACTIVE' where m.id=:userId and m.status='ACTIVE'")
-                .setParameter("userId", userId)
+    public void deleteMember(Long memberId) {
+        em.createQuery("update Member m set m.platform='', m.platformId='', m.imgUrl='', m.serviceTerm=False, m.status='INACTIVE' " +
+                        "where m.id=:memberId and m.status='ACTIVE'")
+                .setParameter("memberId", memberId)
                 .executeUpdate();
         em.flush();
     }

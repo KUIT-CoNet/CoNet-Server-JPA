@@ -2,7 +2,7 @@ package com.kuit.conet.controller;
 
 import com.kuit.conet.annotation.ClientIp;
 import com.kuit.conet.annotation.RefreshToken;
-import com.kuit.conet.annotation.UserId;
+import com.kuit.conet.annotation.MemberId;
 import com.kuit.conet.common.exception.PlatformException;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.auth.LoginRequestDTO;
@@ -46,8 +46,8 @@ public class AuthController {
      * @apiNote 이용 약관 동의 및 이름 입력 api
      * */
     @PostMapping("/term")
-    public BaseResponse<TermAndNameResponseDTO> agreeTermAndPutName(@UserId Long userId, @RequestBody @Valid PutOptionTermAndNameRequestDTO authRequest) {
-        TermAndNameResponseDTO response = authService.agreeTermAndPutName(userId, authRequest);
+    public BaseResponse<TermAndNameResponseDTO> agreeTermAndPutName(@MemberId Long memberId, @RequestBody @Valid PutOptionTermAndNameRequestDTO authRequest) {
+        TermAndNameResponseDTO response = authService.agreeTermAndPutName(memberId, authRequest);
         return new BaseResponse<>(response);
     }
 
@@ -55,8 +55,8 @@ public class AuthController {
      * @apiNote 토큰 재발급 api
      * */
     @PostMapping("/regenerate-token")
-    public BaseResponse<LoginResponseDTO> regenerateToken(@UserId @Valid Long userId, @RefreshToken @Valid String refreshToken, @ClientIp String clientIp) {
-        LoginResponseDTO response = authService.regenerateToken(userId, refreshToken, clientIp);
+    public BaseResponse<LoginResponseDTO> regenerateToken(@MemberId @Valid Long memberId, @RefreshToken @Valid String refreshToken, @ClientIp String clientIp) {
+        LoginResponseDTO response = authService.regenerateToken(memberId, refreshToken, clientIp);
         return new BaseResponse<>(response);
     }
 

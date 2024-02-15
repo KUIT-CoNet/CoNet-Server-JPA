@@ -38,32 +38,32 @@ public class MemberService {
     @Value("${spring.user.default-image}")
     private String defaultMemberImg;
 
-    public StorageImgResponseDTO updateImg(Long userId, MultipartFile file) {
-        Member member = memberRepository.findById(userId);
+    public StorageImgResponseDTO updateImg(Long memberId, MultipartFile file) {
+        Member member = memberRepository.findById(memberId);
         validateMemberExisting(member);
         validateActiveMember(member);
 
-        storageService.deletePreviousImage(userId);
+        storageService.deletePreviousImage(memberId);
 
         // 저장할 파일명 만들기
         // 새로운 이미지 S3에 업로드
-        String imgUrl = storageService.uploadToS3(file, getFileName(file, StorageDomain.USER));
+        String imgUrl = storageService.uploadToS3(file, getFileName(file, StorageDomain.MEMBER));
 
         // 변경감지로 update
         member.updateImgUrl(imgUrl);
-        return memberRepository.getImgUrlResponse(userId);
+        return memberRepository.getImgUrlResponse(memberId);
     }
 
-    public void updateName(Long userId, NameRequestDTO nameRequest) {
-        Member member = memberRepository.findById(userId);
+    public void updateName(Long memberId, NameRequestDTO nameRequest) {
+        Member member = memberRepository.findById(memberId);
         validateMemberExisting(member);
         validateActiveMember(member);
 
         member.updateName(nameRequest.getName());
     }
 
-    public MemberResponseDTO getUser(Long userId) {
-        Member member = memberRepository.findById(userId);
+    public MemberResponseDTO getMember(Long memberId) {
+        Member member = memberRepository.findById(memberId);
         validateMemberExisting(member);
         validateActiveMember(member);
 
@@ -78,18 +78,18 @@ public class MemberService {
         return new MemberResponseDTO(member);
     }
 
-    public List<GetTeamResponseDTO> getBookmarks(Long userId) {
-        Member member = memberRepository.findById(userId);
+    public List<GetTeamResponseDTO> getBookmarks(Long memberId) {
+        Member member = memberRepository.findById(memberId);
         validateMemberExisting(member);
         validateActiveMember(member);
 
-        List<GetTeamResponseDTO> teamResponses = memberRepository.getBookmarks(userId);
+        List<GetTeamResponseDTO> teamResponses = memberRepository.getBookmarks(memberId);
 
         return teamResponses;
     }
 
-    public String bookmarkTeam(Long userId, TeamIdRequestDTO request) {
-        Member member = memberRepository.findById(userId);
+    public String bookmarkTeam(Long memberId, TeamIdRequestDTO request) {
+        Member member = memberRepository.findById(memberId);
         validateMemberExisting(member);
         validateActiveMember(member);
 
@@ -97,32 +97,32 @@ public class MemberService {
         validateTeamExisting(teamRepository.findById(teamId));
 
         // 유저가 팀에 참가 중인지 검사
-        TeamValidator.validateMemberIsTeamMember(teamMemberRepository, teamId, userId);
+        TeamValidator.validateMemberIsTeamMember(teamMemberRepository, teamId, memberId);
 
-        teamMemberRepository.bookmarkTeam(userId, teamId);
+        teamMemberRepository.bookmarkTeam(memberId, teamId);
 
-        if (teamMemberRepository.isBookmark(userId, teamId)) {
+        if (teamMemberRepository.isBookmark(memberId, teamId)) {
             return "모임을 즐겨찾기에 추가하였습니다.";
         } else {
             return "모임을 즐겨찾기에서 삭제하였습니다.";
         }
     }
 
-    public void deleteMember(Long userId) {
-        Member member = memberRepository.findById(userId);
+    public void deleteMember(Long memberId) {
+        Member member = memberRepository.findById(memberId);
         validateMemberExisting(member);
         validateActiveMember(member);
 
         // S3 에서 프로필 이미지 객체 삭제
-        storageService.deletePreviousImage(userId);
+        storageService.deletePreviousImage(memberId);
 
-        int deletedTeamMemberCount = teamMemberRepository.deleteTeamMemberByUserId(userId);
-        planMemberTimeRepository.deleteOnPlanByUserId(userId);
-        int deletedPlanMemberCount = planMemberRepository.deleteOnPlanByUserId(userId);
+        int deletedTeamMemberCount = teamMemberRepository.deleteTeamMemberByMemberId(memberId);
+        planMemberTimeRepository.deleteOnPlanByMemberId(memberId);
+        int deletedPlanMemberCount = planMemberRepository.deleteOnPlanByMemberId(memberId);
 
         log.info(deletedTeamMemberCount + "");
         log.info(deletedPlanMemberCount + "");
 
-        memberRepository.deleteUser(userId);
+        memberRepository.deleteMember(memberId);
     }
 }

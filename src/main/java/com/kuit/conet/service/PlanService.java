@@ -99,13 +99,13 @@ public class PlanService {
         return new WaitingPlanResponseDTO(teamWaitingPlans);
     }
 
-    public SideMenuFixedPlanResponseDTO getFixedPastPlan(Long userId, Long teamId) {
-        List<SideMenuFixedPlanDTO> fixedPastPlans = planRepository.getFixedPastPlans(teamId, userId);
+    public SideMenuFixedPlanResponseDTO getFixedPastPlan(Long memberId, Long teamId) {
+        List<SideMenuFixedPlanDTO> fixedPastPlans = planRepository.getFixedPastPlans(teamId, memberId);
         return new SideMenuFixedPlanResponseDTO(fixedPastPlans);
     }
 
-    public SideMenuFixedPlanResponseDTO getFixedOncomingPlan(Long userId, Long teamId) {
-        List<SideMenuFixedPlanDTO> fixedOncomingPlans = planRepository.getFixedOncomingPlans(teamId, userId);
+    public SideMenuFixedPlanResponseDTO getFixedOncomingPlan(Long memberId, Long teamId) {
+        List<SideMenuFixedPlanDTO> fixedOncomingPlans = planRepository.getFixedOncomingPlans(teamId, memberId);
         return new SideMenuFixedPlanResponseDTO(fixedOncomingPlans);
     }
 
@@ -123,7 +123,7 @@ public class PlanService {
         plan.fixPlan(planRequest.getFixedDate(), fixedTime);
 
         //확정한 약속의 구성원
-        setPlanMember(planRequest.getUserIds(), plan);
+        setPlanMember(planRequest.getMemberIds(), plan);
 
         //해당 약속의 모든 PlanMemberTime 삭제
         deletePlanMemberTime(plan);
@@ -153,32 +153,32 @@ public class PlanService {
                 .toList();
     }
 
-    public UserAvailableTimeResponseDTO getUserAvailableTimeSlot(Long planId, Long userId) {
+    public OneMemberAvailableTimeResponseDTO getOneMemberAvailableTimeSlot(Long planId, Long memberId) {
         Plan plan = planRepository.findById(planId);
 
         // 대기 중인 약속일 때만 나의 가능한 시간 조회
         validatePlanIsWaiting(plan);
 
         // 유저의 시간 정보 유무 조회
-        if(!planMemberTimeRepository.isUserAvailableTimeDataExist(plan, userId)) {
-            return UserAvailableTimeResponseDTO.notRegistered(planId, userId);
+        if(!planMemberTimeRepository.isMemberAvailableTimeDataExist(plan, memberId)) {
+            return OneMemberAvailableTimeResponseDTO.notRegistered(planId, memberId);
         }
 
         // 가능한 시간 정보 조회
-        List<PlanMemberTime> planMemberTimes = planMemberTimeRepository.findByTeamAndMemberId(plan, userId);
-        List<UserAvailableTimeDTO> timeSlot = getAvailableTimeSlot(planMemberTimes);
+        List<PlanMemberTime> planMemberTimes = planMemberTimeRepository.findByTeamAndMemberId(plan, memberId);
+        List<OneMemberAvailableTimeDTO> timeSlot = getAllMemberAvailableTimeSlot(planMemberTimes);
 
         // 가능한 시간이 존재하는지
         Boolean hasAvailableTime = timeSlot.stream()
                 .anyMatch(timeSlotOnDay -> !timeSlotOnDay.getAvailableTimes().isEmpty());
 
-        return UserAvailableTimeResponseDTO.registered(planId, userId, hasAvailableTime, timeSlot);
+        return OneMemberAvailableTimeResponseDTO.registered(planId, memberId, hasAvailableTime, timeSlot);
     }
 
-    private static List<UserAvailableTimeDTO> getAvailableTimeSlot(List<PlanMemberTime> planMemberTimes) {
+    private static List<OneMemberAvailableTimeDTO> getAllMemberAvailableTimeSlot(List<PlanMemberTime> planMemberTimes) {
          return planMemberTimes.stream()
                 .map(planMemberTime -> {
-                    UserAvailableTimeDTO responseDTO = new UserAvailableTimeDTO(planMemberTime.getDate());
+                    OneMemberAvailableTimeDTO responseDTO = new OneMemberAvailableTimeDTO(planMemberTime.getDate());
                     String availableTime = planMemberTime.getAvailableTime();
 
                     List<Integer> timeList = new ArrayList<>();
@@ -191,7 +191,7 @@ public class PlanService {
                 }).toList();
     }
 
-    public MemberAvailableTimeResponseDTO getAvailableTimeSlot(Long planId) {
+    public AllMemberAvailableTimeResponseDTO getAllMemberAvailableTimeSlot(Long planId) {
         Plan plan = planRepository.findById(planId);
 
         // 대기 중인 약속일 때만 구성원의 가능한 시간 조회
@@ -221,7 +221,7 @@ public class PlanService {
             date = Date.valueOf(date.toLocalDate().plusDays(1));
         }
 
-        return new MemberAvailableTimeResponseDTO(teamId, plan, endNumberForEachSection, memberDateTimes);
+        return new AllMemberAvailableTimeResponseDTO(teamId, plan, endNumberForEachSection, memberDateTimes);
     }
 
     private List<AvailableMemberDTO> getAvailableTimeOnDay(Plan plan, Date date, Long teamMemberTotalCount, Map<Integer, Long> endNumberForEachSection) {

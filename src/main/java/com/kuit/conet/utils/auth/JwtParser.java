@@ -23,7 +23,7 @@ public class JwtParser {
     private static final int HEADER_INDEX = 0;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public Long getUserIdFromToken(String accessToken) {
+    public Long getMemberIdFromToken(String accessToken) {
         try {
             return Long.parseLong(Jwts.parser()
                     .setSigningKey(secretKey)

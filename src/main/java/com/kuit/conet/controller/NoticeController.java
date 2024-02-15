@@ -1,6 +1,6 @@
 package com.kuit.conet.controller;
 
-import com.kuit.conet.annotation.UserId;
+import com.kuit.conet.annotation.MemberId;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.response.notice.NoticeResponseDTO;
 import com.kuit.conet.service.NoticeService;
@@ -18,8 +18,8 @@ public class NoticeController {
     private final NoticeService noticeService;
 
     @GetMapping
-    public BaseResponse<NoticeResponseDTO> getNotice(@UserId Long userId) {
-        NoticeResponseDTO response = noticeService.getNotice(userId);
+    public BaseResponse<NoticeResponseDTO> getNotice(@MemberId Long memberId) {
+        NoticeResponseDTO response = noticeService.getNotice(memberId);
         return new BaseResponse<>(response);
     }
 }

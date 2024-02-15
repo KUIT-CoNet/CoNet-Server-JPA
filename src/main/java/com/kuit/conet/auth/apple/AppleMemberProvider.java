@@ -1,12 +1,11 @@
-package com.kuit.conet.auth.kakao;
+package com.kuit.conet.auth.apple;
 
-import com.kuit.conet.dto.web.response.auth.UserResponseDTO;
 import com.kuit.conet.utils.auth.JwtParser;
 import com.kuit.conet.utils.auth.PublicKeyGenerator;
 import com.kuit.conet.common.exception.InvalidTokenException;
+import com.kuit.conet.dto.web.response.auth.MemberResponseDTO;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.PublicKey;
@@ -16,29 +15,28 @@ import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.
 
 @Component
 @RequiredArgsConstructor
-public class KakaoUserProvider {
+public class AppleMemberProvider {
     private final JwtParser jwtParser;
+    private final AppleClient appleClient;
     private final PublicKeyGenerator publicKeyGenerator;
+    private final AppleClaimsValidator appleClaimsValidator;
 
-    private final KakaoClient kakaoClient;
-    @Value("${oauth.kakao.iss}")
-    private String iss;
-
-    @Value("${oauth.kakao.client-id}")
-    private String clientId;
-
-    public UserResponseDTO getPayloadFromIdToken(String identityToken) {
+    public MemberResponseDTO getApplePlatformMember(String identityToken) {
         Map<String, String> headers = jwtParser.parseHeaders(identityToken);
-        KakaoPublicKeys kakaoPublicKeys = kakaoClient.getKakaoOIDCOpenKeys();
-        PublicKey publicKey = publicKeyGenerator.generateKakaoPublicKey(headers, kakaoPublicKeys);
+        ApplePublicKeys applePublicKeys = appleClient.getApplePublicKeys();
+        PublicKey publicKey = publicKeyGenerator.generateApplePublicKey(headers, applePublicKeys);
 
         Claims claims = jwtParser.parsePublicKeyAndGetClaims(identityToken, publicKey);
         validateClaims(claims);
 
-        return new UserResponseDTO(claims.getSubject(), claims.get("email", String.class));
+        return new MemberResponseDTO(claims.getSubject(), claims.get("email", String.class));
+        /*
+           claims 의 subject = member domain 의 platformId
+         * */
     }
+
     private void validateClaims(Claims claims) {
-        if (!claims.getIssuer().contains(iss) && claims.getAudience().equals(clientId)) {
+        if (!appleClaimsValidator.isValid(claims)) {
             throw new InvalidTokenException(INVALID_CLAIMS);
         }
     }

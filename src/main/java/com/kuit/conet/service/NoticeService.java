@@ -20,8 +20,8 @@ public class NoticeService {
     private final MemberRepository memberRepository;
     private final Long NOTICE_ID = 1L;
 
-    public NoticeResponseDTO getNotice(Long userId) {
-        Member member = memberRepository.findById(userId);
+    public NoticeResponseDTO getNotice(Long memberId) {
+        Member member = memberRepository.findById(memberId);
         MemberValidator.validateMemberExisting(member);
 
         Notice notice = noticeRepository.findById(NOTICE_ID);

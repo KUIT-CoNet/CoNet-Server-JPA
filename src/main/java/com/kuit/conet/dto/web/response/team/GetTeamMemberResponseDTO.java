@@ -5,7 +5,7 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 public class GetTeamMemberResponseDTO {
-    private Long userId;
+    private Long memberId;
     private String name;
-    private String userImgUrl;
+    private String memberImgUrl;
 }
