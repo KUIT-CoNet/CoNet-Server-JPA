@@ -45,7 +45,7 @@ public class AuthController {
     /**
      * @apiNote 이용 약관 동의 및 이름 입력 api
      * */
-    @PostMapping("/term-and-name")
+    @PostMapping("/term")
     public BaseResponse<TermAndNameResponseDTO> agreeTermAndPutName(@UserId Long userId, @RequestBody @Valid PutOptionTermAndNameRequestDTO authRequest) {
         TermAndNameResponseDTO response = authService.agreeTermAndPutName(userId, authRequest);
         return new BaseResponse<>(response);
