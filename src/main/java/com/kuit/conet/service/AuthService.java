@@ -14,6 +14,7 @@ import com.kuit.conet.service.validator.AuthValidator;
 import com.kuit.conet.service.validator.MemberValidator;
 import com.kuit.conet.utils.auth.JwtParser;
 import com.kuit.conet.utils.auth.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.kuit.conet.service.validator.AuthValidator.*;
 
 @Slf4j
 @Service
@@ -102,16 +105,16 @@ public class AuthService {
         return new TermAndNameResponseDTO(member);
     }
 
-    public LoginResponseDTO regenerateToken(String refreshToken, String clientIp) {
+    public LoginResponseDTO regenerateToken(Long userId, String refreshToken, String clientIp) {
         // Redis 에서 해당 refresh token 찾기
         String existingIp = redisTemplate.opsForValue().get(refreshToken);
 
         // 찾은 값의 validation 처리
-        AuthValidator.validateRefreshTokenExisting(existingIp);
-        AuthValidator.compareClientIpFromRedis(existingIp, clientIp);
+        validateRefreshTokenExisting(existingIp);
+        compareClientIpFromRedis(existingIp, clientIp);
 
-        Long userId = jwtParser.getUserIdFromToken(refreshToken);
-        Member existingMember = memberRepository.findById(userId);
-        return getLoginResponse(existingMember, clientIp, true);
+        Member member = memberRepository.findById(userId);
+
+        return getLoginResponse(member, clientIp, true);
     }
 }

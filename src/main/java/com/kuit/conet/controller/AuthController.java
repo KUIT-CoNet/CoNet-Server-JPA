@@ -1,6 +1,7 @@
 package com.kuit.conet.controller;
 
 import com.kuit.conet.annotation.ClientIp;
+import com.kuit.conet.annotation.RefreshToken;
 import com.kuit.conet.annotation.UserId;
 import com.kuit.conet.common.response.BaseResponse;
 import com.kuit.conet.dto.web.request.auth.LoginRequestDTO;
@@ -8,7 +9,6 @@ import com.kuit.conet.dto.web.request.auth.PutOptionTermAndNameRequestDTO;
 import com.kuit.conet.dto.web.response.auth.TermAndNameResponseDTO;
 import com.kuit.conet.dto.web.response.auth.LoginResponseDTO;
 import com.kuit.conet.service.AuthService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,8 +52,8 @@ public class AuthController {
     }
 
     @PostMapping("/regenerate-token")
-    public BaseResponse<LoginResponseDTO> regenerateToken(HttpServletRequest httpRequest, @ClientIp String clientIp) {
-        LoginResponseDTO response = authService.regenerateToken((String) httpRequest.getAttribute("token"), clientIp);
+    public BaseResponse<LoginResponseDTO> regenerateToken(@UserId @Valid Long userId, @RefreshToken @Valid String refreshToken, @ClientIp String clientIp) {
+        LoginResponseDTO response = authService.regenerateToken(userId, refreshToken, clientIp);
         return new BaseResponse<>(response);
     }
 
