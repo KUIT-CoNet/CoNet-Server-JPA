@@ -23,8 +23,8 @@ public class Member {
     @Column(length = 100)
     private String email;
 
-    @Column(length = 20)
-    private String platform;
+    @Enumerated(EnumType.STRING)
+    private Platform platform;
 
     @Column(length = 500)
     private String platformId;
@@ -32,18 +32,19 @@ public class Member {
     @Column(length = 500)
     private String imgUrl;
 
+    @Column(columnDefinition = "boolean default false")
     private Boolean serviceTerm; // 필수 약관
-    private Boolean optionTerm;
 
     @ColumnDefault("'ACTIVE'")
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
 
-    public static Member createMember(String email, Platform platform, String platformId) {
+    public static Member createMember(String email, String defaultImgUrl, Platform platform, String platformId) {
         Member member = new Member();
 
         member.email = email;
-        member.platform = platform.getPlatform();
+        member.imgUrl = defaultImgUrl;
+        member.platform = platform;
         member.platformId = platformId;
 
         return member;

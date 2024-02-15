@@ -25,20 +25,20 @@ public class AuthController {
     @PostMapping("/login/apple")
     public BaseResponse<LoginResponseDTO> loginApple(@RequestBody @Valid LoginRequestDTO loginRequest, @ClientIp String clientIp) {
         LoginResponseDTO response = authService.appleLogin(loginRequest, clientIp);
-        return new BaseResponse<LoginResponseDTO>(response);
+        return new BaseResponse<>(response);
     }
 
     // 카카오 로그인
     @PostMapping("/login/kakao")
     public BaseResponse<LoginResponseDTO> loginKakao(@RequestBody @Valid LoginRequestDTO loginRequest, @ClientIp String clientIp) {
         LoginResponseDTO response = authService.kakaoLogin(loginRequest, clientIp);
-        return new BaseResponse<LoginResponseDTO>(response);
+        return new BaseResponse<>(response);
     }
 
     @PostMapping("/regenerate-token")
     public BaseResponse<LoginResponseDTO> regenerateToken(HttpServletRequest httpRequest, @ClientIp String clientIp) {
         LoginResponseDTO response = authService.regenerateToken((String) httpRequest.getAttribute("token"), clientIp);
-        return new BaseResponse<LoginResponseDTO>(response);
+        return new BaseResponse<>(response);
     }
 
 /*    // 이용 약관 동의 및 이름 입력 DB 업데이트

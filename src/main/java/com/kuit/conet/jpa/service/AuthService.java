@@ -2,7 +2,6 @@ package com.kuit.conet.jpa.service;
 
 import com.kuit.conet.auth.apple.AppleUserProvider;
 import com.kuit.conet.auth.kakao.KakaoUserProvider;
-import com.kuit.conet.common.exception.UserException;
 import com.kuit.conet.dto.web.request.auth.LoginRequestDTO;
 import com.kuit.conet.dto.web.response.auth.ApplePlatformUserResponseDTO;
 import com.kuit.conet.dto.web.response.auth.KakaoPlatformUserResponseDTO;
@@ -14,15 +13,17 @@ import com.kuit.conet.utils.auth.JwtParser;
 import com.kuit.conet.utils.auth.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.NOT_FOUND_USER;
 import static com.kuit.conet.jpa.service.validator.AuthValidator.compareClientIpFromRedis;
 import static com.kuit.conet.jpa.service.validator.AuthValidator.validateRefreshTokenExisting;
+import static com.kuit.conet.jpa.service.validator.MemberValidator.*;
 
 @Slf4j
 @Service
@@ -35,6 +36,10 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtParser jwtParser;
+    private static final int FIRST_INDEX = 0;
+
+    @Value("${spring.user.default-image}")
+    private String defaultMemberImg;
 
     public LoginResponseDTO appleLogin(LoginRequestDTO loginRequest, String clientIp) {
         ApplePlatformUserResponseDTO applePlatformUser = appleUserProvider.getApplePlatformUser(loginRequest.getIdToken());
@@ -48,27 +53,38 @@ public class AuthService {
 
     private LoginResponseDTO generateLoginResponse(Platform platform, String email, String platformId, String clientIp) {
         List<Long> findUserId = memberRepository.findByPlatformAndPlatformId(platform, platformId);
-        if (!findUserId.isEmpty()) {
-            Member findMember = memberRepository.findById(findUserId.get(0));
-            if (findMember == null) {
-                throw new UserException(NOT_FOUND_USER);
-            }
 
-            // 회원가입은 되어있는데, 필수 약관 동의 혹은 이름 입력이 되어있지 않은 유저
-            if (!findMember.getServiceTerm() || findMember.getName() == null) {
-                log.info("회원가입은 되어 있으나, 약관 동의 및 이름 입력이 필요합니다.");
-                return getLoginResponse(findMember, clientIp, false);
-            } else {
-                // 이미 회원가입과 약관 동의 및 이름 입력이 모두 되어있는 유저
-                log.info("로그인에 성공하였습니다.");
-                return getLoginResponse(findMember, clientIp, true);
-            }
+        //회원가입이 되어 있는 멤버
+        if (!findUserId.isEmpty()) {
+            Member member = memberRepository.findById(findUserId.get(FIRST_INDEX));
+            validateMemberExisting(member);
+
+            return login(clientIp, member);
+        }
+
+        //회원가입이 필요한 멤버
+        return signUp(platform, email, platformId, clientIp);
+    }
+
+    private LoginResponseDTO signUp(Platform platform, String email, String platformId, String clientIp) {
+        // 회원가입이 필요한 멤버
+        Member signUpMember = Member.createMember(email, defaultMemberImg, platform, platformId);
+        memberRepository.save(signUpMember);
+
+        log.info("회원가입 성공! 약관 동의 및 이름 입력이 필요합니다.");
+
+        return getLoginResponse(signUpMember, clientIp, false);
+    }
+
+    private LoginResponseDTO login(String clientIp, Member member) {
+        // 회원가입은 되어있는데, 필수 약관 동의 혹은 이름 입력이 되어있지 않은 유저
+        if (!member.getServiceTerm() || member.getName() == null) {
+            log.info("회원가입은 되어 있으나, 약관 동의 및 이름 입력이 필요합니다.");
+            return getLoginResponse(member, clientIp, false);
         } else {
-            // 회원가입이 필요한 멤버
-            Member oauthMember = Member.createMember(email, platform, platformId);
-            Member savedMember = memberRepository.findById(memberRepository.save(oauthMember));
-            log.info("회원가입 성공! 약관 동의 및 이름 입력이 필요합니다.");
-            return getLoginResponse(savedMember, clientIp, false);
+            // 이미 회원가입과 약관 동의 및 이름 입력이 모두 되어있는 유저
+            log.info("로그인에 성공하였습니다.");
+            return getLoginResponse(member, clientIp, true);
         }
     }
 
