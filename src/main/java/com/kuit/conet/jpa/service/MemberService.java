@@ -37,7 +37,7 @@ public class MemberService {
     private final PlanMemberTimeRepository planMemberTimeRepository;
 
     @Value("${spring.user.default-image}")
-    private String defaultImg;
+    private String defaultMemberImg;
 
     public StorageImgResponseDTO updateImg(Long userId, MultipartFile file) {
         Member member = memberRepository.findById(userId);
@@ -73,7 +73,7 @@ public class MemberService {
         if (!storageService.isExistImage(fileName)) {
             log.warn("S3 버킷에 존재하지 않는 이미지입니다. 기본 이미지로 변경하겠습니다.");
             // 변경감지로 update
-            member.updateImgUrl(defaultImg);
+            member.updateImgUrl(defaultMemberImg);
         }
 
         return new MemberResponseDTO(member);
