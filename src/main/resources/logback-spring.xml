@@ -49,13 +49,16 @@
     <springProfile name="localDB">
         <root level="info">
             <!--     참조할 appender - STDOUT -->
-            <appender-ref ref="FILE" />
             <appender-ref ref="STDOUT" />
         </root>
+        <logger name="org.springframework.web" level="debug">
+            <!--     참조할 appender - FILE -->
+            <appender-ref ref="FILE" />
+        </logger>
     </springProfile>
     <!--  dev 환경  -->
     <springProfile name="devDB">
-        <root level="debug">
+        <root level="info">
             <!--     참조할 appender - STDOUT -->
             <appender-ref ref="STDOUT" />
         </root>
