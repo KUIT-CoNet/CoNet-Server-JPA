@@ -3,6 +3,8 @@ package com.kuit.conet.jpa.service;
 import com.kuit.conet.auth.apple.AppleUserProvider;
 import com.kuit.conet.auth.kakao.KakaoUserProvider;
 import com.kuit.conet.dto.web.request.auth.LoginRequestDTO;
+import com.kuit.conet.dto.web.request.auth.PutOptionTermAndNameRequestDTO;
+import com.kuit.conet.dto.web.response.auth.TermAndNameResponseDTO;
 import com.kuit.conet.dto.web.response.auth.ApplePlatformUserResponseDTO;
 import com.kuit.conet.dto.web.response.auth.KakaoPlatformUserResponseDTO;
 import com.kuit.conet.dto.web.response.auth.LoginResponseDTO;
@@ -19,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.kuit.conet.jpa.service.validator.AuthValidator.compareClientIpFromRedis;
 import static com.kuit.conet.jpa.service.validator.AuthValidator.validateRefreshTokenExisting;
@@ -95,6 +96,13 @@ public class AuthService {
         redisTemplate.opsForValue().set(refreshToken, clientIp);
 
         return new LoginResponseDTO(targetMember.getEmail(), accessToken, refreshToken, isRegistered);
+    }
+
+    public TermAndNameResponseDTO agreeTermAndPutName(Long userId, PutOptionTermAndNameRequestDTO nameRequest) {
+        Member member = memberRepository.findById(userId);
+        member.agreeTermAndPutName(nameRequest.getName());
+
+        return new TermAndNameResponseDTO(member);
     }
 
     public LoginResponseDTO regenerateToken(String refreshToken, String clientIp) {

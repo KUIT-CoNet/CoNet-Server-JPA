@@ -57,4 +57,10 @@ public class Member {
     public void updateName(String name) {
         this.name = name;
     }
+
+    public void agreeTermAndPutName(String name) {
+        this.name = name;
+        this.serviceTerm = true;
+    }
+
 }
