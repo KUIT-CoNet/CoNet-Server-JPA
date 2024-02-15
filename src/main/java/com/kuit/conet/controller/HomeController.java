@@ -25,6 +25,7 @@ public class HomeController {
      * */
     @GetMapping("/month")
     public BaseResponse<PlanDateOnMonthResponseDTO> getHomeFixedPlanInMonth(@UserId Long userId, @ModelAttribute @Valid HomePlanRequestDTO homeRequest) {
+        log.info("홈 특정 달의 확정 약속이 존재하는 날짜 조회 api searchDate: {}", homeRequest.getSearchDate());
         PlanDateOnMonthResponseDTO response = homeService.getHomeFixedPlanInMonth(userId, homeRequest);
         return new BaseResponse<>(response);
     }
