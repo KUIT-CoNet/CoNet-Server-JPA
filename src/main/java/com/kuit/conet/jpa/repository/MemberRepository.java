@@ -36,7 +36,7 @@ public class MemberRepository {
     public List<Long> findByPlatformAndPlatformId(Platform platform, String platformId) {
         return em.createQuery("select m.id from Member m " +
                         "where m.platform=:platform and m.platformId=:platformId and m.status=:status", Long.class)
-                .setParameter("platform", platform.getPlatform())
+                .setParameter("platform", platform)
                 .setParameter("platformId", platformId)
                 .setParameter("status", MemberStatus.ACTIVE)
                 .getResultList();
