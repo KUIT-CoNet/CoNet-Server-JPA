@@ -5,8 +5,7 @@ import com.kuit.conet.auth.kakao.KakaoUserProvider;
 import com.kuit.conet.dto.web.request.auth.LoginRequestDTO;
 import com.kuit.conet.dto.web.request.auth.PutOptionTermAndNameRequestDTO;
 import com.kuit.conet.dto.web.response.auth.TermAndNameResponseDTO;
-import com.kuit.conet.dto.web.response.auth.ApplePlatformUserResponseDTO;
-import com.kuit.conet.dto.web.response.auth.KakaoPlatformUserResponseDTO;
+import com.kuit.conet.dto.web.response.auth.UserResponseDTO;
 import com.kuit.conet.dto.web.response.auth.LoginResponseDTO;
 import com.kuit.conet.jpa.domain.auth.Platform;
 import com.kuit.conet.jpa.domain.member.Member;
@@ -43,12 +42,12 @@ public class AuthService {
     private String defaultMemberImg;
 
     public LoginResponseDTO appleLogin(LoginRequestDTO loginRequest, String clientIp) {
-        ApplePlatformUserResponseDTO applePlatformUser = appleUserProvider.getApplePlatformUser(loginRequest.getIdToken());
+        UserResponseDTO applePlatformUser = appleUserProvider.getApplePlatformUser(loginRequest.getIdToken());
         return generateLoginResponse(Platform.APPLE, applePlatformUser.getEmail(), applePlatformUser.getPlatformId(), clientIp);
     }
 
     public LoginResponseDTO kakaoLogin(LoginRequestDTO loginRequest, String clientIp) {
-        KakaoPlatformUserResponseDTO kakaoPlatformUser = kakaoUserProvider.getPayloadFromIdToken(loginRequest.getIdToken());
+        UserResponseDTO kakaoPlatformUser = kakaoUserProvider.getPayloadFromIdToken(loginRequest.getIdToken());
         return generateLoginResponse(Platform.KAKAO, kakaoPlatformUser.getEmail(), kakaoPlatformUser.getPlatformId(), clientIp);
     }
 

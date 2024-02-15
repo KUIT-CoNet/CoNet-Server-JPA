@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class KakaoPlatformUserResponseDTO {
+public class UserResponseDTO {
     private String platformId;
     private String email;
 }
