@@ -49,4 +49,8 @@ public class PlanValidator {
         }
     }
 
+    public static boolean isPlanMemberEmpty(Plan plan) {
+        return plan.getPlanMembers().isEmpty();
+    }
+
 }

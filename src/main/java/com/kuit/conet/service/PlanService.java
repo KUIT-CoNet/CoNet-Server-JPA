@@ -16,8 +16,6 @@ import com.kuit.conet.dto.web.request.plan.TeamWaitingPlanRequestDTO;
 import com.kuit.conet.dto.web.response.plan.*;
 import com.kuit.conet.domain.member.Member;
 import com.kuit.conet.repository.*;
-import com.kuit.conet.service.validator.MemberValidator;
-import com.kuit.conet.service.validator.PlanValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -76,12 +74,15 @@ public class PlanService {
     public PlanDetailResponseDTO getPlanDetail(Long planId) {
         Plan plan = planRepository.findById(planId);
 
-        //확정 약속인 경우 상세 정보 조회 가능
-        PlanValidator.validatePlanIsFixed(plan);
+        //확정 약속인지 검사
+        validatePlanIsFixed(plan);
 
         Plan planWithMembers = planRepository.findWithMembersById(planId);
 
-        List<PlanMemberDTO> planMemberList = setPlanMemberDTOS(planWithMembers);
+        List<PlanMemberDTO> planMemberList = new ArrayList<>();
+        if (!isPlanMemberEmpty(planWithMembers)) {
+            planMemberList = setPlanMemberDTOS(planWithMembers);
+        }
 
         return new PlanDetailResponseDTO(planWithMembers, planMemberList);
     }
