@@ -11,13 +11,11 @@ import com.kuit.conet.dto.web.response.team.*;
 import com.kuit.conet.service.TeamService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/team")
@@ -29,7 +27,6 @@ public class TeamController {
      */
     @PostMapping
     public BaseResponse<CreateTeamResponseDTO> createTeam(@RequestPart(value = "request") @Valid CreateTeamRequestDTO teamRequest, @MemberId Long memberId, @RequestPart(value = "file") MultipartFile file) {
-        log.debug("memberId TeamController: {}", memberId);
         CreateTeamResponseDTO response = teamService.createTeam(teamRequest, memberId, file);
         return new BaseResponse<>(response);
     }
