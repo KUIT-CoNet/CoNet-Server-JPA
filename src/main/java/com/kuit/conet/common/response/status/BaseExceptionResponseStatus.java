@@ -56,9 +56,8 @@ public enum BaseExceptionResponseStatus implements ResponseStatus {
     NOT_FOUND_INVITE_CODE(5501, HttpStatus.NOT_FOUND.value(), "존재하지 않는 초대 코드입니다."),
     EXPIRED_INVITE_CODE(5502, HttpStatus.BAD_REQUEST.value(), "초대 코드 유효 기간이 만료되었습니다."),
     EXIST_MEMBER_IN_TEAM(5503, HttpStatus.BAD_REQUEST.value(), "모임에 이미 참여 중입니다."),
-    MEMBER_NOT_EXIST_IN_TEAM(5504, HttpStatus.BAD_REQUEST.value(), "모임에 참여하고 있지 않습니다."),
+    NOT_TEAM_MEMBER(5504, HttpStatus.BAD_REQUEST.value(), "모임의 구성원이 아닙니다."),
     NOT_FOUND_TEAM(5505, HttpStatus.NOT_FOUND.value(), "존재하지 않는 모임입니다."),
-    NOT_TEAM_MEMBER(5507, HttpStatus.BAD_REQUEST.value(), "팀의 멤버가 아닙니다."),
 
     /**
      * 6000: 약속(Plan) 정보 오류
