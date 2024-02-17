@@ -16,7 +16,6 @@ import com.kuit.conet.dto.web.request.plan.TeamWaitingPlanRequestDTO;
 import com.kuit.conet.dto.web.response.plan.*;
 import com.kuit.conet.domain.member.Member;
 import com.kuit.conet.repository.*;
-import com.kuit.conet.service.validator.PlanValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +27,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.kuit.conet.service.validator.MemberValidator.*;
 import static com.kuit.conet.service.validator.PlanValidator.*;
 import static com.kuit.conet.service.validator.TeamValidator.validateMemberIsTeamMember;
 import static com.kuit.conet.utils.DateAndTimeFormatter.*;
@@ -52,7 +52,11 @@ public class PlanService {
     private final static String NO_AVAILABLE_TIME = "";
     private final static int SECTION_DIVISOR = 3;
 
-    public CreatePlanResponseDTO createPlan(CreatePlanRequestDTO planRequest) {
+    public CreatePlanResponseDTO createPlan(Long memberId, CreatePlanRequestDTO planRequest) {
+        Member member = memberRepository.findById(memberId);
+        validateMemberExisting(member);
+        validateMemberIsTeamMember(teamMemberRepository, planRequest.getTeamId(), memberId);
+
         Date endDate = setEndDate(planRequest.getPlanStartDate());
         Team team = teamRepository.findById(planRequest.getTeamId());
 
@@ -70,12 +74,15 @@ public class PlanService {
     public PlanDetailResponseDTO getPlanDetail(Long planId) {
         Plan plan = planRepository.findById(planId);
 
-        //확정 약속인 경우 상세 정보 조회 가능
-        PlanValidator.validatePlanIsFixed(plan);
+        //확정 약속인지 검사
+        validatePlanIsFixed(plan);
 
         Plan planWithMembers = planRepository.findWithMembersById(planId);
 
-        List<PlanMemberDTO> planMemberList = setPlanMemberDTOS(planWithMembers);
+        List<PlanMemberDTO> planMemberList = new ArrayList<>();
+        if (!isPlanMemberEmpty(planWithMembers)) {
+            planMemberList = setPlanMemberDTOS(planWithMembers);
+        }
 
         return new PlanDetailResponseDTO(planWithMembers, planMemberList);
     }

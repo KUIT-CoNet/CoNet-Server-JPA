@@ -11,6 +11,7 @@ import com.kuit.conet.dto.web.response.member.StorageImgResponseDTO;
 import com.kuit.conet.dto.web.response.team.*;
 import com.kuit.conet.domain.member.Member;
 import com.kuit.conet.repository.*;
+import com.kuit.conet.service.validator.MemberValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,7 @@ public class TeamService {
 
         // 팀 만든 멤버 정보 추출
         Member teamCreator = memberRepository.findById(memberId);
+        MemberValidator.validateMemberExisting(teamCreator);
 
         // 이미지 s3 업로드
         String imgUrl = updateTeamImg(file);

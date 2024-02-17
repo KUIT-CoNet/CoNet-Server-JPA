@@ -50,32 +50,28 @@
         <root level="info">
             <!--     참조할 appender - STDOUT -->
             <appender-ref ref="STDOUT" />
-        </root>
-        <logger name="org.springframework.web" level="debug">
             <!--     참조할 appender - FILE -->
             <appender-ref ref="FILE" />
-        </logger>
+        </root>
     </springProfile>
     <!--  dev 환경  -->
     <springProfile name="devDB">
         <root level="info">
             <!--     참조할 appender - STDOUT -->
             <appender-ref ref="STDOUT" />
-        </root>
-        <logger name="org.springframework.web" level="debug">
             <!--     참조할 appender - FILE -->
             <appender-ref ref="FILE" />
+        </root>
+        <logger name="org.springframework.web" level="debug">
         </logger>
     </springProfile>
     <!--  prod 환경  -->
     <springProfile name="prodDB">
-        <root level="debug">
+        <root level="info">
             <!--     참조할 appender - STDOUT -->
             <appender-ref ref="STDOUT" />
-        </root>
-        <logger name="org.springframework.web" level="debug">
             <!--     참조할 appender - FILE -->
             <appender-ref ref="FILE" />
-        </logger>
+        </root>
     </springProfile>
 </configuration>

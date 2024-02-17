@@ -29,7 +29,7 @@ public class AuthController {
      * @apiNote 로그인 api
      * */
     @PostMapping("/login")
-    public BaseResponse<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginRequest, @ClientIp String clientIp) {//ENUM mapping 를 위한 @ModelAttribute
+    public BaseResponse<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginRequest, @ClientIp String clientIp) {
         if (loginRequest.getPlatform() == KAKAO) {
             LoginResponseDTO response = authService.kakaoLogin(loginRequest, clientIp);
             return new BaseResponse<>(response);

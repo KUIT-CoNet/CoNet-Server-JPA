@@ -22,12 +22,14 @@ public class TeamValidator {
 
     public static void validateInviteCodeExisting(TeamRepository teamRepository, String inviteCode) {
         if (!teamRepository.isExistInviteCode(inviteCode)) {
+            log.error(NOT_FOUND_INVITE_CODE.getMessage());
             throw new TeamException(NOT_FOUND_INVITE_CODE);
         }
     }
 
     public static void validateNewMemberInTeam(TeamRepository teamRepository, Long memberId, Team team) {
         if (teamRepository.isExistMember(team.getId(), memberId)) {
+            log.error(EXIST_MEMBER_IN_TEAM.getMessage());
             throw new TeamException(EXIST_MEMBER_IN_TEAM);
         }
     }
@@ -58,18 +60,22 @@ public class TeamValidator {
 
     public static void validateTeamExisting(Team team) {
         if (team == null) {
+            log.error(NOT_FOUND_TEAM.getMessage());
             throw new TeamException(NOT_FOUND_TEAM);
         }
     }
 
     public static void validateMemberIsTeamMember(TeamMemberRepository teamMemberRepository, Long teamId, Long memberId) {
         if (!teamMemberRepository.isTeamMember(teamId, memberId)) {
+            log.error(NOT_TEAM_MEMBER.getMessage());
             throw new TeamException(NOT_TEAM_MEMBER);
         }
     }
 
     public static void validateFile(MultipartFile file) {
-        if (file.isEmpty())
+        if (file.isEmpty()) {
+            log.error(NOT_FOUND_FILE.getMessage());
             throw new FileException(NOT_FOUND_FILE);
+        }
     }
 }

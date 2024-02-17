@@ -29,8 +29,8 @@ public class PlanController {
      * @apiNote 약속 생성 api
      * */
     @PostMapping
-    public BaseResponse<CreatePlanResponseDTO> createPlan(@RequestBody @Valid CreatePlanRequestDTO planRequest) {
-        CreatePlanResponseDTO response = planService.createPlan(planRequest);
+    public BaseResponse<CreatePlanResponseDTO> createPlan(@MemberId @Valid Long memberId, @RequestBody @Valid CreatePlanRequestDTO planRequest) {
+        CreatePlanResponseDTO response = planService.createPlan(memberId, planRequest);
         return new BaseResponse<>(response);
     }
 
