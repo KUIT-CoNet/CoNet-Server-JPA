@@ -17,6 +17,8 @@ public class MemberValidator {
     }
 
     public static void validateActiveMember(Member member) {
+        validateMemberExisting(member);
+
         if (!(member.getStatus() == MemberStatus.ACTIVE)) {
             log.error(INACTIVE_MEMBER.getMessage());
             throw new MemberException(INACTIVE_MEMBER);

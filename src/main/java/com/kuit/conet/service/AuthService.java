@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.kuit.conet.service.validator.AuthValidator.*;
+import static com.kuit.conet.service.validator.MemberValidator.*;
 
 @Slf4j
 @Service
@@ -56,7 +57,7 @@ public class AuthService {
         //회원가입이 되어 있는 멤버
         if (!findMemberId.isEmpty()) {
             Member member = memberRepository.findById(findMemberId.get(FIRST_INDEX));
-            MemberValidator.validateMemberExisting(member);
+            validateMemberExisting(member);
 
             return login(clientIp, member);
         }

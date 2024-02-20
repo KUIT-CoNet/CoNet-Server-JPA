@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.kuit.conet.service.validator.MemberValidator.*;
+
 @Slf4j
 @Service
 @Transactional
@@ -22,7 +24,7 @@ public class NoticeService {
 
     public NoticeResponseDTO getNotice(Long memberId) {
         Member member = memberRepository.findById(memberId);
-        MemberValidator.validateMemberExisting(member);
+        validateMemberExisting(member);
 
         Notice notice = noticeRepository.findById(NOTICE_ID);
         return new NoticeResponseDTO(notice);

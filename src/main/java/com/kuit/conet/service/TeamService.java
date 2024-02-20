@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.kuit.conet.service.validator.MemberValidator.*;
 import static com.kuit.conet.service.validator.TeamValidator.*;
 
 @Slf4j
@@ -60,7 +61,7 @@ public class TeamService {
 
         // 팀 만든 멤버 정보 추출
         Member teamCreator = memberRepository.findById(memberId);
-        MemberValidator.validateMemberExisting(teamCreator);
+        validateMemberExisting(teamCreator);
 
         // 이미지 s3 업로드
         String imgUrl = updateTeamImg(file);

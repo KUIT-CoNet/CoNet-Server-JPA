@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static com.kuit.conet.service.validator.MemberValidator.validateActiveMember;
-import static com.kuit.conet.service.validator.MemberValidator.validateMemberExisting;
 import static com.kuit.conet.service.validator.TeamValidator.validateTeamExisting;
 import static com.kuit.conet.service.StorageService.getFileName;
 
@@ -40,7 +39,6 @@ public class MemberService {
 
     public StorageImgResponseDTO updateImg(Long memberId, MultipartFile file) {
         Member member = memberRepository.findById(memberId);
-        validateMemberExisting(member);
         validateActiveMember(member);
 
         storageService.deletePreviousImage(memberId);
@@ -56,7 +54,6 @@ public class MemberService {
 
     public void updateName(Long memberId, NameRequestDTO nameRequest) {
         Member member = memberRepository.findById(memberId);
-        validateMemberExisting(member);
         validateActiveMember(member);
 
         member.updateName(nameRequest.getName());
@@ -64,7 +61,6 @@ public class MemberService {
 
     public MemberResponseDTO getMember(Long memberId) {
         Member member = memberRepository.findById(memberId);
-        validateMemberExisting(member);
         validateActiveMember(member);
 
         String fileName = storageService.getFileNameFromUrl(member.getImgUrl());
@@ -80,7 +76,6 @@ public class MemberService {
 
     public List<GetTeamResponseDTO> getBookmarks(Long memberId) {
         Member member = memberRepository.findById(memberId);
-        validateMemberExisting(member);
         validateActiveMember(member);
 
         List<GetTeamResponseDTO> teamResponses = memberRepository.getBookmarks(memberId);
@@ -90,7 +85,6 @@ public class MemberService {
 
     public String bookmarkTeam(Long memberId, TeamIdRequestDTO request) {
         Member member = memberRepository.findById(memberId);
-        validateMemberExisting(member);
         validateActiveMember(member);
 
         Long teamId = request.getTeamId();
@@ -110,7 +104,6 @@ public class MemberService {
 
     public void deleteMember(Long memberId) {
         Member member = memberRepository.findById(memberId);
-        validateMemberExisting(member);
         validateActiveMember(member);
 
         // S3 에서 프로필 이미지 객체 삭제
