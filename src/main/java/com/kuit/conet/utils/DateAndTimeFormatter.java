@@ -7,12 +7,12 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 @Component
 public class DateAndTimeFormatter {
     private static final String DATE_REGEX = "-";
+    private static final String DATE_DOT_REGEX = ". ";
     private static final String POSSIBLE_TIME_REGEX = ",";
     private static final int DATE_INDEX = 2;
     private static final String MINUTE_AND_SECOND = ":00:00";
@@ -31,6 +31,11 @@ public class DateAndTimeFormatter {
         // yyyy-MM-dd -> yyyy. MM. dd
         SimpleDateFormat dateFormat = new SimpleDateFormat(CONET_DATE_FORMAT);
         return dateFormat.format(date);
+    }
+
+    public static String stringWithDotToDate(String date) {
+        // yyyy. MM. dd -> yyyy-MM-dd
+        return date.replaceAll(DATE_DOT_REGEX, DATE_REGEX);
     }
 
     public static String timeDeleteSeconds(Time time) {

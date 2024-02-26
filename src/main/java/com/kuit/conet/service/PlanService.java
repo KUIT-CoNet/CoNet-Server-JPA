@@ -1,21 +1,16 @@
 package com.kuit.conet.service;
 
 
+import com.kuit.conet.domain.member.Member;
 import com.kuit.conet.domain.plan.Plan;
 import com.kuit.conet.domain.plan.PlanMember;
 import com.kuit.conet.domain.plan.PlanMemberTime;
 import com.kuit.conet.domain.team.Team;
-import com.kuit.conet.dto.plan.AvailableDateTimeDTO;
 import com.kuit.conet.dto.plan.*;
 import com.kuit.conet.dto.web.request.plan.*;
-import com.kuit.conet.dto.plan.AvailableMemberDTO;
-import com.kuit.conet.dto.plan.MemberAvailableTimeDTO;
-import com.kuit.conet.dto.plan.MemberDateTimeDTO;
-import com.kuit.conet.dto.web.request.plan.TeamFixedPlanOnDateRequestDTO;
-import com.kuit.conet.dto.web.request.plan.TeamWaitingPlanRequestDTO;
 import com.kuit.conet.dto.web.response.plan.*;
-import com.kuit.conet.domain.member.Member;
 import com.kuit.conet.repository.*;
+import com.kuit.conet.utils.DateAndTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,7 +22,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.kuit.conet.service.validator.MemberValidator.*;
+import static com.kuit.conet.service.validator.MemberValidator.validateMemberExisting;
 import static com.kuit.conet.service.validator.PlanValidator.*;
 import static com.kuit.conet.service.validator.TeamValidator.validateMemberIsTeamMember;
 import static com.kuit.conet.utils.DateAndTimeFormatter.*;
@@ -37,13 +32,6 @@ import static com.kuit.conet.utils.DateAndTimeFormatter.*;
 @Transactional
 @RequiredArgsConstructor
 public class PlanService {
-    private final MemberRepository memberRepository;
-    private final TeamRepository teamRepository;
-    private final TeamMemberRepository teamMemberRepository;
-    private final PlanRepository planRepository;
-    private final PlanMemberRepository planMemberRepository;
-    private final PlanMemberTimeRepository planMemberTimeRepository;
-
     private final static int ONE_WEEK_DAYS = 7;
     private final static int ONE_DAY_HOURS = 24;
     private final static int MIN_TIME_NUMBER = 0;
@@ -51,6 +39,76 @@ public class PlanService {
     private final static String AVAILABLE_TIME_SPLIT_REGEX = ",";
     private final static String NO_AVAILABLE_TIME = "";
     private final static int SECTION_DIVISOR = 3;
+    private final MemberRepository memberRepository;
+    private final TeamRepository teamRepository;
+    private final TeamMemberRepository teamMemberRepository;
+    private final PlanRepository planRepository;
+    private final PlanMemberRepository planMemberRepository;
+    private final PlanMemberTimeRepository planMemberTimeRepository;
+
+    private static Date setEndDate(Date startDate) {
+        LocalDate endDate = startDate.toLocalDate().plusDays(6);
+        return Date.valueOf(endDate);
+    }
+
+    private static List<PlanMemberDTO> setPlanMemberDTOS(Plan plan) {
+        return plan.getPlanMembers().stream()
+                .map(planMember ->
+                        new PlanMemberDTO(
+                                planMember.getMember().getId(),
+                                planMember.getMember().getName(),
+                                planMember.getMember().getImgUrl()))
+                .sorted(Comparator.comparing(PlanMemberDTO::getName))
+                .toList();
+    }
+
+    private static List<OneMemberAvailableTimeDTO> getAllMemberAvailableTimeSlot(List<PlanMemberTime> planMemberTimes) {
+        return planMemberTimes.stream()
+                .map(planMemberTime -> {
+                    OneMemberAvailableTimeDTO responseDTO = new OneMemberAvailableTimeDTO(planMemberTime.getDate());
+                    String availableTime = planMemberTime.getAvailableTime();
+
+                    List<Integer> timeList = new ArrayList<>();
+                    if (!availableTime.isEmpty()) {
+                        timeList = timeStringToIntegerList(availableTime);
+                    }
+                    responseDTO.setAvailableTimes(timeList);
+
+                    return responseDTO;
+                }).toList();
+    }
+
+    private static Map<Integer, Long> getIntervalEndBySection(Long totalMemberCount) {
+        Map<Integer, Long> endNumberForEachSection = new HashMap<>();
+
+        //기본 구간 크기와 나머지 계산
+        Long baseIntervalSize = totalMemberCount / SECTION_DIVISOR;
+        Long remainder = totalMemberCount % SECTION_DIVISOR;
+
+        //3구간의 범위가 너무 크지 않게, 비교적 균등하게 범위가 나뉘도록 하기 위하여
+        Long firstIntervalEnd = baseIntervalSize + (remainder > 0 ? 1 : 0);
+        Long secondIntervalEnd = firstIntervalEnd + baseIntervalSize + (remainder > 1 ? 1 : 0);
+        endNumberForEachSection.put(1, firstIntervalEnd);
+        endNumberForEachSection.put(2, secondIntervalEnd);
+        endNumberForEachSection.put(3, totalMemberCount);
+
+        return endNumberForEachSection;
+    }
+
+    private static int[] setSectionForEachTime(Map<Integer, Long> endNumberForEachSection, int[] membersCount) {
+        int[] section = new int[ONE_DAY_HOURS];
+
+        for (int time = MIN_TIME_NUMBER; time <= MAX_TIME_NUMBER; time++) {
+            int count = membersCount[time];
+
+            if (count <= endNumberForEachSection.get(3)) section[time] = 3;
+            if (count <= endNumberForEachSection.get(2)) section[time] = 2;
+            if (count <= endNumberForEachSection.get(1)) section[time] = 1;
+            if (count == 0) section[time] = 0;
+        }
+
+        return section;
+    }
 
     public CreatePlanResponseDTO createPlan(Long memberId, CreatePlanRequestDTO planRequest) {
         Member member = memberRepository.findById(memberId);
@@ -64,11 +122,6 @@ public class PlanService {
         Long planId = planRepository.save(newPlan);
 
         return new CreatePlanResponseDTO(planId);
-    }
-
-    private static Date setEndDate(Date startDate) {
-        LocalDate endDate = startDate.toLocalDate().plusDays(6);
-        return Date.valueOf(endDate);
     }
 
     public PlanDetailResponseDTO getPlanDetail(Long planId) {
@@ -88,13 +141,13 @@ public class PlanService {
     }
 
     public TeamPlanOnDayResponseDTO getFixedPlanOnDay(TeamFixedPlanOnDateRequestDTO planRequest) {
-        List<FixedPlanOnDayDTO> fixedPlansOnDay = planRepository.getFixedPlansOnDay(planRequest.getTeamId(), planRequest.getSearchDate());
+        List<FixedPlanOnDayDTO> fixedPlansOnDay = planRepository.getFixedPlansOnDay(planRequest.getTeamId(), DateAndTimeFormatter.stringWithDotToDate(planRequest.getSearchDate()));
 
         return new TeamPlanOnDayResponseDTO(fixedPlansOnDay);
     }
 
     public PlanDateOnMonthResponseDTO getFixedPlanInMonth(TeamFixedPlanOnDateRequestDTO planRequest) {
-        List<Date> fixedPlansInMonth = planRepository.getFixedPlansInMonth(planRequest.getTeamId(), planRequest.getSearchDate());
+        List<Date> fixedPlansInMonth = planRepository.getFixedPlansInMonth(planRequest.getTeamId(), DateAndTimeFormatter.stringWithDotToDate(planRequest.getSearchDate()));
         List<Integer> planDates = datesToIntegerList(fixedPlansInMonth);
 
         return new PlanDateOnMonthResponseDTO(planDates);
@@ -151,17 +204,6 @@ public class PlanService {
         log.info("약속을 확정하며 삭제된 PlanMemberTime 개수: {}", deletedPlanMemberTimeCount);
     }
 
-    private static List<PlanMemberDTO> setPlanMemberDTOS(Plan plan) {
-        return plan.getPlanMembers().stream()
-                .map(planMember ->
-                        new PlanMemberDTO(
-                                planMember.getMember().getId(),
-                                planMember.getMember().getName(),
-                                planMember.getMember().getImgUrl()))
-                .sorted(Comparator.comparing(PlanMemberDTO::getName))
-                .toList();
-    }
-
     public OneMemberAvailableTimeResponseDTO getOneMemberAvailableTimeSlot(Long planId, Long memberId) {
         Plan plan = planRepository.findById(planId);
 
@@ -169,7 +211,7 @@ public class PlanService {
         validatePlanIsWaiting(plan);
 
         // 유저의 시간 정보 유무 조회
-        if(!planMemberTimeRepository.isMemberAvailableTimeDataExist(plan, memberId)) {
+        if (!planMemberTimeRepository.isMemberAvailableTimeDataExist(plan, memberId)) {
             return OneMemberAvailableTimeResponseDTO.notRegistered(planId, memberId);
         }
 
@@ -182,22 +224,6 @@ public class PlanService {
                 .anyMatch(timeSlotOnDay -> !timeSlotOnDay.getAvailableTimes().isEmpty());
 
         return OneMemberAvailableTimeResponseDTO.registered(planId, memberId, hasAvailableTime, timeSlot);
-    }
-
-    private static List<OneMemberAvailableTimeDTO> getAllMemberAvailableTimeSlot(List<PlanMemberTime> planMemberTimes) {
-         return planMemberTimes.stream()
-                .map(planMemberTime -> {
-                    OneMemberAvailableTimeDTO responseDTO = new OneMemberAvailableTimeDTO(planMemberTime.getDate());
-                    String availableTime = planMemberTime.getAvailableTime();
-
-                    List<Integer> timeList = new ArrayList<>();
-                    if (!availableTime.isEmpty()) {
-                        timeList = timeStringToIntegerList(availableTime);
-                    }
-                    responseDTO.setAvailableTimes(timeList);
-
-                    return responseDTO;
-                }).toList();
     }
 
     public AllMemberAvailableTimeResponseDTO getAllMemberAvailableTimeSlot(Long planId) {
@@ -253,8 +279,8 @@ public class PlanService {
             if (possibleTime.isBlank()) continue; //가능한 시간이 없는 경우 넘어감
 
             List<Integer> possibleTimes = Arrays.stream(possibleTime.split(AVAILABLE_TIME_SPLIT_REGEX))
-                .map(Integer::parseInt)
-                .toList();// ["1", "2", "3", "4"]
+                    .map(Integer::parseInt)
+                    .toList();// ["1", "2", "3", "4"]
 
             possibleTimes.stream()
                     .forEach(time -> {
@@ -280,38 +306,6 @@ public class PlanService {
             memberResponses.add(memberResponse);
         }
         return memberResponses;
-    }
-
-    private static Map<Integer, Long> getIntervalEndBySection(Long totalMemberCount) {
-        Map<Integer, Long> endNumberForEachSection = new HashMap<>();
-
-        //기본 구간 크기와 나머지 계산
-        Long baseIntervalSize = totalMemberCount / SECTION_DIVISOR;
-        Long remainder = totalMemberCount % SECTION_DIVISOR;
-
-        //3구간의 범위가 너무 크지 않게, 비교적 균등하게 범위가 나뉘도록 하기 위하여
-        Long firstIntervalEnd = baseIntervalSize + (remainder > 0 ? 1 : 0);
-        Long secondIntervalEnd = firstIntervalEnd + baseIntervalSize + (remainder > 1 ? 1 : 0);
-        endNumberForEachSection.put(1, firstIntervalEnd);
-        endNumberForEachSection.put(2, secondIntervalEnd);
-        endNumberForEachSection.put(3, totalMemberCount);
-
-        return endNumberForEachSection;
-    }
-
-    private static int[] setSectionForEachTime(Map<Integer, Long> endNumberForEachSection, int[] membersCount) {
-        int[] section = new int[ONE_DAY_HOURS];
-
-        for (int time = MIN_TIME_NUMBER; time <= MAX_TIME_NUMBER; time++) {
-            int count = membersCount[time];
-
-            if (count <= endNumberForEachSection.get(3)) section[time] = 3;
-            if (count <= endNumberForEachSection.get(2)) section[time] = 2;
-            if (count <= endNumberForEachSection.get(1)) section[time] = 1;
-            if (count == 0) section[time] = 0;
-        }
-
-        return section;
     }
 
     public void registerAvailableTime(Long memberId, RegisterAvailableTimeRequestDTO planRequest) {
