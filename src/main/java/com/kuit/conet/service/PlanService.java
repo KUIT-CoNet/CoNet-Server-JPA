@@ -141,13 +141,13 @@ public class PlanService {
     }
 
     public TeamPlanOnDayResponseDTO getFixedPlanOnDay(TeamFixedPlanOnDateRequestDTO planRequest) {
-        List<FixedPlanOnDayDTO> fixedPlansOnDay = planRepository.getFixedPlansOnDay(planRequest.getTeamId(), DateAndTimeFormatter.stringWithDotToDate(planRequest.getSearchDate()));
+        List<FixedPlanOnDayDTO> fixedPlansOnDay = planRepository.getFixedPlansOnDay(planRequest.getTeamId(), DateAndTimeFormatter.stringWithDotToStringWithoutDot(planRequest.getSearchDate()));
 
         return new TeamPlanOnDayResponseDTO(fixedPlansOnDay);
     }
 
     public PlanDateOnMonthResponseDTO getFixedPlanInMonth(TeamFixedPlanOnDateRequestDTO planRequest) {
-        List<Date> fixedPlansInMonth = planRepository.getFixedPlansInMonth(planRequest.getTeamId(), DateAndTimeFormatter.stringWithDotToDate(planRequest.getSearchDate()));
+        List<Date> fixedPlansInMonth = planRepository.getFixedPlansInMonth(planRequest.getTeamId(), DateAndTimeFormatter.stringWithDotToStringWithoutDot(planRequest.getSearchDate()));
         List<Integer> planDates = datesToIntegerList(fixedPlansInMonth);
 
         return new PlanDateOnMonthResponseDTO(planDates);
@@ -322,16 +322,17 @@ public class PlanService {
     }
 
     private void savePlanMemberTime(AvailableDateTimeDTO availableDateTime, Plan plan, Member member) {
-        Date availableDate = availableDateTime.getDate();
+        String availableDate = availableDateTime.getDate();
+        Date formattedAvailableDate = DateAndTimeFormatter.stringWithoutDotToDate(DateAndTimeFormatter.stringWithDotToStringWithoutDot(availableDate));
 
         //해당 날짜의 기존 데이터 삭제
-        planMemberTimeRepository.deleteExistingAvailableTimeOnDate(plan, member, availableDate);
+        planMemberTimeRepository.deleteExistingAvailableTimeOnDate(plan, member, formattedAvailableDate);
 
         //7개의 날에 대하여 가능한 시간을 문자열로 변환
         String availableTimes = setAvailableTimeToString(availableDateTime.getTime());
 
         //가능한 시간 저장
-        PlanMemberTime planMemberTime = PlanMemberTime.createPlanMemberTime(plan, member, availableDate, availableTimes);
+        PlanMemberTime planMemberTime = PlanMemberTime.createPlanMemberTime(plan, member, formattedAvailableDate, availableTimes);
     }
 
     // 특정 날짜에 가능한 시간을 문자열로 변환

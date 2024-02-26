@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +18,7 @@ public class DateAndTimeFormatter {
     private static final int DATE_INDEX = 2;
     private static final String MINUTE_AND_SECOND = ":00:00";
     private static final String SECOND = ":00";
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String CONET_DATE_FORMAT = "yyyy. MM. dd";
     private static final String CONET_TIME_FORMAT = "HH:mm";
 
@@ -33,9 +35,22 @@ public class DateAndTimeFormatter {
         return dateFormat.format(date);
     }
 
-    public static String stringWithDotToDate(String date) {
+    public static String stringWithDotToStringWithoutDot(String date) {
         // yyyy. MM. dd -> yyyy-MM-dd
         return date.replaceAll(DATE_DOT_REGEX, DATE_REGEX);
+    }
+
+    public static Date stringWithoutDotToDate(String date) {
+        // yyyy-MM-dd -> yyyy-MM-dd
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        Date sql;
+        try {
+            java.util.Date parsed = dateFormat.parse(date);
+            sql = new java.sql.Date(parsed.getTime());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return sql;
     }
 
     public static String timeDeleteSeconds(Time time) {

@@ -26,14 +26,14 @@ public class HomeService {
     private final HomeRepository homeRepository;
 
     public PlanDateOnMonthResponseDTO getHomeFixedPlanInMonth(Long memberId, HomePlanRequestDTO homeRequest) {
-        List<Date> fixedPlansInMonth = homeRepository.getHomeFixedPlansInMonth(memberId, DateAndTimeFormatter.stringWithDotToDate(homeRequest.getSearchDate()));
+        List<Date> fixedPlansInMonth = homeRepository.getHomeFixedPlansInMonth(memberId, DateAndTimeFormatter.stringWithDotToStringWithoutDot(homeRequest.getSearchDate()));
         List<Integer> planDates = datesToIntegerList(fixedPlansInMonth);
 
         return new PlanDateOnMonthResponseDTO(planDates);
     }
 
     public HomePlanOnDayResponseDTO getHomeFixedPlanOnDay(Long memberId, HomePlanRequestDTO homeRequest) {
-        List<HomeFixedPlanOnDayDTO> plans = homeRepository.getHomeFixedPlansOnDay(memberId, DateAndTimeFormatter.stringWithDotToDate(homeRequest.getSearchDate()));
+        List<HomeFixedPlanOnDayDTO> plans = homeRepository.getHomeFixedPlansOnDay(memberId, DateAndTimeFormatter.stringWithDotToStringWithoutDot(homeRequest.getSearchDate()));
 
         return new HomePlanOnDayResponseDTO(plans.size(), plans);
     }
