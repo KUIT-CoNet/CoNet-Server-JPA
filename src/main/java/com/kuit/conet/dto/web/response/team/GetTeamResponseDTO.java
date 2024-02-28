@@ -16,11 +16,11 @@ public class GetTeamResponseDTO {
     private Boolean bookmark;
 
 
-    public GetTeamResponseDTO(Team team, Long teamMemberCount, Boolean bookmark) {
+    public GetTeamResponseDTO(Team team, int teamMemberCount, Boolean bookmark) {
         this.teamId = team.getId();
         this.teamName = team.getName();
         this.teamImgUrl = team.getImgUrl();
-        this.teamMemberCount = teamMemberCount;
+        this.teamMemberCount = Long.valueOf(teamMemberCount);
         this.bookmark = bookmark;
 
         //isNew 결정

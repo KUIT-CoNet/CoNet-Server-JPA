@@ -1,12 +1,11 @@
 package com.kuit.conet.dto.plan;
 
-import lombok.*;
+import lombok.Getter;
 
-import java.sql.Date;
 import java.util.List;
 
 @Getter
 public class AvailableDateTimeDTO {
-    private Date date;
+    private String date;
     private List<Integer> time;
 }
