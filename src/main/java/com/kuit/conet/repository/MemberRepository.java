@@ -69,10 +69,10 @@ public class MemberRepository {
     }
 
     public List<GetTeamResponseDTO> getBookmarks(Long memberId) {
-        return em.createQuery("select new com.kuit.conet.dto.web.response.team.GetTeamResponseDTO(t, (select count(tm) from TeamMember tm " +
-                        "where tm.team.id=t.id), tm.bookMark) " +
-                        "from TeamMember tm join tm.team t where tm.member.id=:memberId", GetTeamResponseDTO.class)
+        return em.createQuery("select new com.kuit.conet.dto.web.response.team.GetTeamResponseDTO(t, size(t.teamMembers), tm.bookMark) " +
+                        "from TeamMember tm join tm.team t where tm.member.id=:memberId and tm.bookMark=:bookMark", GetTeamResponseDTO.class)
                 .setParameter("memberId", memberId)
+                .setParameter("bookMark", true)
                 .getResultList();
     }
 

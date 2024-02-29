@@ -15,7 +15,6 @@ public class GetTeamResponseDTO {
     private Boolean isNew;
     private Boolean bookmark;
 
-
     public GetTeamResponseDTO(Team team, int teamMemberCount, Boolean bookmark) {
         this.teamId = team.getId();
         this.teamName = team.getName();
