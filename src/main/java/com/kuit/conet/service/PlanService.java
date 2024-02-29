@@ -78,8 +78,8 @@ public class PlanService {
                 }).toList();
     }
 
-    private static Map<Integer, Long> getIntervalEndBySection(Long totalMemberCount) {
-        Map<Integer, Long> endNumberForEachSection = new HashMap<>();
+    private static Map<String, Long> getIntervalEndBySection(Long totalMemberCount) {
+        Map<String, Long> endNumberForEachSection = new HashMap<>();
 
         //기본 구간 크기와 나머지 계산
         Long baseIntervalSize = totalMemberCount / SECTION_DIVISOR;
@@ -88,22 +88,22 @@ public class PlanService {
         //3구간의 범위가 너무 크지 않게, 비교적 균등하게 범위가 나뉘도록 하기 위하여
         Long firstIntervalEnd = baseIntervalSize + (remainder > 0 ? 1 : 0);
         Long secondIntervalEnd = firstIntervalEnd + baseIntervalSize + (remainder > 1 ? 1 : 0);
-        endNumberForEachSection.put(1, firstIntervalEnd);
-        endNumberForEachSection.put(2, secondIntervalEnd);
-        endNumberForEachSection.put(3, totalMemberCount);
+        endNumberForEachSection.put("section1", firstIntervalEnd);
+        endNumberForEachSection.put("section2", secondIntervalEnd);
+        endNumberForEachSection.put("section3", totalMemberCount);
 
         return endNumberForEachSection;
     }
 
-    private static int[] setSectionForEachTime(Map<Integer, Long> endNumberForEachSection, int[] membersCount) {
+    private static int[] setSectionForEachTime(Map<String, Long> endNumberForEachSection, int[] membersCount) {
         int[] section = new int[ONE_DAY_HOURS];
 
         for (int time = MIN_TIME_NUMBER; time <= MAX_TIME_NUMBER; time++) {
             int count = membersCount[time];
 
-            if (count <= endNumberForEachSection.get(3)) section[time] = 3;
-            if (count <= endNumberForEachSection.get(2)) section[time] = 2;
-            if (count <= endNumberForEachSection.get(1)) section[time] = 1;
+            if (count <= endNumberForEachSection.get("section3")) section[time] = 3;
+            if (count <= endNumberForEachSection.get("section2")) section[time] = 2;
+            if (count <= endNumberForEachSection.get("section1")) section[time] = 1;
             if (count == 0) section[time] = 0;
         }
 
@@ -239,7 +239,7 @@ public class PlanService {
         Long teamMemberTotalCount = teamMemberRepository.getCount(teamId);
 
         //구간별 최대 인원수 구하기
-        Map<Integer, Long> endNumberForEachSection = getIntervalEndBySection(teamMemberTotalCount);
+        Map<String, Long> endNumberForEachSection = getIntervalEndBySection(teamMemberTotalCount);
 
         //가능한 시간 조회해서 Response에 포함되는 List<MemberDateTimeResponseDTO> 추출
         List<MemberDateTimeDTO> memberDateTimes = new ArrayList<>(ONE_WEEK_DAYS);
@@ -259,7 +259,7 @@ public class PlanService {
         return new AllMemberAvailableTimeResponseDTO(teamId, plan, endNumberForEachSection, memberDateTimes);
     }
 
-    private List<AvailableMemberDTO> getAvailableTimeOnDay(Plan plan, Date date, Long teamMemberTotalCount, Map<Integer, Long> endNumberForEachSection) {
+    private List<AvailableMemberDTO> getAvailableTimeOnDay(Plan plan, Date date, Long teamMemberTotalCount, Map<String, Long> endNumberForEachSection) {
         //24시간 - ArrayList 초기화
         int[] membersCount = new int[ONE_DAY_HOURS];
         List<AvailableMemberDTO> memberResponses = new ArrayList<>(ONE_DAY_HOURS);

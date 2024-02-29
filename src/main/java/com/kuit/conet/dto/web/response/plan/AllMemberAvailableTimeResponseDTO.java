@@ -15,10 +15,10 @@ public class AllMemberAvailableTimeResponseDTO {
     private String planName;
     private String planStartPeriod;
     private String planEndPeriod;
-    private Map<Integer, Long> endNumberForEachSection; // 각 구간의 최대 인원 수
+    private Map<String, Long> endNumberForEachSection; // 각 구간의 최대 인원 수
     private List<MemberDateTimeDTO> availableMemberDateTime;
 
-    public AllMemberAvailableTimeResponseDTO(Long teamId, Plan plan, Map<Integer, Long> endNumberForEachSection, List<MemberDateTimeDTO> availableMemberDateTime) {
+    public AllMemberAvailableTimeResponseDTO(Long teamId, Plan plan, Map<String, Long> endNumberForEachSection, List<MemberDateTimeDTO> availableMemberDateTime) {
         this.teamId = teamId;
         this.planId = plan.getId();
         this.planName = plan.getName();
