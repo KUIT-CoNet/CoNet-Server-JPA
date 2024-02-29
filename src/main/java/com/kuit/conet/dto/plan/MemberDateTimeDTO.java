@@ -1,14 +1,18 @@
 package com.kuit.conet.dto.plan;
 
-import lombok.AllArgsConstructor;
+import com.kuit.conet.utils.DateAndTimeFormatter;
 import lombok.Getter;
 
 import java.sql.Date;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 public class MemberDateTimeDTO {
-    private Date date;
+    private String date;
     private List<AvailableMemberDTO> sectionAndAvailableTimes;
+
+    public MemberDateTimeDTO(Date date, List<AvailableMemberDTO> sectionAndAvailableTimes) {
+        this.date = DateAndTimeFormatter.dateToStringWithDot(date);
+        this.sectionAndAvailableTimes = sectionAndAvailableTimes;
+    }
 }
