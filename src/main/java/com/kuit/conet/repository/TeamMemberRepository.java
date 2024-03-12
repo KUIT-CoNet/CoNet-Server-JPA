@@ -1,10 +1,14 @@
 package com.kuit.conet.repository;
 
+import com.kuit.conet.domain.member.Member;
+import com.kuit.conet.domain.team.Team;
 import com.kuit.conet.domain.team.TeamMember;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -65,5 +69,12 @@ public class TeamMemberRepository {
                 .executeUpdate();
         em.flush();
         return deletedTeamMemberCount;
+    }
+
+    public List<Member> findTeamMembersByTeamId(Team team) {
+        return em.createQuery("select m from TeamMember tm left join tm.member m " +
+                "where tm.team=:team", Member.class)
+                .setParameter("team", team)
+                .getResultList();
     }
 }

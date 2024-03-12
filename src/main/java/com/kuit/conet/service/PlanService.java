@@ -6,6 +6,7 @@ import com.kuit.conet.domain.plan.Plan;
 import com.kuit.conet.domain.plan.PlanMember;
 import com.kuit.conet.domain.plan.PlanMemberTime;
 import com.kuit.conet.domain.team.Team;
+import com.kuit.conet.domain.team.TeamMember;
 import com.kuit.conet.dto.plan.*;
 import com.kuit.conet.dto.web.request.plan.*;
 import com.kuit.conet.dto.web.response.plan.*;
@@ -394,5 +395,20 @@ public class PlanService {
         }
 
         planRepository.delete(plan);
+    }
+
+    public List<MemberIsInResponseDTO> getAllMemberIsInPlan(Long planId) {
+        Plan plan = planRepository.findWithMembersById(planId);
+        validatePlanIsFixed(plan);
+
+        List<Member> planMembers = plan.getPlanMemberDetails();
+        List<Member> teamMembers = teamMemberRepository.findTeamMembersByTeamId(plan.getTeam());
+
+        return teamMembers.stream()
+                .map(teamMember -> {
+                    boolean isInPlan = planMembers.contains(teamMember);
+                    return new MemberIsInResponseDTO(teamMember, isInPlan);
+                })
+                .toList();
     }
 }
