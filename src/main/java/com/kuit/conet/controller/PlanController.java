@@ -161,7 +161,7 @@ public class PlanController {
     /**
      * @apiNote [확정 약속 수정] 모임 구성원 약속 참여 여부 조회 api
      */
-    @GetMapping("/member-participation/{planId}")
+    @GetMapping("/{planId}/member-participation")
     public BaseResponse<List<MemberIsInResponseDTO>> getAllMemberParticipationOnPlan(@PathVariable @Valid Long planId) {
         List<MemberIsInResponseDTO> response = planService.getAllMemberIsInPlan(planId);
         return new BaseResponse<>(response);
