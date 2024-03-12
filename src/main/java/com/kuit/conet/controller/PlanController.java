@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.kuit.conet.common.response.status.BaseExceptionResponseStatus.BAD_REQUEST;
 
 @Slf4j
@@ -154,5 +156,14 @@ public class PlanController {
     public BaseResponse<String> deletePlan(@MemberId @Valid Long memberId, @PathVariable @Valid Long planId) {
         planService.deletePlan(memberId, planId);
         return new BaseResponse<>("약속 삭제에 성공하였습니다.");
+    }
+
+    /**
+     * @apiNote [확정 약속 수정] 모임 구성원 약속 참여 여부 조회 api
+     */
+    @GetMapping("/member-participation/{planId}")
+    public BaseResponse<List<MemberIsInResponseDTO>> getAllMemberParticipationOnPlan(@PathVariable @Valid Long planId) {
+        List<MemberIsInResponseDTO> response = planService.getAllMemberIsInPlan(planId);
+        return new BaseResponse<>(response);
     }
 }

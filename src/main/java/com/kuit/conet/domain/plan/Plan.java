@@ -1,5 +1,6 @@
 package com.kuit.conet.domain.plan;
 
+import com.kuit.conet.domain.member.Member;
 import com.kuit.conet.domain.team.Team;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -100,6 +101,12 @@ public class Plan {
 
     public boolean isFixedPlan() {
         return status == PlanStatus.FIXED;
+    }
+
+    public List<Member> getPlanMemberDetails() {
+        return planMembers.stream()
+                .map(PlanMember::getMember)
+                .toList();
     }
 
 }
